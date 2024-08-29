@@ -57,21 +57,31 @@
     </div>
     <div class="row">
         <div class="col">
-            <div class="form-floating mb-3">
-                <input type="number" class="form-control" id="startAge" name="start_age" value="{{old('start_age')}}" required placeholder="Input Age">
-                <label for="floatingInput">Start Age</label>
-                @error('age')
-                <span class="error-msg">{{ $message }}</span>
-                @enderror
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="startAge" name="start_age" value="{{old('start_age')}}" required placeholder="Input Age">
+                        <label for="floatingInput">Start Age</label>
+                        @error('age')
+                        <span class="error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="endAge" name="end_age" value="{{old('end_age')}}" required placeholder="Input Age">
+                        <label for="floatingInput">End Age</label>
+                        @error('age')
+                        <span class="error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col">
             <div class="form-floating mb-3">
-                <input type="number" class="form-control" id="endAge" name="end_age" value="{{old('end_age')}}" required placeholder="Input Age">
-                <label for="floatingInput">End Age</label>
-                @error('age')
-                <span class="error-msg">{{ $message }}</span>
-                @enderror
+                <input type="text" class="form-control date" name="schedule" required placeholder="Choose Date">
+                <label for="floatingInput">Choose Date</label>
             </div>
         </div>
     </div>
@@ -96,7 +106,10 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
+        <div class="col">
+            <input type="text" class="form-control date" placeholder="Choose Date">
+        </div>
         <div class="col">
             <div class="mb-3">
                 <label for="">Start Date: </label>
@@ -109,7 +122,7 @@
                 <input type="date" name="end_date" class="date-input">
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="row">
         <div class="col">
             <div class="form-floating mb-3">
@@ -202,7 +215,37 @@
         }
     }
 
+    function sortAndFormatDates(dateInput) {
+        let dates = dateInput.val().split(',');
+
+        // Parse and sort the dates
+        dates = dates.map(date => new Date(date.trim()));
+        dates.sort((a, b) => a - b);
+
+        // Format the dates back to the desired format (mm/dd/yyyy)
+        const sortedDates = dates.map(date =>
+            ('0' + (date.getMonth() + 1)).slice(-2) + '/' +
+            ('0' + date.getDate()).slice(-2) + '/' +
+            date.getFullYear()
+        );
+
+        // Update the input field with the sorted dates
+        dateInput.val(sortedDates.join(','));
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        $('.date').datepicker({
+            multidate: true,
+            todayHighlight: true,
+        }).on('changeDate', function(e) {
+            sortAndFormatDates($(this));
+        });
+
+        // Trigger sorting when the input field loses focus
+        $('.date').on('blur', function() {
+            sortAndFormatDates($(this));
+        });
+
         fetchProvinces();
 
         document.getElementById('provinceSelect').addEventListener('change', function() {

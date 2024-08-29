@@ -65,8 +65,15 @@
                     <div class="requirements">
                         <div class="d-flex justify-content-start mb-5">
                             <div class="more-info">
-                                <h5>Duration</h5>
-                                <p>{{ \Carbon\Carbon::parse($program->start)->format('M d, Y') . ' to ' . \Carbon\Carbon::parse($program->end)->format('M d, Y') }}</p>
+                                <h5>Schedule</h5>
+                                <p>
+                                    @foreach(explode(',', $program->schedule) as $date)
+                                    {{ \Carbon\Carbon::parse(trim($date))->format('M d, Y') }}
+                                    @if(!$loop->last)
+                                    |
+                                    @endif
+                                    @endforeach
+                                </p>
                             </div>
                             <div class="more-info">
                                 <h5>Participants</h5>
