@@ -88,10 +88,41 @@
             </div>
         </div>
     </div>
+    <div class="row mb-3">
+        <div class="col">
+            <h5>Select Disabilities</h5>
+            <div class="req-container">
+                @foreach ($disabilities as $disability)
+                @if ($disability->disability_name != 'Not Applicable')
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{$disability->disability_name}}" id="flexCheckChecked{{$loop->index}}" name="disability[]">
+                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                        {{$disability->disability_name}}
+                    </label>
+                </div>
+                @endif
+                @endforeach
+            </div>
+        </div>
+        <div class="col">
+            <h5>Select Skills</h5>
+            <div class="req-container">
+                @foreach ($skills as $skill)
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{$skill->title}}" id="flexCheckChecked{{$loop->index}}" name="skill[]">
+                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                        {{$skill->title}}
+                    </label>
+                </div>
+                @endforeach
+            </div>
+
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="participants" name="participants" value="{{ $program->participants }}" required placeholder="Input Participants" oninput="formatNumber(this)">
+                <input type="text" class="form-control" id="participants" name="participants" value="{{old('participants')}}" required placeholder="Input Participants" oninput="formatNumber(this)">
                 <label for="floatingInput">Number of Participants</label>
                 @error('participants')
                 <span class="error-msg">{{ $message }}</span>
@@ -100,50 +131,15 @@
         </div>
         <div class="col">
             <div class="form-floating mb-3">
-                <select class="form-select" id="floatingSelect" name="skills" aria-label="Floating label select example">
-                    @foreach ($skills as $skill)
-                    <option value="{{ $skill->id }}" {{ $program->skill_id == $skill->id ? 'selected' : '' }}>{{ $skill->title }}</option>
-                    @endforeach
-                </select>
-                <label for="floatingSelect">Select Skill</label>
-            </div>
-        </div>
-    </div>
-    <!-- <div class="row">
-        <div class="col">
-            <div class="mb-3">
-                <label for="start_date">Start Date: </label>
-                <input type="date" name="start_date" class="date-input" value="{{ $program->start }}" required>
-            </div>
-        </div>
-        <div class="col">
-            <div class="mb-3">
-                <label for="end_date">End Date: </label>
-                <input type="date" name="end_date" class="date-input" value="{{ $program->end }}" required>
-            </div>
-        </div>
-    </div> -->
-    <div class="row">
-        <div class="col">
-            <div class="form-floating mb-3">
-                <select class="form-select" id="floatingSelect" name="disability" aria-label="Floating label select example">
-                    @foreach ($disabilities as $disability)
-                    @if ($disability->id != 1)
-                    <option value="{{ $disability->id }}" {{ $program->disability_id == $disability->id ? 'selected' : '' }}>{{ $disability->disability_name }}</option>
-                    @endif
-                    @endforeach
-                </select>
-                <label for="floatingSelect">Disability</label>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-floating mb-3">
                 <select class="form-select" id="floatingSelect" name="education" aria-label="Floating label select example">
                     @foreach ($levels as $level)
-                    <option value="{{ $level->id }}" {{ $program->education_id == $level->id ? 'selected' : '' }}>{{ $level->education_name }}</option>
+                    @if ($level->education_name != 'Not Applicable')
+                    <option value="{{ $level->id }}">{{ $level->education_name }}</option>
+                    @endif
                     @endforeach
+
                 </select>
-                <label for="floatingSelect">Education Level</label>
+                <label for="floatingSelect">Education Level (at least)</label>
             </div>
         </div>
     </div>

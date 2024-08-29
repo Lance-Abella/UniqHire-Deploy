@@ -85,6 +85,37 @@
             </div>
         </div>
     </div>
+    <div class="row mb-3">
+        <div class="col">
+            <h5>Select Disabilities</h5>
+            <div class="req-container">
+                @foreach ($disabilities as $disability)
+                @if ($disability->disability_name != 'Not Applicable')
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{$disability->disability_name}}" id="flexCheckChecked{{$loop->index}}" name="disability[]">
+                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                        {{$disability->disability_name}}
+                    </label>
+                </div>
+                @endif
+                @endforeach
+            </div>
+        </div>
+        <div class="col">
+            <h5>Select Skills</h5>
+            <div class="req-container">
+                @foreach ($skills as $skill)
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{$skill->title}}" id="flexCheckChecked{{$loop->index}}" name="skill[]">
+                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                        {{$skill->title}}
+                    </label>
+                </div>
+                @endforeach
+            </div>
+
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <div class="form-floating mb-3">
@@ -97,48 +128,6 @@
         </div>
         <div class="col">
             <div class="form-floating mb-3">
-                <select class="form-select" id="floatingSelect" name="skills" aria-label="Floating label select example">
-                    @foreach ($skills as $skill)
-                    <option value="{{ $skill->id }}">{{ $skill->title }}</option>
-                    @endforeach
-                </select>
-                <label for="floatingSelect">Select Skill</label>
-            </div>
-        </div>
-    </div>
-    <!-- <div class="row">
-        <div class="col">
-            <input type="text" class="form-control date" placeholder="Choose Date">
-        </div>
-        <div class="col">
-            <div class="mb-3">
-                <label for="">Start Date: </label>
-                <input type="date" name="start_date" class="date-input">
-            </div>
-        </div>
-        <div class="col">
-            <div class="mb-3">
-                <label for="">End Date: </label>
-                <input type="date" name="end_date" class="date-input">
-            </div>
-        </div>
-    </div> -->
-    <div class="row">
-        <div class="col">
-            <div class="form-floating mb-3">
-                <select class="form-select" id="floatingSelect" name="disability" aria-label="Floating label select example">
-                    @foreach ($disabilities as $disability)
-                    @if ($disability->disability_name != 'Not Applicable')
-                    <option value="{{ $disability->id }}">{{ $disability->disability_name }}</option>
-                    @endif
-                    @endforeach
-
-                </select>
-                <label for="floatingSelect">Disability</label>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-floating mb-3">
                 <select class="form-select" id="floatingSelect" name="education" aria-label="Floating label select example">
                     @foreach ($levels as $level)
                     @if ($level->education_name != 'Not Applicable')
@@ -147,7 +136,7 @@
                     @endforeach
 
                 </select>
-                <label for="floatingSelect">Education Level</label>
+                <label for="floatingSelect">Education Level (at least)</label>
             </div>
         </div>
     </div>
