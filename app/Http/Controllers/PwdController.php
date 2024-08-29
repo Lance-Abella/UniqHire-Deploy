@@ -263,4 +263,9 @@ class PwdController extends Controller
 
         return back()->with('success', 'Application sent successfully!');
     }
+
+    // //Google Maps API
+    // $GOOGLE_API_KEY = "AIza5yCQtaKHSa5671P90qp4twot6ZaqkA55We";
+
+    // // 
 }

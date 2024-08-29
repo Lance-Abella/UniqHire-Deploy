@@ -42,8 +42,8 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'contactnumber' => 'required|string|max:255',
             'age' => 'nullable|integer|min:1|max:99',
-            'city' => 'string|max:255',
-            'state' => 'string|max:255',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
             'founder' => 'nullable|string|max:255',
             'year_established' => 'nullable|integer|min:1000|max:3000',
             'about' => 'nullable|string',
@@ -67,8 +67,8 @@ class AuthController extends Controller
             $user->userInfo->update([
                 'name' => $request->name,
                 'contactnumber' => $request->contactnumber,
-                'city' => $request->city,
-                'state' => $request->state,
+                'latitude' => $request->lat,
+                'longitude' => $request->long,
                 'about' => $request->about,
                 'founder' => $request->founder,
                 'year_established' => $request->year_established,
@@ -80,8 +80,8 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'contactnumber' => $request->contactnumber,
                 'age' => $request->age,
-                'city' => $request->city,
-                'state' => $request->state,
+                'latitude' => $request->lat,
+                'longitude' => $request->long,
                 'about' => $request->about,
                 'disability_id' => $request->disability,
                 'educational_id' => $request->education
@@ -255,21 +255,23 @@ class AuthController extends Controller
         } else {
             $email = $request->email;
         }
-
+        
+        Log::info("Kaabot ari!");
         $request->validate([
             'password' => 'required|string|min:4|max:255|confirmed',
             // 'disability' => 'required|string|exists:disabilities,id',
             // 'education' => 'required|string|exists:education_level,name',
             'name' => 'required|string|max:255',
             'contactnumber' => 'required|string|max:11|min:11',
-            'state' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
+            'lat' => 'required|numeric|between:-90,90',
+            'long' => 'required|numeric|between:-180,180',
             'pwd_card' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             'age' => 'nullable|integer|min:1|max:99',
             'founder' => 'nullable|string|max:255',
             'year_established' => 'nullable|integer|min:1000|max:3000',
             // 'role' => 'required|string|exists:roles,id',
         ]);
+        Log::info("Nalapas sa validation!");
 
 
 
@@ -279,7 +281,7 @@ class AuthController extends Controller
         ]);
 
         $user->role()->attach($request->role);
-        // Log::info('Attaching role ID: ' . $request->role . ' to user ID: ' . $user->id);
+        Log::info("Registration reaches here!");
 
         UserInfo::create([
             'user_id' => $user->id,
@@ -287,8 +289,8 @@ class AuthController extends Controller
             'educational_id' => $request->education,
             'name' => $request->name,
             'contactnumber' => $request->contactnumber,
-            'state' => $request->state,
-            'city' => $request->city,
+            'latitude' => $request->lat,
+            'longitude' => $request->long,
             'pwd_card' => null,
             'age' => $request->age ?? 0,
             'founder' => $request->founder ?? '',

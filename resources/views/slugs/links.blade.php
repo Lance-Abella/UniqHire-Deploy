@@ -14,6 +14,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
 
+<!-- GOOGlE MAPS JAVASCRIPT API -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places"></script>
+
 <!-- CSS -->
 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
