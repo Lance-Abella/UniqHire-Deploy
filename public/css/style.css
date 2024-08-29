@@ -1496,6 +1496,12 @@ table tbody .bx {
     color: var(--primary-color);
 }
 
+.add-form .req-container, .edit-form .req-container {
+    height: 15rem;
+    /* border: 1px solid; */
+    overflow-y: scroll;
+}
+
 /* PROFILE */
 .profile-container, .agency-prog-container, .edit-form, .add-form {
     position: absolute;
@@ -1932,3 +1938,16 @@ table tbody .bx {
 .trainings-container  #filterForm select {
     width: 10rem;
 }
+
+/* DATE PICKER */
+.datepicker {
+    width: 35.2rem;
+}
+
+.datepicker table {
+    width: 100%;
+}
+
+/* .datepicker table tr td.active.active {
+    background-color: var(--primary-color);
+} */
