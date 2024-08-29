@@ -57,22 +57,63 @@
     </div>
     <div class="row">
         <div class="col">
-            <div class="form-floating mb-3">
-                <input type="number" class="form-control" id="startAge" name="start_age" value="{{old('start_age')}}" required placeholder="Input Age">
-                <label for="floatingInput">Start Age</label>
-                @error('age')
-                <span class="error-msg">{{ $message }}</span>
-                @enderror
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="startAge" name="start_age" value="{{old('start_age')}}" required placeholder="Input Age">
+                        <label for="floatingInput">Age Range (from)</label>
+                        @error('age')
+                        <span class="error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="endAge" name="end_age" value="{{old('end_age')}}" required placeholder="Input Age">
+                        <label for="floatingInput">Age Range (to)</label>
+                        @error('age')
+                        <span class="error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col">
             <div class="form-floating mb-3">
-                <input type="number" class="form-control" id="endAge" name="end_age" value="{{old('end_age')}}" required placeholder="Input Age">
-                <label for="floatingInput">End Age</label>
-                @error('age')
-                <span class="error-msg">{{ $message }}</span>
-                @enderror
+                <input type="text" class="form-control date" name="schedule" required placeholder="Choose Date">
+                <label for="floatingInput">Choose Date</label>
             </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <h5>Select Disabilities</h5>
+            <div class="req-container">
+                @foreach ($disabilities as $disability)
+                @if ($disability->disability_name != 'Not Applicable')
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{$disability->disability_name}}" id="flexCheckChecked{{$loop->index}}" name="disability[]">
+                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                        {{$disability->disability_name}}
+                    </label>
+                </div>
+                @endif
+                @endforeach
+            </div>
+        </div>
+        <div class="col">
+            <h5>Select Skills</h5>
+            <div class="req-container">
+                @foreach ($skills as $skill)
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{$skill->title}}" id="flexCheckChecked{{$loop->index}}" name="skill[]">
+                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                        {{$skill->title}}
+                    </label>
+                </div>
+                @endforeach
+            </div>
+
         </div>
     </div>
     <div class="row">
@@ -87,45 +128,6 @@
         </div>
         <div class="col">
             <div class="form-floating mb-3">
-                <select class="form-select" id="floatingSelect" name="skills" aria-label="Floating label select example">
-                    @foreach ($skills as $skill)
-                    <option value="{{ $skill->id }}">{{ $skill->title }}</option>
-                    @endforeach
-                </select>
-                <label for="floatingSelect">Select Skill</label>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="mb-3">
-                <label for="">Start Date: </label>
-                <input type="date" name="start_date" class="date-input">
-            </div>
-        </div>
-        <div class="col">
-            <div class="mb-3">
-                <label for="">End Date: </label>
-                <input type="date" name="end_date" class="date-input">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="form-floating mb-3">
-                <select class="form-select" id="floatingSelect" name="disability" aria-label="Floating label select example">
-                    @foreach ($disabilities as $disability)
-                    @if ($disability->disability_name != 'Not Applicable')
-                    <option value="{{ $disability->id }}">{{ $disability->disability_name }}</option>
-                    @endif
-                    @endforeach
-
-                </select>
-                <label for="floatingSelect">Disability</label>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-floating mb-3">
                 <select class="form-select" id="floatingSelect" name="education" aria-label="Floating label select example">
                     @foreach ($levels as $level)
                     @if ($level->education_name != 'Not Applicable')
@@ -134,7 +136,7 @@
                     @endforeach
 
                 </select>
-                <label for="floatingSelect">Education Level</label>
+                <label for="floatingSelect">Education Level (at least)</label>
             </div>
         </div>
     </div>
@@ -202,7 +204,37 @@
         }
     }
 
+    function sortAndFormatDates(dateInput) {
+        let dates = dateInput.val().split(',');
+
+        // Parse and sort the dates
+        dates = dates.map(date => new Date(date.trim()));
+        dates.sort((a, b) => a - b);
+
+        // Format the dates back to the desired format (mm/dd/yyyy)
+        const sortedDates = dates.map(date =>
+            ('0' + (date.getMonth() + 1)).slice(-2) + '/' +
+            ('0' + date.getDate()).slice(-2) + '/' +
+            date.getFullYear()
+        );
+
+        // Update the input field with the sorted dates
+        dateInput.val(sortedDates.join(','));
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        $('.date').datepicker({
+            multidate: true,
+            todayHighlight: true,
+        }).on('changeDate', function(e) {
+            sortAndFormatDates($(this));
+        });
+
+        // Trigger sorting when the input field loses focus
+        $('.date').on('blur', function() {
+            sortAndFormatDates($(this));
+        });
+
         fetchProvinces();
 
         document.getElementById('provinceSelect').addEventListener('change', function() {
