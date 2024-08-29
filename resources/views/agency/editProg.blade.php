@@ -64,7 +64,7 @@
                 <div class="col">
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" id="startAge" name="start_age" value="{{$program->start_age}}" required placeholder="Input Age">
-                        <label for="floatingInput">Start Age</label>
+                        <label for="floatingInput">Age Range (from)</label>
                         @error('age')
                         <span class="error-msg">{{ $message }}</span>
                         @enderror
@@ -73,7 +73,7 @@
                 <div class="col">
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" id="endAge" name="end_age" value="{{$program->end_age}}" required placeholder="Input Age">
-                        <label for="floatingInput">End Age</label>
+                        <label for="floatingInput">Age Range (to)</label>
                         @error('age')
                         <span class="error-msg">{{ $message }}</span>
                         @enderror
