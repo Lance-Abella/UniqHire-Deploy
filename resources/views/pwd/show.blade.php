@@ -92,7 +92,7 @@
                             </div>
                             <div class="more-info">
                                 <h5>Participants</h5>
-                                <p>{{ number_format($program->participants) . ' Persons' }}&nbsp;&nbsp; <span class="sub-text">({{$slots}} slots)</span></p>
+                                <p>{{ number_format($program->participants) . ' Persons' }}&nbsp;&nbsp; <span class="sub-text">({{$slots}} slots remaining)</span></p>
                             </div>
                         </div>
                         <!-- AGE -->
