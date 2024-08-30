@@ -27,7 +27,7 @@ class PwdController extends Controller
         $user = auth()->user()->userInfo;
         $disabilities = Disability::all();
         $educations = EducationLevel::all();
-        $query = TrainingProgram::query();
+        $query = TrainingProgram::all();
 
         $approvedProgramIds = TrainingApplication::where('user_id', auth()->id())
             ->where('application_status', 'Approved')
@@ -35,64 +35,80 @@ class PwdController extends Controller
             ->toArray();
 
         // Filtering the programs through searching program title
-        if ($request->filled('search')) {
-            $query->where("title", "LIKE", "%" . $request->search . "%");
-        }
+        // if ($request->filled('search')) {
+        //     $query->where("title", "LIKE", "%" . $request->search . "%");
+        // }
 
         // Filtering the programs based on disability [multiple selection]
-        if (isset($request->disability) && ($request->disability != null)) {
-            $query->whereHas('disability', function ($q) use ($request) {
-                $q->whereIn('disability_name', $request->disability);
-            });
-        }
+        // if (isset($request->disability) && ($request->disability != null)) {
+        //     $query->whereHas('disability', function ($q) use ($request) {
+        //         $q->whereIn('disability_name', $request->disability);
+        //     });
+        // }
 
-        if (isset($request->education) && ($request->education != null)) {
-            $query->whereHas('education', function ($q) use ($request) {
-                $q->whereIn('education_name', $request->education);
-            });
-        }
+        // if (isset($request->education) && ($request->education != null)) {
+        //     $query->whereHas('education', function ($q) use ($request) {
+        //         $q->whereIn('education_name', $request->education);
+        //     });
+        // }
 
-        $query->whereNotIn('id', $approvedProgramIds);
+        // $query->whereNotIn('id', $approvedProgramIds);
 
-        $filteredPrograms = $query->get();
+        // $filteredPrograms = $query->get();
 
 
-        $rankedPrograms = [];
+        // $rankedPrograms = [];
 
-        foreach ($filteredPrograms as $program) {
-            $similarity = $this->calculateSimilarity($user, $program);
-            Log::info("Similarity score for program ID {$program->id}: " . $similarity);
-            $rankedPrograms[] = [
-                'program' => $program,
-                'similarity' => $similarity
-            ];
-        }
+        // foreach ($filteredPrograms as $program) {
+        //     $similarity = $this->calculateSimilarity($user, $program);
+        //     Log::info("Similarity score for program ID {$program->id}: " . $similarity);
+        //     $rankedPrograms[] = [
+        //         'program' => $program,
+        //         'similarity' => $similarity
+        //     ];
+        // }
 
 
 
         // Sorting the programs based on similarity score [ascending]
-        usort($rankedPrograms, function ($a, $b) {
-            return $b['similarity'] <=> $a['similarity'];
-        });
+        // usort($rankedPrograms, function ($a, $b) {
+        //     return $b['similarity'] <=> $a['similarity'];
+        // });
 
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 5;
-        $currentItems = array_slice($rankedPrograms, ($currentPage - 1) * $perPage, $perPage);
-        $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedPrograms), $perPage);
-        $paginatedItems->setPath($request->url());
+        // $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        // $perPage = 5;
+        // $currentItems = array_slice($rankedPrograms, ($currentPage - 1) * $perPage, $perPage);
+        // $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedPrograms), $perPage);
+        // $paginatedItems->setPath($request->url());
 
-        $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
-        $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
+        // $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
+        // $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
         
 
-        return view('pwd.listPrograms', compact('paginatedItems', 'disabilities', 'educations','disabilityCounts', 'educationCounts'));
+        return view('pwd.listPrograms', compact('paginatedItems', 'disabilities', 'educations', 'educationCounts'));
+    }
+
+    private function calculateDistance($lat1, $lng1, $lat2, $lng2) {
+        $earthRadius = 6371; // Radius of the earth in km
+    
+        $latDifference = deg2rad($lat2 - $lat1);
+        $lngDifference = deg2rad($lng2 - $lng1);
+    
+        $a = sin($latDifference / 2) * sin($latDifference / 2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($lngDifference / 2) * sin($lngDifference / 2);
+    
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+    
+        $distance = $earthRadius * $c; // Distance in km
+    
+        return round($distance, 2);
     }
 
     private function calculateSimilarity($user, $program)
     {
         $similarityScore = 0;
         $weights = [
-
             'age' => 5,
             'educ' => 10,
             'skills' => 10,
@@ -103,17 +119,15 @@ class PwdController extends Controller
         $totalRating = PwdFeedback::where('program_id', $program->id)->sum('rating');
         $ratingCount = PwdFeedback::where('program_id', $program->id)->count();
         $averageRating = $ratingCount > 0 ? $totalRating / $ratingCount : 0;
-        $lat1 = $users->latitude;
-        $lng1 = $users->longitude;
+        $lat1 = $user->latitude;
+        $lng1 = $user->longitude;
         $lat2 = $program->latitude;
         $lng2 = $program->longitude;
 
-        $distance = calculateDistance($lat1, $lng1, $lat2, $lng2);
+        $distance = $this->calculateDistance($lat1, $lng1, $lat2, $lng2);
 
         // Criteria: disability, location
-        if ($user->disability_id === $program->disability_id) {
-            $similarityScore += $weights['disability'];
-        }
+        
 
         if ($distance <= 20) {
             $similarityScore += 20;
@@ -149,22 +163,7 @@ class PwdController extends Controller
         return $similarityScore;
     }
 
-    function calculateDistance($lat1, $lng1, $lat2, $lng2) {
-        $earthRadius = 6371; // Radius of the earth in km
     
-        $latDifference = deg2rad($lat2 - $lat1);
-        $lngDifference = deg2rad($lng2 - $lng1);
-    
-        $a = sin($latDifference / 2) * sin($latDifference / 2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($lngDifference / 2) * sin($lngDifference / 2);
-    
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-    
-        $distance = $earthRadius * $c; // Distance in km
-    
-        return round($distance, 2);
-    }
 
     public function showDetails($id)
     {

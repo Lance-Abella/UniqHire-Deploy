@@ -20,7 +20,7 @@
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="{{$disability->disability_name}}" id="flexCheckDefault{{$loop->index}}" name="disability[]" onchange="submitForm()" {{ in_array($disability->disability_name, request()->input('disability', [])) ? 'checked' : '' }}>
                     <label class="form-check-label" for="flexCheckDefault{{$loop->index}}">
-                        {{$disability->disability_name}} &nbsp;<span class="count sub-text">({{ $disabilityCounts[$disability->id]->program_count }})</span>
+                        {{$disability->disability_name}} &nbsp;<span class="count sub-text">()</span>
 
                     </label>
                 </div>
