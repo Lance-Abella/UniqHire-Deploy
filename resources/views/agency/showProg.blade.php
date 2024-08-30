@@ -88,13 +88,21 @@
                             </div>
                             <div class="more-info">
                                 <h5>Skills Acquired</h5>
-                                <span class="match-info">{{ $program->skill->title }}</span>
+                                <ul>
+                                    @foreach ($program->skill as $skill)
+                                    <li class="match-info mb-2">{{ $skill->title }}</li>
+                                    @endforeach
+                                </ul>
                             </div>
                         </div>
                         <div class="d-flex justify-content-start more-info">
                             <div class="more-info">
                                 <h5>We Accept</h5>
-                                <span class="match-info">{{ $program->disability->disability_name }}</span>
+                                <ul>
+                                    @foreach ($program->disability as $disability)
+                                    <li class="match-info mb-2">{{ $disability->disability_name }}</li>
+                                    @endforeach
+                                </ul>
                             </div>
                             <div class="more-info">
                                 <h5>Education Level</h5>

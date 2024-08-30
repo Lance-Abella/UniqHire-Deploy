@@ -92,8 +92,8 @@
                 @foreach ($disabilities as $disability)
                 @if ($disability->disability_name != 'Not Applicable')
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{$disability->disability_name}}" id="flexCheckChecked{{$loop->index}}" name="disability[]">
-                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                    <input class="form-check-input" type="checkbox" value="{{$disability->id}}" id="disability{{$loop->index}}" name="disabilities[]">
+                    <label class="form-check-label" for="disability{{$loop->index}}">
                         {{$disability->disability_name}}
                     </label>
                 </div>
@@ -106,14 +106,13 @@
             <div class="req-container">
                 @foreach ($skills as $skill)
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{$skill->title}}" id="flexCheckChecked{{$loop->index}}" name="skill[]">
-                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                    <input class="form-check-input" type="checkbox" value="{{$skill->id}}" id="skill{{$loop->index}}" name="skills[]">
+                    <label class="form-check-label" for="skill{{$loop->index}}">
                         {{$skill->title}}
                     </label>
                 </div>
                 @endforeach
             </div>
-
         </div>
     </div>
     <div class="row">
