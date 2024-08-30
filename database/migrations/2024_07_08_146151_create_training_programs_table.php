@@ -19,9 +19,7 @@ return new class extends Migration
             $table->string('state');
             $table->string('city');
             $table->integer('participants')->default(0);
-            $table->date('start');
-            $table->date('end');
-
+            $table->string('schedule');
             //requirements
             $table->foreignId('disability_id')->constrained('disabilities')->onDelete('cascade');
             $table->foreignId('education_id')->constrained('education_levels')->onDelete('cascade');
