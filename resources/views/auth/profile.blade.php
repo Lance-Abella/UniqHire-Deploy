@@ -19,7 +19,9 @@
             <div class="details row">
                 <div class="col">
                     <p class="text-cap profile-name">{{ $user->userInfo->name }}</p>
-                    <p class="text-cap"><i class='bx bx-map sub-text'></i>{{ $user->userInfo->state . ', ' . (str_contains($user->userInfo->city, 'City') ? $user->userInfo->city : $user->userInfo->city . ' City') }}</p>
+                    <p class="text-cap" id="location"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                    <input type="hidden" id="lat" value="{{ $latitude }}">
+                    <input type="hidden" id="lng" value="{{ $longitude }}">
                 </div>
                 @if($user->hasRole('PWD'))
                 <div class="col">
@@ -218,4 +220,122 @@
         var input = document.getElementById(id);
         input.value = '';
     }
+
+    function initMap() {
+        var lat = parseFloat(document.getElementById('lat').value);
+        var lng = parseFloat(document.getElementById('long').value);
+        var latlng = { lat: lat, lng: lng };
+
+        // Create the map, centered at the initial location
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 8,
+            center: latlng
+        });
+
+        // Add a draggable marker to the map
+        var marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            draggable: true,  
+            title: 'Drag me to your location!'
+        });
+
+        // // Set the hidden input fields to the default location when the map is loaded
+        // document.getElementById('lat').value = lat;
+        // document.getElementById('long').value = lng;
+
+        function updateCoordinates(markerPosition) {
+            var lat = markerPosition.lat();
+            var lng = markerPosition.lng();
+            document.getElementById('lat').value = lat;
+            document.getElementById('long').value = lng;
+            document.getElementById('coordinates').innerText = 'Latitude: ' + lat + ', Longitude: ' + lng;
+        }
+
+         // Place the marker where the user clicks on the map
+        map.addListener('click', function(event) {
+            var clickedLocation = event.latLng;
+            marker.setPosition(clickedLocation); 
+            marker.setMap(map); 
+            updateCoordinates(clickedLocation); 
+        });
+
+        // Automatically update the coordinates when the marker is dragged
+        marker.addListener('dragend', function() {
+            updateCoordinates(marker.getPosition());
+        });
+
+        // Create the search box and link it to the UI element
+        var input = document.getElementById('pac-input');
+        var searchBox = new google.maps.places.SearchBox(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        // Bias the SearchBox results towards current map's viewport
+        map.addListener('bounds_changed', function() {
+            searchBox.setBounds(map.getBounds());
+        });
+
+        // Listen for the event fired when the user selects a prediction and retrieves more details for that place
+        searchBox.addListener('places_changed', function() {
+            var places = searchBox.getPlaces();
+
+            if (places.length == 0) {
+                return;
+            }
+
+            // Clear out the old marker
+            marker.setMap(null);
+
+            // For each place, get the icon, name, and location
+            var bounds = new google.maps.LatLngBounds();
+            places.forEach(function(place) {
+                if (!place.geometry || !place.geometry.location) {
+                    console.log("Returned place contains no geometry");
+                    return;
+                }
+
+                // Create a new marker for the selected place
+                marker = new google.maps.Marker({
+                    position: place.geometry.location,
+                    map: map,
+                    draggable: true
+                });
+
+                // Automatically update coordinates when the new marker is dragged
+                marker.addListener('dragend', function() {
+                    updateCoordinates(marker.getPosition());
+                });
+
+                // Immediately update the coordinates for the selected place
+                updateCoordinates(marker.getPosition());
+
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
+                }
+            });
+            map.fitBounds(bounds);
+        });
+
+        var geocoder = new google.maps.Geocoder();
+
+        // Reverse geocode to get the address
+        geocoder.geocode({ location: latlng }, function(results, status) {
+            var locationElement = document.getElementById('location');
+            if (status === 'OK') {
+                if (results[0]) {
+                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+                } else {
+                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
+                }
+            } else {
+                locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
+            }
+        });
+    }
+
+    // Initialize the map and geocoding
+    window.onload = initMap;
 </script>

@@ -92,8 +92,7 @@ class PwdController extends Controller
     {
         $similarityScore = 0;
         $weights = [
-            'disability' => 50,
-            'location' => 20,
+
             'age' => 5,
             'educ' => 10,
             'skills' => 10,
@@ -104,14 +103,29 @@ class PwdController extends Controller
         $totalRating = PwdFeedback::where('program_id', $program->id)->sum('rating');
         $ratingCount = PwdFeedback::where('program_id', $program->id)->count();
         $averageRating = $ratingCount > 0 ? $totalRating / $ratingCount : 0;
+        $lat1 = $users->latitude;
+        $lng1 = $users->longitude;
+        $lat2 = $program->latitude;
+        $lng2 = $program->longitude;
+
+        $distance = calculateDistance($lat1, $lng1, $lat2, $lng2);
 
         // Criteria: disability, location
         if ($user->disability_id === $program->disability_id) {
             $similarityScore += $weights['disability'];
         }
 
-        if ($user->city === $program->city) {
-            $similarityScore += $weights['location'];
+        if ($distance <= 5) {
+            $similarityScore += 20;
+        }
+        else if($distance > 5 && $distance <= 10) {
+            $similarityScore += 15;
+        }
+        else if($distance > 10 && $distance <= 15) {
+            $similarityScore += 10;
+        }
+        else {
+            $similarityScore += 5;
         }
 
         if($user->age >= $program->start_age && $user->age <= $program->end_age){
@@ -133,6 +147,23 @@ class PwdController extends Controller
         }
 
         return $similarityScore;
+    }
+
+    function calculateDistance($lat1, $lng1, $lat2, $lng2) {
+        $earthRadius = 6371; // Radius of the earth in km
+    
+        $latDifference = deg2rad($lat2 - $lat1);
+        $lngDifference = deg2rad($lng2 - $lng1);
+    
+        $a = sin($latDifference / 2) * sin($latDifference / 2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($lngDifference / 2) * sin($lngDifference / 2);
+    
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+    
+        $distance = $earthRadius * $c; // Distance in km
+    
+        return round($distance, 2);
     }
 
     public function showDetails($id)
@@ -263,9 +294,4 @@ class PwdController extends Controller
 
         return back()->with('success', 'Application sent successfully!');
     }
-
-    // //Google Maps API
-    // $GOOGLE_API_KEY = "AIza5yCQtaKHSa5671P90qp4twot6ZaqkA55We";
-
-    // // 
 }

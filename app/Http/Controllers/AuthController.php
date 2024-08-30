@@ -30,7 +30,10 @@ class AuthController extends Controller
         $skilluser = SkillUser::where('user_id', $id)->get();
         $experiences = Experience::where('user_id', $id)->get();
         $certifications = Enrollee::where('pwd_id', $id)->where('completion_status', 'Completed')->get();
-        return view('auth.profile', compact('levels', 'disabilities', 'user', 'certifications', 'skills', 'skilluser', 'experiences'));
+        $latitude = $user->userInfo->latitude;
+        $longitude = $user->userInfo->longitude;
+
+        return view('auth.profile', compact('levels', 'disabilities', 'user', 'certifications', 'skills', 'skilluser', 'experiences', 'latitude', 'longitude'));
     }
 
     public function editProfile(Request $request)
@@ -42,8 +45,8 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'contactnumber' => 'required|string|max:255',
             'age' => 'nullable|integer|min:1|max:99',
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
+            'lat' => 'required|numeric|between:-90,90',
+            'long' => 'required|numeric|between:-180,180',
             'founder' => 'nullable|string|max:255',
             'year_established' => 'nullable|integer|min:1000|max:3000',
             'about' => 'nullable|string',

@@ -37,10 +37,8 @@ class AgencyController extends Controller
         $programs = TrainingProgram::where('agency_id', $userId)
             ->latest()
             ->with('crowdfund')
-            ->get();
-
+            ->get();        
         
-
         foreach ($programs as $program) {
             $endDate = new DateTime($program->end);
             $today = new DateTime();
@@ -98,8 +96,8 @@ class AgencyController extends Controller
         // Validate the request data
         $request->validate([
             'title' => 'required|string|max:255',
-            'state' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
+            'lat' => 'required|numeric|between:-90,90',
+            'long' => 'required|numeric|between:-180,180',
             'description' => 'required|string',
             'schedule' => 'required|string',
             // 'start_date' => 'required|date',
@@ -122,8 +120,8 @@ class AgencyController extends Controller
         $trainingProgram = TrainingProgram::create([
             'agency_id' => auth()->id(),
             'title' => $request->title,
-            'state' => $request->state,
-            'city' => $request->city,
+            'latitude' => $request->lat,
+            'longitude' => $request->long,
             'description' => $request->description,
             'schedule' => $request->schedule,
             'disability_id' => $request->disability,
