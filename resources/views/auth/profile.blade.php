@@ -148,73 +148,11 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        fetchProvinces().then(() => {
-            var selectedProvince = "{{ $user->userInfo->state }}";
-            var provinceSelect = document.getElementById('provinceSelect');
-            if (selectedProvince) {
-                provinceSelect.value = selectedProvince;
-                fetchCities(selectedProvince).then(() => {
-                    var selectedCity = "{{ $user->userInfo->city }}";
-                    var citySelect = document.getElementById('citySelect');
-                    if (selectedCity) {
-                        citySelect.value = selectedCity;
-                    }
-                });
-            }
-        });
-
-        document.getElementById('provinceSelect').addEventListener('change', function() {
-            var provinceCode = this.value;
-            fetchCities(provinceCode);
-        });
-
         // Set max year for the year established input
         var yearEstablishedInput = document.getElementById('year-established');
         var currentYear = new Date().getFullYear();
         yearEstablishedInput.max = currentYear;
     });
-
-    function fetchProvinces() {
-        return fetch('https://psgc.cloud/api/provinces')
-            .then(response => response.json())
-            .then(data => {
-                var provinceSelect = document.getElementById('provinceSelect');
-                provinceSelect.innerHTML = '<option value="">Select Province</option>';
-                data.sort((a, b) => a.name.localeCompare(b.name));
-                data.forEach(province => {
-                    var option = document.createElement('option');
-                    option.value = province.name; // Ensure this matches your database value
-                    option.text = province.name;
-                    provinceSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error fetching provinces:', error));
-    }
-
-    function fetchCities(provinceCode) {
-        return fetch(`https://psgc.cloud/api/provinces/${provinceCode}/cities-municipalities`)
-            .then(response => response.json())
-            .then(data => {
-                var citySelect = document.getElementById('citySelect');
-                citySelect.innerHTML = '<option value="">Select City</option>';
-                data.sort((a, b) => a.name.localeCompare(b.name));
-                data.forEach(city => {
-                    var option = document.createElement('option');
-                    option.value = city.name.trim();
-                    option.text = city.name.trim();
-                    citySelect.appendChild(option);
-                });
-
-                var userCity = "{{ $user->userInfo->city }}".trim().toLowerCase();
-
-                Array.from(citySelect.options).forEach(option => {
-                    if (option.value.trim().toLowerCase() === userCity) {
-                        option.selected = true;
-                    }
-                });
-            })
-            .catch(error => console.error('Error fetching cities:', error));
-    }
 
     function clearFileInput(id) {
         var input = document.getElementById(id);

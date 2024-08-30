@@ -115,17 +115,17 @@ class PwdController extends Controller
             $similarityScore += $weights['disability'];
         }
 
-        if ($distance <= 5) {
+        if ($distance <= 20) {
             $similarityScore += 20;
         }
-        else if($distance > 5 && $distance <= 10) {
+        else if($distance > 20 && $distance <= 40) {
             $similarityScore += 15;
         }
-        else if($distance > 10 && $distance <= 15) {
+        else if($distance > 40 && $distance <= 60) {
             $similarityScore += 10;
         }
         else {
-            $similarityScore += 5;
+            $similarityScore += 5;  
         }
 
         if($user->age >= $program->start_age && $user->age <= $program->end_age){
