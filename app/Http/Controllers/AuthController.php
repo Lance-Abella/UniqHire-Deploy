@@ -333,7 +333,8 @@ class AuthController extends Controller
     }
 
 
-    public function addPicture(Request $request) {
+    public function addPicture(Request $request)
+    {
         $user = UserInfo::where('user_id', Auth::user()->id)->firstOrFail();
 
         $request->validate([
@@ -355,5 +356,4 @@ class AuthController extends Controller
 
         return back()->with('success', 'Profile picture updated successfully.');
     }
-
 }
