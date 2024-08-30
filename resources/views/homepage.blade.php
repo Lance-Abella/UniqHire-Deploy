@@ -39,12 +39,12 @@
     <div class="row home-row mt-5 home-top">
         <div class="col">
             <h2 class="mb-4">Mission</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>UniqHire aims to bridge the gap between PWD users, Training Agencies, Companies, and Sponsors by providing a user-friendly platform that simplifies transactions, enhances communication, and promotes equal opportunities for all stakeholders in a transparent and efficient manner.</p>
         </div>
         <div class="col-1"></div>
         <div class="col mb-4">
             <h2 class="mb-4">Vision</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>To create an inclusive, accessible, and empowering platform where PWD users, Training Agencies, Companies, and Sponsors seamlessly connect and collaborate, fostering opportunities for growth, employment, and mutual support.</p>
         </div>
     </div>
     <div class="row d-flex align-items-center home-row mb-5 home-top border-bottom text-center count-user-row">

@@ -31,7 +31,7 @@ class TrainingProgram extends Model
 
     public function disability()
     {
-        return $this->belongsTo(Disability::class);
+        return $this->belongsToMany(Disability::class, 'program_disability', 'training_program_id', 'disability_id');
     }
 
     public function education()
@@ -61,6 +61,6 @@ class TrainingProgram extends Model
 
     public function skill()
     {
-        return $this->belongsTo(Skill::class, 'skill_id');
+        return $this->belongsToMany(Skill::class, 'program_skill', 'training_program_id', 'skill_id');
     }
 }

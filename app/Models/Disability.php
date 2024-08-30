@@ -13,7 +13,8 @@ class Disability extends Model
         'disability_name',
     ];
 
-    public function userInfo() {
+    public function userInfo()
+    {
         return $this->hasMany(UserInfo::class);
     }
 
