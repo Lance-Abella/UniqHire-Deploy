@@ -25,67 +25,66 @@ class PwdController extends Controller
     public function showPrograms(Request $request)
     {
         $user = auth()->user()->userInfo;
-        $disabilities = Disability::all();
         $educations = EducationLevel::all();
-        $query = TrainingProgram::all();
+        $query = TrainingProgram::query();
 
-        $approvedProgramIds = TrainingApplication::where('user_id', auth()->id())
-            ->where('application_status', 'Approved')
-            ->pluck('training_program_id')
-            ->toArray();
+        // $approvedProgramIds = TrainingApplication::where('user_id', auth()->id())
+        //     ->where('application_status', 'Approved')
+        //     ->pluck('training_program_id')
+        //     ->toArray();
 
         // Filtering the programs through searching program title
-        // if ($request->filled('search')) {
-        //     $query->where("title", "LIKE", "%" . $request->search . "%");
-        // }
+        if ($request->filled('search')) {
+            $query->where("title", "LIKE", "%" . $request->search . "%");
+        }
 
-        // Filtering the programs based on disability [multiple selection]
-        // if (isset($request->disability) && ($request->disability != null)) {
-        //     $query->whereHas('disability', function ($q) use ($request) {
-        //         $q->whereIn('disability_name', $request->disability);
-        //     });
-        // }
-
-        // if (isset($request->education) && ($request->education != null)) {
-        //     $query->whereHas('education', function ($q) use ($request) {
-        //         $q->whereIn('education_name', $request->education);
-        //     });
-        // }
+        // Filtering the programs based on education [multiple selection]
+        if (isset($request->education) && ($request->education != null)) {
+            $query->whereHas('education', function ($q) use ($request) {
+                $q->whereIn('education_name', $request->education);
+            });
+        }
 
         // $query->whereNotIn('id', $approvedProgramIds);
 
-        // $filteredPrograms = $query->get();
+        // Filtering the programs based on the user's disability
+        $query->whereHas('disability', function ($q) use ($user) {
+            $q->where('program_disability.id', $user->disability_id);
+        });
+        
+
+        $filteredPrograms = $query->get();
 
 
-        // $rankedPrograms = [];
+        $rankedPrograms = [];
 
-        // foreach ($filteredPrograms as $program) {
-        //     $similarity = $this->calculateSimilarity($user, $program);
-        //     Log::info("Similarity score for program ID {$program->id}: " . $similarity);
-        //     $rankedPrograms[] = [
-        //         'program' => $program,
-        //         'similarity' => $similarity
-        //     ];
-        // }
+        foreach ($filteredPrograms as $program) {
+            $similarity = $this->calculateSimilarity($user, $program);
+            Log::info("Similarity score for program ID {$program->id}: " . $similarity);
+            $rankedPrograms[] = [
+                'program' => $program,
+                'similarity' => $similarity
+            ];
+        }
 
 
 
         // Sorting the programs based on similarity score [ascending]
-        // usort($rankedPrograms, function ($a, $b) {
-        //     return $b['similarity'] <=> $a['similarity'];
-        // });
+        usort($rankedPrograms, function ($a, $b) {
+            return $b['similarity'] <=> $a['similarity'];
+        });
 
-        // $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        // $perPage = 5;
-        // $currentItems = array_slice($rankedPrograms, ($currentPage - 1) * $perPage, $perPage);
-        // $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedPrograms), $perPage);
-        // $paginatedItems->setPath($request->url());
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 5;
+        $currentItems = array_slice($rankedPrograms, ($currentPage - 1) * $perPage, $perPage);
+        $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedPrograms), $perPage);
+        $paginatedItems->setPath($request->url());
 
         // $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
-        // $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
+        $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
         
-
-        return view('pwd.listPrograms', compact('paginatedItems', 'disabilities', 'educations', 'educationCounts'));
+        log::info("nakaabot ari gyuddd");
+        return view('pwd.listPrograms', compact('paginatedItems', 'educations', 'educationCounts'));
     }
 
     private function calculateDistance($lat1, $lng1, $lat2, $lng2) {

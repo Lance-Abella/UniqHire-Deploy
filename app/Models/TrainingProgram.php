@@ -17,11 +17,9 @@ class TrainingProgram extends Model
         'longitude',
         'participants',
         'schedule',
-        'disability_id',
         'education_id',
         'start_age',
         'end_age',
-        'skill_id',
     ];
 
     public function agency()
