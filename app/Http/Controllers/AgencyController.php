@@ -98,8 +98,8 @@ class AgencyController extends Controller
         // Validate the request data
         $request->validate([
             'title' => 'required|string|max:255',
-            'state' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
+            'lat' => 'required|numeric|between:-90,90',
+            'long' => 'required|numeric|between:-180,180',
             'description' => 'required|string',
             'schedule' => 'required|string',
             'start_age' => 'integer|min:1|max:99',
@@ -121,8 +121,8 @@ class AgencyController extends Controller
         $trainingProgram = TrainingProgram::create([
             'agency_id' => auth()->id(),
             'title' => $request->title,
-            'state' => $request->state,
-            'city' => $request->city,
+            'latitude' => $request->lat,
+            'longitude' => $request->long,
             'description' => $request->description,
             'schedule' => $request->schedule,
             'disabilities' => $request->disability,
@@ -222,8 +222,8 @@ class AgencyController extends Controller
         if ($program && $program->agency_id == auth()->id()) {
             $request->validate([
                 'title' => 'required|string|max:255',
-                'state' => 'required|string|max:255',
-                'city' => 'required|string|max:255',
+                'lat' => 'required|numeric|between:-90,90',
+                'long' => 'required|numeric|between:-180,180',
                 'description' => 'required|string',
                 'schedule' => 'required|string',
                 'goal' => 'nullable|string',
@@ -235,17 +235,21 @@ class AgencyController extends Controller
                 'competencies.*' => 'string|distinct',
                 'start_age' => 'integer|min:1|max:99',
                 'end_age' => 'integer|min:1|max:99',
+                'participants' => 'required|max:255',
             ]);
+
+            $participants = $this->convertToNumber($request->participants);
 
             $program->update([
                 'title' => $request->title,
-                'state' => $request->state,
-                'city' => $request->city,
+                'latitude' => $request->lat,
+                'longitude' => $request->long,
                 'description' => $request->description,
                 'schedule' => $request->schedule,
                 'education_id' => $request->education,
                 'start_age' => $request->start_age,
                 'end_age' => $request->end_age,
+                'participants' => $participants,
             ]);
 
             $program->skill()->sync($request->skills);

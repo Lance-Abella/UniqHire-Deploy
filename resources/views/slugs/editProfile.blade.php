@@ -93,31 +93,12 @@
                             </div>
                             @endif
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-floating mb-3">
-                                    <select type="text" class="form-select" id="provinceSelect" name="state" placeholder="Province">
-                                        <option value="">Select Province</option>
-                                    </select>
-                                    <label for="provinceSelect">Province</label>
-                                    @error('state')
-                                    <span class="error-msg">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-floating mb-3">
-                                    <select type="text" class="form-select" id="citySelect" name="city" placeholder="City">
-                                        <option value="">Select City</option>
-                                    </select>
-                                    <label for="citySelect">City</label>
-                                    @error('city')
-                                    <span class="error-msg">{{ $message }}</span>
-                                    @enderror
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                        <input type="hidden" id="lat" name="lat" value="{{ $latitude }}">
+                        <input type="hidden" id="long" name="long" value="{{ $longitude }}">
+                        <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+                        <label for="map">Select Your Location:</label>
+                        <div id="map" style="height: 400px; width: 100%;"></div>
+                        <p id="coordinates"></p>
                         @if($user->hasRole('PWD'))
                         <div class="form-floating mb-3">
                             <select class="form-select" id="floatingSelect" name="disability" aria-label="Floating label select example">

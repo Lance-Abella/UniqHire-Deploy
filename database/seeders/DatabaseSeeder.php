@@ -62,8 +62,8 @@ class DatabaseSeeder extends Seeder
         UserInfo::create([
             'name' => 'Evryl Claire',
             'contactnumber' => '09123456789',
-            'state' => 'Cebu',
-            'city' => 'City Of Talisay',
+            'latitude' => 10.30489026928145,
+            'longitude' => 123.74810749843749,
             'disability_id' => $none->id,
             'educational_id' => $not_applicable->id,
             'user_id' => $adminuser->id,

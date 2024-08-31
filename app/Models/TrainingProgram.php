@@ -13,15 +13,13 @@ class TrainingProgram extends Model
         'agency_id',
         'title',
         'description',
-        'state',
-        'city',
+        'latitude',
+        'longitude',
         'participants',
         'schedule',
-        'disability_id',
         'education_id',
         'start_age',
         'end_age',
-        'skill_id',
     ];
 
     public function agency()
