@@ -112,6 +112,10 @@
                                 <i class='bx bx-dollar-circle side-icon'></i>
                                 <span class="side-title">Sponsors</span>
                             </a></li>
+                        <li class="side-item"><a href="{{route('skill-list')}}">
+                                <i class='bx bxs-brain side-icon'></i>
+                                <span class="side-title">Manage Skills</span>
+                            </a></li>
                         <li class="side-item"><a href="">
                                 <i class='bx bx-cog side-icon'></i>
                                 <span class="side-title">Settings</span>
