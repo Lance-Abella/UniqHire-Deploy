@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserInfo;
 use App\Models\Role;
+use App\Models\Skill;
 
 class AdminController extends Controller
 {
@@ -27,7 +28,7 @@ class AdminController extends Controller
 
     public function showTrainers()
     {
-        $trainingID = Role::where('role_name', 'Trainer')->value('id');
+        $trainingID = Role::where('role_name', 'Training Agency')->value('id');
         $users = User::whereHas('role', function ($query) use ($trainingID) {
             $query->where('role_id', $trainingID);
         })->get();
@@ -55,5 +56,53 @@ class AdminController extends Controller
         })->get();
 
         return view('admin.sponsorUsers', compact('users'));
+    }
+
+    // SKILLS MANAGING
+
+    public function showSkills()
+    {
+        $skills = Skill::all();
+
+        return view('admin.skillManage', compact('skills'));
+    }
+
+    public function create()
+    {
+        return view('admin.createSkill');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        Skill::create($request->all());
+
+        return redirect()->route('skill-list')->with('success', 'Skill added successfully.');
+    }
+
+    public function edit(Skill $skill)
+    {
+        return view('admin.editSkill', compact('skill')); // Create a form view for editing a skill
+    }
+
+    public function update(Request $request, Skill $skill)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $skill->update($request->all());
+
+        return redirect()->route('skill-list')->with('success', 'Skill updated successfully.');
+    }
+
+    public function destroy(Skill $skill)
+    {
+        $skill->delete();
+
+        return redirect()->route('skill-list')->with('success', 'Skill deleted successfully.');
     }
 }
