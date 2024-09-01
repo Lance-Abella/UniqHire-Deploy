@@ -24,4 +24,5 @@ class TrainingApplication extends Model
     {
         return $this->belongsTo(TrainingProgram::class, 'training_program_id');
     }
+
 }

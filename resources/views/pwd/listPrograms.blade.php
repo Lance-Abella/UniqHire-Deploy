@@ -41,9 +41,11 @@
         </div>
         <div class="outer">
             <div class="prog-grid" id="prog-grid">
+               
                 @foreach ($paginatedItems as $ranked)
+                
                 <div class="row prog-card mb-2">
-                    <input type="hidden" name="" value="{{$ranked['similarity']}}" id="">
+                    <input type="text" name="" value="{{$ranked['similarity']}}" id="">
                     <div class="col ">
                         <a href="{{ route('training-details', $ranked['program']->id ) }}" class="d-flex prog-texts">
                             <div class="prog-texts-container">
@@ -59,7 +61,9 @@
                                         <div class="header">
                                             <h4 class="text-cap">{{$ranked['program']->title}}</h4>
                                             <p class="sub-text text-cap">{{$ranked['program']->agency->userInfo->name}}</p>
-                                            <p class="sub-text text-cap"><i class='bx bx-map sub-text'></i></p>
+                                            <p class="sub-text text-cap" id="location-{{ $ranked['program']->id }}"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                                            <input type="hidden" id="lat-{{ $ranked['program']->id }}" value="{{ $ranked['program']->latitude }}">
+                                            <input type="hidden" id="lng-{{ $ranked['program']->id }}" value="{{ $ranked['program']->longitude }}">
                                         </div>
                                         <div class="text-end date-posted">
                                             <p class="text-end">{{ $ranked['program']->created_at->diffForHumans() }}</p>
@@ -128,5 +132,32 @@
             document.getElementById('searchForm').submit();
         }
     }
+
+    function initMap() {
+        var geocoder = new google.maps.Geocoder();
+
+        @foreach ($paginatedItems as $ranked)
+            (function(programId) {
+                var lat = parseFloat(document.getElementById('lat-' + programId).value);
+                var lng = parseFloat(document.getElementById('lng-' + programId).value);
+                var latlng = { lat: lat, lng: lng };
+
+                geocoder.geocode({ location: latlng }, function(results, status) {
+                    var locationElement = document.getElementById('location-' + programId);
+                    if (status === 'OK') {
+                        if (results[0]) {
+                            locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+                        } else {
+                            locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
+                        }
+                    } else {
+                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
+                    }
+                });
+            })('{{ $ranked['program']->id }}');
+        @endforeach
+    }
+
+    window.onload = initMap;
 </script>
 @endsection
