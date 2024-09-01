@@ -19,6 +19,9 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet" />
 
+<!-- GOOGlE MAPS JAVASCRIPT API -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places"></script>
+
 <!-- CSS -->
 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 

@@ -25,34 +25,33 @@ class PwdController extends Controller
     public function showPrograms(Request $request)
     {
         $user = auth()->user()->userInfo;
-        $disabilities = Disability::all();
         $educations = EducationLevel::all();
         $query = TrainingProgram::query();
 
-        $approvedProgramIds = TrainingApplication::where('user_id', auth()->id())
-            ->where('application_status', 'Approved')
-            ->pluck('training_program_id')
-            ->toArray();
+        // $approvedProgramIds = TrainingApplication::where('user_id', auth()->id())
+        //     ->where('application_status', 'Approved')
+        //     ->pluck('training_program_id')
+        //     ->toArray();
 
         // Filtering the programs through searching program title
         if ($request->filled('search')) {
             $query->where("title", "LIKE", "%" . $request->search . "%");
         }
 
-        // Filtering the programs based on disability [multiple selection]
-        if (isset($request->disability) && ($request->disability != null)) {
-            $query->whereHas('disability', function ($q) use ($request) {
-                $q->whereIn('disability_name', $request->disability);
-            });
-        }
-
+        // Filtering the programs based on education [multiple selection]
         if (isset($request->education) && ($request->education != null)) {
             $query->whereHas('education', function ($q) use ($request) {
                 $q->whereIn('education_name', $request->education);
             });
         }
 
-        $query->whereNotIn('id', $approvedProgramIds);
+        // $query->whereNotIn('id', $approvedProgramIds);
+
+        // Filtering the programs based on the user's disability
+        $query->whereHas('disability', function ($q) use ($user) {
+            $q->where('program_disability.id', $user->disability_id);
+        });
+        
 
         $filteredPrograms = $query->get();
 
@@ -81,19 +80,34 @@ class PwdController extends Controller
         $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedPrograms), $perPage);
         $paginatedItems->setPath($request->url());
 
-        $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
+        // $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
         $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
         
+        log::info("nakaabot ari gyuddd");
+        return view('pwd.listPrograms', compact('paginatedItems', 'educations', 'educationCounts'));
+    }
 
-        return view('pwd.listPrograms', compact('paginatedItems', 'disabilities', 'educations','disabilityCounts', 'educationCounts'));
+    private function calculateDistance($lat1, $lng1, $lat2, $lng2) {
+        $earthRadius = 6371; // Radius of the earth in km
+    
+        $latDifference = deg2rad($lat2 - $lat1);
+        $lngDifference = deg2rad($lng2 - $lng1);
+    
+        $a = sin($latDifference / 2) * sin($latDifference / 2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($lngDifference / 2) * sin($lngDifference / 2);
+    
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+    
+        $distance = $earthRadius * $c; // Distance in km
+    
+        return round($distance, 2);
     }
 
     private function calculateSimilarity($user, $program)
     {
         $similarityScore = 0;
         $weights = [
-            'disability' => 50,
-            'location' => 20,
             'age' => 5,
             'educ' => 10,
             'skills' => 10,
@@ -104,14 +118,27 @@ class PwdController extends Controller
         $totalRating = PwdFeedback::where('program_id', $program->id)->sum('rating');
         $ratingCount = PwdFeedback::where('program_id', $program->id)->count();
         $averageRating = $ratingCount > 0 ? $totalRating / $ratingCount : 0;
+        $lat1 = $user->latitude;
+        $lng1 = $user->longitude;
+        $lat2 = $program->latitude;
+        $lng2 = $program->longitude;
+
+        $distance = $this->calculateDistance($lat1, $lng1, $lat2, $lng2);
 
         // Criteria: disability, location
-        if ($user->disability_id === $program->disability_id) {
-            $similarityScore += $weights['disability'];
-        }
+        
 
-        if ($user->city === $program->city) {
-            $similarityScore += $weights['location'];
+        if ($distance <= 20) {
+            $similarityScore += 20;
+        }
+        else if($distance > 20 && $distance <= 40) {
+            $similarityScore += 15;
+        }
+        else if($distance > 40 && $distance <= 60) {
+            $similarityScore += 10;
+        }
+        else {
+            $similarityScore += 5;  
         }
 
         if($user->age >= $program->start_age && $user->age <= $program->end_age){
@@ -134,6 +161,8 @@ class PwdController extends Controller
 
         return $similarityScore;
     }
+
+    
 
     public function showDetails($id)
     {

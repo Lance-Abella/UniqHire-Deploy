@@ -15,7 +15,9 @@
                 <div class="mb-3 titles">
                     <h3 class="text-cap">{{ $program->title }}</h3>
                     <p class="sub-text text-cap">{{ $program->agency->userInfo->name }}</p>
-                    <p class="sub-text prog-loc text-cap"><i class='bx bx-map sub-text'></i>{{$program->state . ', ' .(str_contains($program->city, 'City') ? $program->city : $program->city . ' City')}}</p>
+                    <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                    <input type="hidden" id="lat" value="{{ $program->latitude }}">
+                    <input type="hidden" id="lng" value="{{ $program->longitude }}">
                 </div>
                 <div class="prog-btn">
                     @include('slugs.enrolleeRequests')
@@ -254,6 +256,30 @@
             }
         });
     }
+
+    function initMap() {
+        var lat = parseFloat(document.getElementById('lat').value);
+        var lng = parseFloat(document.getElementById('lng').value);
+        var latlng = { lat: lat, lng: lng };
+        var geocoder = new google.maps.Geocoder();
+
+        // Reverse geocode to get the address
+        geocoder.geocode({ location: latlng }, function(results, status) {
+            var locationElement = document.getElementById('location');
+            if (status === 'OK') {
+                if (results[0]) {
+                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+                } else {
+                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
+                }
+            } else {
+                locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
+            }
+        });
+    }
+
+    // Initialize the map and geocoding
+    window.onload = initMap;
 </script>
 
 @endsection

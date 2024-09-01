@@ -10,23 +10,7 @@
             <div class="d-flex justify-content-between mb-3">
                 <h3>Filter</h3>
                 <i class='bx bx-filter-alt fs-3 sub-text'></i>
-            </div>
-            <div class="mb-3">
-                <span>
-                    <p>Disabilities</p>
-                </span>
-                @foreach($disabilities as $disability)
-                @if($disability->id !== 1)
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{$disability->disability_name}}" id="flexCheckDefault{{$loop->index}}" name="disability[]" onchange="submitForm()" {{ in_array($disability->disability_name, request()->input('disability', [])) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="flexCheckDefault{{$loop->index}}">
-                        {{$disability->disability_name}} &nbsp;<span class="count sub-text">({{ $disabilityCounts[$disability->id]->program_count }})</span>
-
-                    </label>
-                </div>
-                @endif
-                @endforeach
-            </div>
+            </div>            
             <div class="mb-3">
                 <span>
                     <p>Education Level</p>
@@ -75,7 +59,7 @@
                                         <div class="header">
                                             <h4 class="text-cap">{{$ranked['program']->title}}</h4>
                                             <p class="sub-text text-cap">{{$ranked['program']->agency->userInfo->name}}</p>
-                                            <p class="sub-text text-cap"><i class='bx bx-map sub-text'></i>{{$ranked['program']->state . ', ' .(str_contains($ranked['program']->city, 'City') ? $ranked['program']->city : $ranked['program']->city . ' City')}}</p>
+                                            <p class="sub-text text-cap"><i class='bx bx-map sub-text'></i></p>
                                         </div>
                                         <div class="text-end date-posted">
                                             <p class="text-end">{{ $ranked['program']->created_at->diffForHumans() }}</p>
@@ -87,9 +71,27 @@
                                     <p>{{$ranked['program']->description}}</p>
                                 </div>
                                 <div class="row d-flex">
-                                    <div class="match-info @if (Auth::user()->userInfo->disability->id != $ranked['program']->disability->id) notmatch-info @endif ">
-                                        {{$ranked['program']->disability->disability_name}}
-                                    </div>
+                                <div class="match-info 
+    @php
+        $userDisabilityId = Auth::user()->userInfo->disability->id;
+        $isMatched = false;
+        foreach ($ranked['program']->disability as $disability) {
+            if ($disability->id == $userDisabilityId) {
+                $isMatched = true;
+                break;
+            }
+        }
+    @endphp
+    @if (!$isMatched) 
+        notmatch-info 
+    @endif">
+    
+    @foreach ($ranked['program']->disability as $disability)
+        {{$disability->disability_name}}
+    @endforeach
+</div>
+
+
                                     <div class="match-info @if (Auth::user()->userInfo->education->id != $ranked['program']->education->id) notmatch-info @endif">
                                         {{$ranked['program']->education->education_name}}
                                     </div>
