@@ -17,7 +17,9 @@
                 <div class="mb-3 titles">
                     <h3 class="text-cap">{{ $program->title }}</h3>
                     <p class="sub-text text-cap">{{ $program->agency->userInfo->name }}</p>
-                    <p class="sub-text prog-loc text-cap"><i class='bx bx-map sub-text'></i>{{$program->state . ', ' .(str_contains($program->city, 'City') ? $program->city : $program->city . ' City')}}</p>
+                    <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                    <input type="hidden" id="lat" value="{{ $program->latitude }}">
+                    <input type="hidden" id="lng" value="{{ $program->longitude }}">
                 </div>
                 <div class="prog-btn">
                     <form id="apply-form-{{ $program->id }}" action="{{ route('pwd-application') }}" method="POST">
@@ -37,22 +39,24 @@
                         @endphp
 
                         @if ($applicationStatus == 'Pending')
-                        <button type="submit" class="submit-btn pending border-0" disabled>
-                            Pending
-                        </button>
+                            <button type="submit" class="submit-btn pending border-0" disabled>
+                                Pending
+                            </button>
                         @elseif($applicationStatus == 'Approved')
-                        <button type="submit" class="submit-btn approved border-0" disabled>
-                            <i class='bx bx-check'></i>
-                        </button>
+                            <button type="submit" class="submit-btn approved border-0" disabled>
+                                <i class='bx bx-check'></i>
+                            </button>
                         @else
-                        <button type="submit" class="submit-btn border-0 
-                        @if (!in_array($program->id, $nonConflictingPrograms)) disabled @endif
-                        " onclick="confirmApplication(event, 'apply-form-{{ $program->id }}')" @if (!in_array($program->id, $nonConflictingPrograms)) disabled @endif>
-                            Apply
-                        </button>
-                        @if (!in_array($program->id, $nonConflictingPrograms))
-                        <div class="text-end text-danger">Conflict to your schedule!</div>
-                        @endif
+                            <button type="submit" class="submit-btn border-0"
+                                onclick="confirmApplication(event, 'apply-form-{{ $program->id }}')"
+                                @if (!in_array($program->id, $nonConflictingPrograms)) disabled @endif>
+                                Apply
+                            </button>
+
+                            @if (!in_array($program->id, $nonConflictingPrograms))
+                                <div class="text-end text-danger">Conflict to your schedule!</div>
+                            @endif
+
                         @endif
                     </form>
                 </div>
@@ -110,13 +114,21 @@
                             </div>
                             <div class="more-info">
                                 <h5>Skills Acquired</h5>
-                                <span class="match-info">{{ $program->skill->title }}</span>
+                                <ul>
+                                    @foreach ($program->skill as $skill)
+                                    <li class="match-info mb-2">{{ $skill->title }}</li>
+                                    @endforeach
+                                </ul>
                             </div>
                         </div>
                         <div class="d-flex justify-content-start more-info">
                             <div class="more-info">
                                 <h5>We Accept</h5>
-                                <span class="match-info">{{ $program->disability->disability_name }}</span>
+                                <ul>
+                                    @foreach ($program->disability as $disability)
+                                    <li class="match-info mb-2">{{ $disability->disability_name }}</li>
+                                    @endforeach
+                                </ul>
                             </div>
                             <div class="more-info">
                                 <h5>Education Level</h5>
@@ -275,6 +287,30 @@
             }
         });
     }
+
+    function initMap() {
+        var lat = parseFloat(document.getElementById('lat').value);
+        var lng = parseFloat(document.getElementById('lng').value);
+        var latlng = { lat: lat, lng: lng };
+        var geocoder = new google.maps.Geocoder();
+
+        // Reverse geocode to get the address
+        geocoder.geocode({ location: latlng }, function(results, status) {
+            var locationElement = document.getElementById('location');
+            if (status === 'OK') {
+                if (results[0]) {
+                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+                } else {
+                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
+                }
+            } else {
+                locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
+            }
+        });
+    }
+
+    // Initialize the map and geocoding
+    window.onload = initMap;
 </script>
 
 @endsection

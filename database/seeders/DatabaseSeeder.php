@@ -30,12 +30,10 @@ class DatabaseSeeder extends Seeder
 
         //DISABILITIES
         $none = Disability::create(['disability_name' => 'Not Applicable']);
-        $rightarm = Disability::create(['disability_name' => 'Right Arm Amputee']);
-        $leftarm = Disability::create(['disability_name' => 'Left Arm Amputee']);
-        $botharm = Disability::create(['disability_name' => "Bilateral Amputee (both arms)"]);
-        $rightleg = Disability::create(['disability_name' => 'Right Leg Amputee']);
-        $leftleg = Disability::create(['disability_name' => 'Left Leg Amputee']);
-        $bothleg = Disability::create(['disability_name' => "Bilateral Amputee (both legs)"]);
+        $onearm = Disability::create(['disability_name' => 'One Arm Amputee']);
+        $botharm = Disability::create(['disability_name' => "Bilateral Amputee (Both Arms)"]);
+        $oneleg = Disability::create(['disability_name' => 'One Leg Amputee']);
+        $bothleg = Disability::create(['disability_name' => "Bilateral Amputee (Both Legs)"]);
         $hear = Disability::create(['disability_name' => 'Hearing Impaired']);
         $speech = Disability::create(['disability_name' => 'Speech Impairment']);
         $visual = Disability::create(['disability_name' => 'Visually Impaired']);
@@ -43,8 +41,9 @@ class DatabaseSeeder extends Seeder
         $not_applicable = EducationLevel::create(['education_name' => 'Not Applicable']);
         $hsgrad = EducationLevel::create(['education_name' => 'High School Graduate']);
         $somecoll = EducationLevel::create(['education_name' => 'Some College']);
-        $bachdegree = EducationLevel::create(['education_name' => "Bachelor's Degree"]);
         $vocational = EducationLevel::create(['education_name' => 'Vocational']);
+        $bachdegree = EducationLevel::create(['education_name' => "Bachelor's Degree"]);
+        
 
         $programming = Skill::create(['title' => 'Programming']);
         $communication = Skill::create(['title' => 'Communication']);
