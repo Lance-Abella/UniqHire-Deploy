@@ -52,20 +52,20 @@
                                     Apply
                             </button>
                             @if (!in_array($program->id, $nonConflictingPrograms))
-                            <div class="text-center" style="width:10rem">
-                                <div class="text-danger">
-                                    Conflict to your schedule!
+                            <div class="text-center" style="width:fit-content">
+                                <div class="text-danger d-flex justify-content-center">
+                                    Conflict to you schedule!
                                 </div>
                             </div>
                             @elseif ($slots <= 0)
-                                <div class="text-center" style="width:10rem">
-                                    <div class="text-danger d-flex justify-content-center">
-                                        No slots available!
-                                    </div>
+                                <div class="text-center" style="width:fit-content">
+                                <div class="text-danger d-flex justify-content-center">
+                                    No slots available!
                                 </div>
-                            @endif
                         </div>
                         @endif
+                </div>
+                @endif
                 </form>
             </div>
         </div>
@@ -104,7 +104,7 @@
                                 @foreach(explode(',', $program->schedule) as $date)
                                 {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
                                 @if(!$loop->last)
-                                |
+                                <p></p>
                                 @endif
                                 @endforeach
                             </p>

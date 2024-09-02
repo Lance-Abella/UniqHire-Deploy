@@ -70,9 +70,9 @@
                                 <h5>Schedule</h5>
                                 <p>
                                     @foreach(explode(',', $program->schedule) as $date)
-                                    {{ \Carbon\Carbon::parse(trim($date))->format('M d, Y') }}
+                                    {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
                                     @if(!$loop->last)
-                                    |
+                                    <p></p>
                                     @endif
                                     @endforeach
                                 </p>
