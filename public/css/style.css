@@ -1738,120 +1738,91 @@ table tbody .bx {
 }
 
 .calendar-container .calendar {
-    width: 80%;
+    width: 80vw;
+    margin-bottom: 2rem;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--side-shadow-04);
     /* height: 10%; */
     /* height: 80vh;
     overflow-y: scroll; */
 }
 
-/* .fc-right .fc-button-group {
-    background-color: var(--primary-color);
-} */
- /* .fc-right .fc-button-group .fc-button {
-    background-color: var(--primary-color);
-    color: var(--primary-color);
-} */
-
-.fc-right .fc-button-group .fc-button.fc-state-default {
-    /* background: var(--primary-color-light); */
-    color: var(--primary-color);
-}
-
-.fc-right .fc-button-group .fc-button.fc-state-active {
-    background: var(--primary-color);
-    /* background-color: var(--bg-color-01); */
-    color: var(--bg-color-01);
-    /* font-weight: 700; */
-    text-decoration: underline;
-}
-
-.fc-right .fc-button-group .fc-button.fc-state-hover {
-    background-color: var(--hover-color);
-    color: var(--primary-color);
-}
-
-.fc-left .fc-button-group .fc-button.fc-state-hover {
-    background: var(--primary-color);
-    
-}
-
-.fc-left .fc-button-group .fc-button.fc-state-hover span {
-    color: var(--bg-color-01);
-}
-
-.fc-left .fc-today-button.fc-state-disabled {
-    background-color: var(--primary-color);
-    color: var(--bg-color-01);
-    /* font-weight: var(--header-extrabold); */
-}
-
-.fc-unthemed td.fc-today {
-    background: var(--primary-color-light);
-}
-
-.fc-event-container .fc-day-grid-event {
-    border-color: var(--primary-color);
-    background: var(--primary-color);
-    
-}
-
-.fc-event-container .fc-day-grid-event span {
-    color: var(--bg-color-01);
-    font-weight: var(--header-extrabold);
-    text-transform: capitalize;
-}
-
-.fc-toolbar.fc-header-toolbar {
-    margin: 0;
-    padding: 1.5rem;
+.fc .fc-toolbar.fc-header-toolbar {
     background-color: var(--primary-color-light);
-    border-top-right-radius: var(--border-radius);
-    border-top-left-radius: var(--border-radius);
-    border-top: 1px solid var(--primary-color);
+    padding: 2rem;
+    margin-bottom: 0;
+}
+
+.fc-toolbar-title {
+    font-weight: var(--header-extrabold);
+}
+
+/* .fc-view-harness {
     border-right: 1px solid var(--primary-color);
     border-left: 1px solid var(--primary-color);
+    border-bottom: 1px solid var(--primary-color);
+} */
+
+.fc-theme-standard td, .fc-theme-standard th {
+    border: 1px solid var(--hover-color);
 }
 
-.fc {
-    border: 1px dashed var(--primary-color);
-    padding: 1rem;
-    background-color: var(--bg-color-02);
-    border-radius: var(--border-radius);
-}
-
-.fc th, .fc td {
-    border: 1px solid var(--primary-color);
-    /* background-color: var(--bg-color-01); */
-}
-
-.fc-ltr .fc-basic-view .fc-day-top .fc-day-number {
-    padding: 0.5rem;
-}
-
-.fc-day-header {
+.fc-col-header-cell {
     background-color: var(--primary-color);
-    
 }
 
-.fc-day-header span {
+.fc-col-header-cell-cushion {
     color: var(--bg-color-01);
     font-size: 20px;
 }
 
-.fc-agenda-view .fc-day-grid .fc-row .fc-content-skeleton {
-    padding-top: 1rem;
+.fc .fc-button-primary, .fc .fc-button-primary:disabled {
+    background: var(--primary-color);
+    border: none;
 }
 
-.fc-day-grid-event  {
-    margin-top: 0.3rem;
+.fc-button-group .fc-button-primary:hover, .fc-today-button:hover {
+    background-color: var(--bg-color-01);
 }
-
-.fc-icon {
+.fc .fc-button-primary:hover span, .fc-today-button:hover {
     color: var(--primary-color);
 }
 
-.fc-center h2 {
-    font-weight: var(--header-extrabold);
+
+.fc .fc-button-primary span {
+    color: var(--bg-color-01);
+}
+
+.fc-h-event .fc-event-title-container {
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.3rem;
+}
+
+.fc-h-event {
+    border: none;
+}
+
+.fc-event-title {
+    color: var(--bg-color-01);
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.fc-daygrid-event-harness {
+    margin-bottom: 0.3rem;
+    
+}
+
+.fc-daygrid-day-number, .fc-daygrid-day-top {
+    padding-right: 0.5rem;
+    font-weight: bold;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: var(--primary-color-light);
 }
 
 /* TRAININGS */
