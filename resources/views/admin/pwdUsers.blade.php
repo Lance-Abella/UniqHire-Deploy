@@ -2,7 +2,7 @@
 
 @section('page-title', 'PWDs Users')
 @section('page-content')
-<div class="">
+<div class="users-container">
     <div class="row mt-4 mb-2">
         <div class="text-start header-texts back-link-container border-bottom">
             Person with Disabilities.

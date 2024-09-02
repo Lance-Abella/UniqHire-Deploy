@@ -2,7 +2,7 @@
     @csrf
     @method('PUT')
     <div>
-        <button type="button" class="submit-btn border-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Edit Profile</button>
+        <button type="button" class="submit-btn border-0" style="width:8rem;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Edit Profile</button>
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
 

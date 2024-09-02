@@ -10,7 +10,7 @@
             <div class="d-flex justify-content-between mb-3">
                 <h3>Filter</h3>
                 <i class='bx bx-filter-alt fs-3 sub-text'></i>
-            </div>            
+            </div>
             <div class="mb-3">
                 <span>
                     <p>Education Level</p>
@@ -40,12 +40,19 @@
             </div>
         </div>
         <div class="outer">
+
             <div class="prog-grid" id="prog-grid">
-               
-                @foreach ($paginatedItems as $ranked)
-                
-                <div class="row prog-card mb-2">
-                    <input type="text" name="" value="{{$ranked['similarity']}}" id="">
+                <div class="mb-4">
+                    <div class="container mb-2" style="width:100%;">
+                        <span style="padding-bottom:0.6rem;border-bottom:3px solid var(--primary-color);">Recommended</span>
+                    </div>
+                </div>
+
+
+                @forelse ($paginatedItems as $ranked)
+
+                <div class="row prog-card mb-2" data-program-id="{{ $ranked['program']->id }}" data-lat="{{ $ranked['program']->latitude }}" data-lng="{{ $ranked['program']->longitude }}">
+                    <input type="hidden" name="" value="{{$ranked['similarity']}}" id="">
                     <div class="col ">
                         <a href="{{ route('training-details', $ranked['program']->id ) }}" class="d-flex prog-texts">
                             <div class="prog-texts-container">
@@ -61,7 +68,7 @@
                                         <div class="header">
                                             <h4 class="text-cap">{{$ranked['program']->title}}</h4>
                                             <p class="sub-text text-cap">{{$ranked['program']->agency->userInfo->name}}</p>
-                                            <p class="sub-text text-cap" id="location-{{ $ranked['program']->id }}"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                                            <p class="sub-text text-cap" id="location-{{ $ranked['program']->id }}" style="overflow-x:hidden; text-wrap:nowrap; text-overflow:ellipsis;"><i class='bx bx-map sub-text'></i>Loading address...</p>
                                             <input type="hidden" id="lat-{{ $ranked['program']->id }}" value="{{ $ranked['program']->latitude }}">
                                             <input type="hidden" id="lng-{{ $ranked['program']->id }}" value="{{ $ranked['program']->longitude }}">
                                         </div>
@@ -74,27 +81,13 @@
                                 <div class="row prog-desc mb-1">
                                     <p>{{$ranked['program']->description}}</p>
                                 </div>
-                                <div class="row d-flex">
-                                <div class="match-info 
-    @php
-        $userDisabilityId = Auth::user()->userInfo->disability->id;
-        $isMatched = false;
-        foreach ($ranked['program']->disability as $disability) {
-            if ($disability->id == $userDisabilityId) {
-                $isMatched = true;
-                break;
-            }
-        }
-    @endphp
-    @if (!$isMatched) 
-        notmatch-info 
-    @endif">
-    
-    @foreach ($ranked['program']->disability as $disability)
-        {{$disability->disability_name}}
-    @endforeach
-</div>
-
+                                <div class="infos">
+                                    <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
+                                    @foreach ($ranked['program']->disability as $disability)
+                                    <div class="disability-item" data-disability-id="{{ $disability->id }}">
+                                        {{$disability->disability_name}}
+                                    </div>
+                                    @endforeach
 
                                     <div class="match-info @if (Auth::user()->userInfo->education->id != $ranked['program']->education->id) notmatch-info @endif">
                                         {{$ranked['program']->education->education_name}}
@@ -110,7 +103,9 @@
                         </a>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <div class="sub-text" style="font-style:italic;font-weight:normal;text-align:center;margin-top:2rem">No results found.</div>
+                @endforelse
                 <div class="pagination">
                     {{ $paginatedItems->links() }}
                 </div>
@@ -122,6 +117,54 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Assume userDisabilityId is available from the backend (you can inject it into a script tag or pass it as a data attribute)
+        var userDisabilityId = parseInt(document.getElementById('user-disability').value, 10);
+
+        // Get all programs' disability containers
+        var disabilityItems = document.querySelectorAll('.disability-item');
+
+        disabilityItems.forEach(function(item) {
+            var programDisabilityId = parseInt(item.getAttribute('data-disability-id'), 10);
+
+            // Check if the user's disability matches this program's disability
+            if (programDisabilityId === userDisabilityId) {
+                item.classList.add('match-info');
+                item.classList.remove('notmatch-info');
+            } else {
+                item.classList.add('notmatch-info');
+                item.classList.remove('match-info');
+            }
+        });
+
+        var geocoder = new google.maps.Geocoder();
+
+        document.querySelectorAll('.prog-card').forEach(function(card) {
+            var programId = card.getAttribute('data-program-id');
+            var lat = parseFloat(card.getAttribute('data-lat'));
+            var lng = parseFloat(card.getAttribute('data-lng'));
+            var latlng = {
+                lat: lat,
+                lng: lng
+            };
+
+            geocoder.geocode({
+                location: latlng
+            }, function(results, status) {
+                var locationElement = document.getElementById('location-' + programId);
+                if (status === 'OK') {
+                    if (results[0]) {
+                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+                    } else {
+                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
+                    }
+                } else {
+                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
+                }
+            });
+        });
+    });
+
     function submitForm() {
         document.getElementById('filterForm').submit();
     }
@@ -132,32 +175,5 @@
             document.getElementById('searchForm').submit();
         }
     }
-
-    function initMap() {
-        var geocoder = new google.maps.Geocoder();
-
-        @foreach ($paginatedItems as $ranked)
-            (function(programId) {
-                var lat = parseFloat(document.getElementById('lat-' + programId).value);
-                var lng = parseFloat(document.getElementById('lng-' + programId).value);
-                var latlng = { lat: lat, lng: lng };
-
-                geocoder.geocode({ location: latlng }, function(results, status) {
-                    var locationElement = document.getElementById('location-' + programId);
-                    if (status === 'OK') {
-                        if (results[0]) {
-                            locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
-                        } else {
-                            locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
-                        }
-                    } else {
-                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
-                    }
-                });
-            })('{{ $ranked['program']->id }}');
-        @endforeach
-    }
-
-    window.onload = initMap;
 </script>
 @endsection

@@ -3,7 +3,7 @@
 @section('page-title', 'Create Account')
 
 @section('auth-content')
-<div class="container register-container vh-100">
+<div class="container register-container vh-100 mb-4">
 
     <form method="POST" action="{{ route('register-form') }}" enctype="multipart/form-data">
         <div class="row" style="padding-top:3rem;">
@@ -66,10 +66,10 @@
                             <span class="error-msg">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="col">
+                        <!-- <div class="col">
                             <input type="checkbox" name="generate_email" id="generate_email" class="form-check-input border border-dark">
                             <label for="generate_email" class="form-check-label">Generate Email Address</label>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="col">
                         <div class="form-floating mb-3">

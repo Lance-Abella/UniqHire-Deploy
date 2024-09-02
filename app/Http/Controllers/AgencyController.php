@@ -42,10 +42,6 @@ class AgencyController extends Controller
 
 
         foreach ($programs as $program) {
-            $endDate = new DateTime($program->end);
-            $today = new DateTime();
-            $interval = $today->diff($endDate);
-            $program->remainingDays = $interval->days;
 
             $program->enrolleeCount = Enrollee::where('program_id', $program->id)
                 ->count();

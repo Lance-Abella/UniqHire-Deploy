@@ -188,6 +188,16 @@ class PwdController extends Controller
         ->pluck('program_id')
         ->toArray();
 
+        $userHasReviewed = PwdFeedback::where('program_id', $id)
+        ->where('pwd_id', $userId)
+        ->exists();
+
+        $userReview = PwdFeedback::where('program_id', $id)
+        ->where('pwd_id', $userId)
+        ->first();
+
+        $rating = $userReview ? $userReview->rating : 0;
+
         // Collect all dates from the schedules of applied programs excluding completed programs
         $appliedDates = $application->map(function ($app) use ($completedPrograms) {
             if (!in_array($app->training_program_id, $completedPrograms)) {
@@ -232,7 +242,7 @@ class PwdController extends Controller
             $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0; // Calculate progress percentage
             $program->crowdfund->progress = $progress;
         }
-        return view('pwd.show', compact('program', 'reviews', 'application', 'nonConflictingPrograms', 'enrollees', 'status', 'isCompletedProgram', 'slots'));
+        return view('pwd.show', compact('program', 'reviews', 'application', 'nonConflictingPrograms', 'enrollees', 'status', 'isCompletedProgram', 'slots', 'userHasReviewed', 'rating', 'userReview'));
     }
 
     public function showCalendar(Request $request)
@@ -284,12 +294,27 @@ class PwdController extends Controller
         ]);
 
         try {
-            PwdFeedback::create([
-                'program_id' => $request->program_id,
-                'pwd_id' => $request->user()->id,
-                'rating' => $request->rating,
-                'content' => $request->content,
-            ]);
+            $userId = $request->user()->id;
+
+            // Check if the user has already reviewed this program
+            $existingReview = PwdFeedback::where('program_id', $request->program_id)
+                ->where('pwd_id', $userId)
+                ->first();
+            if ($existingReview) {
+                // Update existing review
+                $existingReview->update([
+                    'rating' => $request->rating,
+                    'content' => $request->content,
+                ]);
+            } else {
+                // Create a new review
+                PwdFeedback::create([
+                    'program_id' => $request->program_id,
+                    'pwd_id' => $userId,
+                    'rating' => $request->rating,
+                    'content' => $request->content,
+                ]);
+            }
             // return response()->json(['success' => true, 'message' => 'Feedback submitted successfully.']);
             return back()->with('success', 'Thank you for leaving us a review!');
         } catch (\Exception $e) {

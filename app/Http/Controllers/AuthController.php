@@ -272,6 +272,7 @@ class AuthController extends Controller
             'age' => 'nullable|integer|min:1|max:99',
             'founder' => 'nullable|string|max:255',
             'year_established' => 'nullable|integer|min:1000|max:3000',
+            'email' => 'required|email'
             // 'role' => 'required|string|exists:roles,id',
         ]);
         Log::info("Nalapas sa validation!");
@@ -279,7 +280,8 @@ class AuthController extends Controller
 
 
         $user = User::create([
-            'email' => $email,
+            // 'email' => $email,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 

@@ -803,12 +803,16 @@ table tbody .bx {
     height: 100%;
 }
 
-.pwd-browse-prog .prog-card .prog-texts-container, .pwd-browse-prog .prog-card .prog-texts-container .prog-head {
+.pwd-browse-prog .prog-card .prog-texts-container {
+    width: 45rem;
+}
+
+.pwd-browse-prog .prog-card .prog-texts-container .prog-head {
     width: 100%;
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container .header {
-    width: 25rem;
+    width: 30rem;
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container .header p {
@@ -816,7 +820,14 @@ table tbody .bx {
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container .date-posted {
-    width: 100%;
+    width: 25%;
+}
+
+.pwd-browse-prog .infos {
+    display: flex;
+    /* width: 100%; */
+    overflow-x: hidden;
+    text-wrap: nowrap;
 }
 
 /* PAGINATION */
@@ -1423,7 +1434,7 @@ table tbody .bx {
     padding: 1rem;
 }
 
-.agency-show-prog .reviews .body-review .owner {
+.agency-show-prog .reviews .body-review .owner-name {
     font-weight: var(--header-extrabold);
 }
 
@@ -1951,3 +1962,16 @@ table tbody .bx {
 /* .datepicker table tr td.active.active {
     background-color: var(--primary-color);
 } */
+
+/* ADMIN POV */
+.users-container {
+    width: 90%;
+    position: relative;
+    top: 8rem;
+    padding-left: 6rem;
+}
+
+.users-container .submit-btn,  .users-container .deny-btn{
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+}
