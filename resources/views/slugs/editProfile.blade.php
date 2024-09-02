@@ -2,7 +2,7 @@
     @csrf
     @method('PUT')
     <div>
-        <button type="button" class="submit-btn border-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Edit Profile</button>
+        <button type="button" class="submit-btn border-0" style="width:8rem;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Edit Profile</button>
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
 
@@ -97,7 +97,7 @@
                         <input type="hidden" id="long" name="long" value="{{ $longitude }}">
                         <input id="pac-input" class="controls" type="text" placeholder="Search Box">
                         <label for="map">Select Your Location:</label>
-                        <div id="map" style="height: 400px; width: 100%;"></div>
+                        <div id="map" class="map"></div>
                         <p id="coordinates"></p>
                         @if($user->hasRole('PWD'))
                         <div class="form-floating mb-3">
@@ -147,3 +147,10 @@
         </div>
     </div>
 </form>
+
+<script>
+    function clearFileInput(id) {
+        var input = document.getElementById(id);
+        input.value = '';
+    }
+</script>

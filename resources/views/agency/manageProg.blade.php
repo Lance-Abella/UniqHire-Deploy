@@ -2,16 +2,21 @@
 
 @section('page-title', 'Training Programs')
 @section('page-content')
-<div class="d-flex justify-content-center agency-prog-container">
+<div class="d-flex flex-column agency-prog-container pb-4">
+    <div class="row mb-2">
+        <div class="text-start header-texts back-link-container border-bottom">
+            Training Programs.
+        </div>
+    </div>
     <div class="mt-2 prog-grid">
         <div class="add-prog-card d-flex justify-content-center align-items-center ">
             <a href="{{ route('programs-add') }}" class="">+</a>
         </div>
         @foreach ($programs as $program)
-        <div class="prog-card">
+        <div class="prog-card" data-program-id="{{ $program->id }}" data-lat="{{ $program->latitude }}" data-lng="{{ $program->longitude }}">
             <a href="{{ route('programs-show', $program->id) }}" class="prog-texts">
                 <h3 class="text-cap">{{ $program->title }}</h3>
-                <p class="sub-text prog-loc text-cap" id="location">
+                <p class="sub-text prog-loc text-cap" id="location-{{ $program->id }}">
                     <i class='bx bx-map sub-text prog-loc'></i>Loading address...
                 </p>
                 <input type="hidden" id="lat" value="{{ $program->latitude }}">
@@ -41,52 +46,45 @@
                 @endif
                 <div class="d-flex prog-details">
                     <p class="sub-text">
-                        <i class='bx bx-group sub-text'></i> {{ number_format($program->slots) }} Slots
+                        <i class='bx bx-group sub-text'></i> {{ number_format($program->slots) . '/' . number_format($program->participants) }} Remaining
                     </p>
-                    <span class="sub-text period">•</span>
-                    <p class="sub-text"><i class='bx bx-calendar sub-text'></i> {{ $program->remainingDays }} days to go</p>
+                    <!-- <span class="sub-text period">•</span>  -->
+
                 </div>
             </a>
-            <!-- <div class="d-flex justify-content-center prog-btn">
-                <form action="{{ route('programs-delete', $program->id) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="deny-btn border-0">Delete</button>
-                </form>
-                <form action="{{ route('programs-edit', $program->id) }}" method="GET">
-                    <button class="submit-btn border-0">Edit</button>
-                </form>
-            </div> -->
         </div>
         @endforeach
     </div>
 </div>
-
-
-@endsection
-
 <script>
-    function initMap() {
-        var lat = parseFloat(document.getElementById('lat').value);
-        var lng = parseFloat(document.getElementById('lng').value);
-        var latlng = { lat: lat, lng: lng };
+    document.addEventListener('DOMContentLoaded', function() {
         var geocoder = new google.maps.Geocoder();
 
-        // Reverse geocode to get the address
-        geocoder.geocode({ location: latlng }, function(results, status) {
-            var locationElement = document.getElementById('location');
-            if (status === 'OK') {
-                if (results[0]) {
-                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
-                } else {
-                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
-                }
-            } else {
-                locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
-            }
-        });
-    }
+        document.querySelectorAll('.prog-card').forEach(function(card) {
+            var programId = card.getAttribute('data-program-id');
+            var lat = parseFloat(card.getAttribute('data-lat'));
+            var lng = parseFloat(card.getAttribute('data-lng'));
+            var latlng = {
+                lat: lat,
+                lng: lng
+            };
 
-    // Initialize the map and geocoding
-    window.onload = initMap;
+            geocoder.geocode({
+                location: latlng
+            }, function(results, status) {
+                var locationElement = document.getElementById('location-' + programId);
+                if (status === 'OK') {
+                    if (results[0]) {
+                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+                    } else {
+                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
+                    }
+                } else {
+                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
+                }
+            });
+        });
+    });
 </script>
+
+@endsection

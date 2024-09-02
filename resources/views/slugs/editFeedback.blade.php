@@ -1,5 +1,5 @@
 <!-- If compeleted ilisan ang apply to rate -->
-<button type="button" class="submit-btn modal-btn border-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add Review</button>
+<button type="button" class="modal-btn border-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="background-color:transparent">Edit</button>
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
         <div class="modal-content">
@@ -7,7 +7,7 @@
                 <form id="rating-form" action="{{ route('rate-program') }}" method="POST">
                     @csrf
                     <input type="hidden" name="program_id" value="{{ $program->id }}">
-                    <input type="hidden" name="rating" id="rating-input" value="">
+                    <input type="hidden" name="rating" id="rating-input" value="{{$rating}}">
                     <div class="star-rating">
                         <i class='bx bx-star star-light' data-rating="1" id="star-1"></i>
                         <i class='bx bx-star star-light' data-rating="2" id="star-2"></i>
@@ -16,7 +16,7 @@
                         <i class='bx bx-star star-light' data-rating="5" id="star-5"></i>
                     </div>
                     <div class="form-floating mb-3">
-                        <textarea class="form-control" placeholder="How was your experience?" id="floatingTextarea2" name="content" style="height: 100px"></textarea>
+                        <textarea class="form-control" placeholder="How was your experience?" id="floatingTextarea2" name="content" style="height: 100px">{{$userReview->content ?? ''}}</textarea>
                         <label for="floatingTextarea2">How was your experience?</label>
                         @error('content')
                         <span class="error-msg">{{ $message }}</span>
@@ -35,7 +35,9 @@
 
 <script>
     $(document).ready(function() {
-        var rating_data = 0;
+        var rating_data = $('#rating-input').val(); // Initialize with the rating value from the hidden input
+        updateStarRating(rating_data);
+
         $(document).on('mouseenter', '.star-light', function() {
             var rating = $(this).data('rating');
             reset_background();
@@ -45,7 +47,7 @@
         });
 
         function reset_background() {
-            for (var count = 0; count <= 5; count++) {
+            for (var count = 1; count <= 5; count++) {
                 $('#star-' + count).addClass('bx-star').removeClass('bxs-star');
             }
         }

@@ -51,11 +51,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/employee/all', [AdminController::class, 'showEmployers'])->middleware('role:Admin')->name('employee-list');
     Route::get('/sponsor/all', [AdminController::class, 'showSponsors'])->middleware('role:Admin')->name('sponsor-list');
     Route::get('/skill/all', [AdminController::class, 'showSkills'])->middleware('role:Admin')->name('skill-list');
-    Route::get('skills/create', [AdminController::class, 'create'])->middleware('role:Admin')->name('skills-create');
-    Route::post('skills', [AdminController::class, 'store'])->middleware('role:Admin')->name('skills-store');
-    Route::get('skills/edit/{skill}', [AdminController::class, 'edit'])->middleware('role:Admin')->name('skills-edit');
-    Route::put('skills/edit/{skill}', [AdminController::class, 'update'])->middleware('role:Admin')->name('skills-update');
-    Route::delete('skills/{skill}', [AdminController::class, 'destroy'])->middleware('role:Admin')->name('skills-destroy');
+    Route::post('/skill/add', [AdminController::class, 'addSkill'])->middleware('role:Admin')->name('skill-add');
+    Route::get('skills/edit/{skill}', [AdminController::class, 'editSkill'])->middleware('role:Admin')->name('skill-edit');
+    Route::put('skills/edit/{skill}', [AdminController::class, 'updateSkill'])->middleware('role:Admin')->name('skill-update');
+    Route::delete('skills/{skill}', [AdminController::class, 'deleteSkill'])->middleware('role:Admin')->name('skill-delete');
+    Route::delete('user/{id}', [AdminController::class, 'deleteUser'])->middleware('role:Admin')->name('user-delete');
 
 
     //Trainer Middleware
