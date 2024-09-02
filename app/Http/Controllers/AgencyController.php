@@ -301,14 +301,32 @@ class AgencyController extends Controller
         $user = auth()->user()->userInfo->user_id;
         log::info($user);
 
-        if ($request->ajax()) {
-            $data = TrainingProgram::where('agency_id', $user)
-                ->whereDate('start', '>=', $request->start)
-                ->whereDate('end', '<=', $request->end)
-                ->get(['agency_id', 'title', 'start', 'end']);
+            if ($request->expectsJson()) {
+                $trainingPrograms = TrainingProgram::where('agency_id', $user)
+                    ->get(['agency_id', 'title', 'schedule']);
 
-            return response()->json($data);
-        }
+                $events = [];
+
+                foreach ($trainingPrograms as $program) {
+                    $scheduleDates = explode(',', $program->schedule);
+
+                    foreach ($scheduleDates as $date) {
+                        // Convert MM/DD/YYYY to YYYY-MM-DD
+                        $dateParts = explode('/', $date);
+                        if (count($dateParts) == 3) {
+                            $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
+                            $events[] = [
+                                'id' => $program->id,
+                                'title' => $program->title,
+                                'start' => $formattedDate, // FullCalendar expects start for all-day events
+                                'allDay' => true
+                            ];
+                        }
+                    }
+                }
+
+                return response()->json($events);
+            }
 
         return view('agency.calendar');
     }
