@@ -248,7 +248,8 @@ class AuthController extends Controller
         $roles = Role::all();
         $disabilities = Disability::all();
         $levels = EducationLevel::all();
-        return view('auth.register', compact('roles', 'disabilities', 'levels'));
+        $skills = Skill::all();
+        return view('auth.register', compact('roles', 'disabilities', 'levels', 'skills'));
     }
 
     public function register(Request $request)
@@ -272,7 +273,9 @@ class AuthController extends Controller
             'age' => 'nullable|integer|min:1|max:99',
             'founder' => 'nullable|string|max:255',
             'year_established' => 'nullable|integer|min:1000|max:3000',
-            'email' => 'required|email'
+            'email' => 'required|email',
+            'skills' => 'required|array|min:1',
+            'skills.*' => 'exists:skills,id',
             // 'role' => 'required|string|exists:roles,id',
         ]);
         Log::info("Nalapas sa validation!");
@@ -288,7 +291,7 @@ class AuthController extends Controller
         $user->role()->attach($request->role);
         Log::info("Registration reaches here!");
 
-        UserInfo::create([
+        $userInfo = UserInfo::create([
             'user_id' => $user->id,
             'disability_id' => $request->disability,
             'educational_id' => $request->education,
@@ -301,6 +304,8 @@ class AuthController extends Controller
             'founder' => $request->founder ?? '',
             'year_established' => $request->year_established ?? 0,
         ]);
+
+        $userInfo->skills()->attach($request->skills);
 
         // return redirect()->route('login-page');
         return redirect()->route('login-page')->with('success', 'Account registered successfully!');

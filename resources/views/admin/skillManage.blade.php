@@ -26,12 +26,12 @@
                 <td>{{ $skill->id }}</td>
                 <td>{{ $skill->title }}</td>
                 <td colspan="2">
-                    <a href="{{ route('skills-edit', $skill->id) }}" class="btn submit-btn">Edit</a>
-                    <form action="{{ route('skills-destroy', $skill->id) }}" method="POST" style="display:inline;">
+                    <a href="{{ route('skill-edit', $skill->id) }}" class="submit-btn border-0">Edit</a>
+                    <form id="delete-form-{{ $skill->id }}" action="{{ route('skill-delete', $skill->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="deny-btn border-0">
-                            <i class='bx bx-trash'></i>
+                        <button type="submit" class="deny-btn border-0" onclick="confirmDelete(event, 'delete-form-{{ $skill->id }}')">
+                            <!-- <i class='bx bx-trash'></i> --> Delete
                         </button>
                     </form>
                 </td>
@@ -45,11 +45,22 @@
     </table>
 </div>
 
-@section('scripts')
 <script>
-    function confirmDelete() {
-        return confirm('Are you sure you want to delete this skill?');
+    function confirmDelete(event, formId) {
+        event.preventDefault();
+        Swal.fire({
+            title: "Confirmation",
+            text: "Do you really want to delete this?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirm"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
     }
 </script>
-@endsection
 @endsection

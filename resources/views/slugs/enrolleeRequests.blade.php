@@ -18,7 +18,9 @@
                                 </div>
                                 <div class="owner-name">
                                     <p class="fs-5">{{ $request->user->userInfo->name }}</p>
-                                    <p class="mb-2 location text-cap"><i class='bx bx-map sub-text'></i>{{ $request->user->userInfo->state . ', ' . (str_contains($request->user->userInfo->city, 'City') ? $request->user->userInfo->city : $request->user->userInfo->city. ' City')}}</p>
+                                    <input type="hidden" class="lat" value="{{ $request->user->userInfo->latitude }}">
+                                    <input type="hidden" class="lng" value="{{ $request->user->userInfo->longitude }}">
+                                    <p class="sub-text mb-2 location text-cap" id="location"><i class='bx bx-map sub-text'></i>Loading address...</p>
                                     <span class="match-info">{{ $request->user->userInfo->disability->disability_name }}</span>
                                 </div>
                             </div>
@@ -45,3 +47,37 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var geocoder = new google.maps.Geocoder();
+
+        document.querySelectorAll('.request-container').forEach(function(container) {
+            var lat = parseFloat(container.querySelector('.lat').value);
+            var lng = parseFloat(container.querySelector('.lng').value);
+            var locationElement = container.querySelector('.location');
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                var latlng = {
+                    lat: lat,
+                    lng: lng
+                };
+
+                geocoder.geocode({
+                    location: latlng
+                }, function(results, status) {
+                    if (status === 'OK') {
+                        if (results[0]) {
+                            locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+                        } else {
+                            locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
+                        }
+                    } else {
+                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
+                    }
+                });
+            } else {
+                locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Invalid coordinates";
+            }
+        });
+    });
+</script>

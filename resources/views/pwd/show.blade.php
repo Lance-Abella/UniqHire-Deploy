@@ -47,18 +47,18 @@
                             <i class='bx bx-check'></i>
                         </button>
                         @else
-                        <div class="d-flex flex-column align-items-end">
+                        <div class="d-flex flex-column align-items-end apply-btn-container">
                             <button type="submit" class="submit-btn border-0 {{ ((!$isCompletedProgram && !in_array($program->id, $nonConflictingPrograms)) || $slots <= 0) ? 'disabled' : '' }}" onclick="confirmApplication(event, 'apply-form-{{ $program->id }}')" @if((!$isCompletedProgram && !in_array($program->id, $nonConflictingPrograms)) || $slots <= 0) disabled @endif>
                                     Apply
                             </button>
                             @if (!in_array($program->id, $nonConflictingPrograms))
-                            <div class="text-center" style="width:fit-content">
+                            <div class="text-center error">
                                 <div class="text-danger d-flex justify-content-center">
                                     Conflict to you schedule!
                                 </div>
                             </div>
                             @elseif ($slots <= 0)
-                                <div class="text-center" style="width:fit-content">
+                                <div class="text-center error">
                                 <div class="text-danger d-flex justify-content-center">
                                     No slots available!
                                 </div>

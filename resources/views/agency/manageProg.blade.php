@@ -2,7 +2,12 @@
 
 @section('page-title', 'Training Programs')
 @section('page-content')
-<div class="d-flex justify-content-center agency-prog-container">
+<div class="d-flex flex-column agency-prog-container pb-4">
+    <div class="row mb-2">
+        <div class="text-start header-texts back-link-container border-bottom">
+            Training Programs.
+        </div>
+    </div>
     <div class="mt-2 prog-grid">
         <div class="add-prog-card d-flex justify-content-center align-items-center ">
             <a href="{{ route('programs-add') }}" class="">+</a>
@@ -51,10 +56,6 @@
         @endforeach
     </div>
 </div>
-
-
-@endsection
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var geocoder = new google.maps.Geocoder();
@@ -85,3 +86,5 @@
         });
     });
 </script>
+
+@endsection

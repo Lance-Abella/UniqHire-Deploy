@@ -68,21 +68,21 @@
                         <div class="d-flex justify-content-start mb-5">
                             <div class="more-info">
                                 <h5>Schedule</h5>
-                                <div style="height:5rem;overflow-y:scroll">
-                                    <p>
-                                        @foreach(explode(',', $program->schedule) as $date)
-                                        {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
-                                        @if(!$loop->last)
-                                        <p></p>
-                                        @endif
-                                        @endforeach
-                                    </p>
-                                </div>
+                                <!-- <div style="height:5rem;overflow-y:scroll"> -->
+                                <p>
+                                    @foreach(explode(',', $program->schedule) as $date)
+                                    {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
+                                    @if(!$loop->last)
+                                <p></p>
+                                @endif
+                                @endforeach
+                                </p>
+                                <!-- </div> -->
 
                             </div>
                             <div class="more-info">
                                 <h5>Participants</h5>
-                                <p>{{ number_format($program->participants) . ' Persons' }}</p>
+                                <p>{{ number_format($program->participants) . ' Persons' }}&nbsp;&nbsp; <span class="sub-text">({{$slots}} remaining)</span></p>
                             </div>
                         </div>
                         <!-- AGE -->

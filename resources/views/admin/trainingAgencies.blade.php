@@ -29,7 +29,15 @@
                 <td>{{ $user->userInfo->contactnumber }}</td>
                 <td>{{ $user->userInfo->state. ' ' .$user->userInfo->city }}</td>
                 <!-- <td>{{ $user->userInfo->disability->disability_name }}</td> -->
-                <td colspan="2"><i class='bx bx-trash' id="trash-btn"></i></td>
+                <td colspan="2">
+                    <form id="delete-user-{{ $user->id }}" action="{{ route('user-delete', $user->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="deny-btn border-0" onclick="confirmDelete(event, 'delete-user-{{ $user->id }}')">
+                            <!-- <i class='bx bx-trash'></i> --> Delete
+                        </button>
+                    </form>
+                </td>
             </tr>
             @empty
             <tr>
@@ -39,4 +47,22 @@
         </tbody>
     </table>
 </div>
+<script>
+    function confirmDelete(event, formId) {
+        event.preventDefault();
+        Swal.fire({
+            title: "Confirmation",
+            text: "Do you really want to delete this?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirm"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
+    }
+</script>
 @endsection

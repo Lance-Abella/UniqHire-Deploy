@@ -97,7 +97,7 @@
                         <input type="hidden" id="long" name="long" value="{{ $longitude }}">
                         <input id="pac-input" class="controls" type="text" placeholder="Search Box">
                         <label for="map">Select Your Location:</label>
-                        <div id="map" style="height: 400px; width: 100%;"></div>
+                        <div id="map" class="map"></div>
                         <p id="coordinates"></p>
                         @if($user->hasRole('PWD'))
                         <div class="form-floating mb-3">
@@ -147,3 +147,10 @@
         </div>
     </div>
 </form>
+
+<script>
+    function clearFileInput(id) {
+        var input = document.getElementById(id);
+        input.value = '';
+    }
+</script>

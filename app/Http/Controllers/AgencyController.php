@@ -72,13 +72,18 @@ class AgencyController extends Controller
         $completedCount = $enrollees->where('completion_status', 'Completed')->count();
         $enrolleesCount = $enrollees->count();
 
+        $enrolleeCount = Enrollee::where('program_id', $program->id)
+            ->count();
+
+        $slots = $program->participants - $enrolleeCount;
+
         if ($program->crowdfund) {
             $raisedAmount = $program->crowdfund->raised_amount ?? 0;
             $goal = $program->crowdfund->goal ?? 1;
             $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
             $program->crowdfund->progress = $progress;
         }
-        return view('agency.showProg', compact('program', 'applications', 'reviews', 'enrollees', 'pendingsCount', 'ongoingCount', 'completedCount', 'enrolleesCount', 'requests'));
+        return view('agency.showProg', compact('program', 'applications', 'reviews', 'enrollees', 'pendingsCount', 'ongoingCount', 'completedCount', 'enrolleesCount', 'requests', 'slots'));
     }
 
     public function showAddForm()

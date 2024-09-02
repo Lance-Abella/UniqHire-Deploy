@@ -72,7 +72,7 @@ class AdminController extends Controller
         return view('admin.createSkill');
     }
 
-    public function store(Request $request)
+    public function addSkill(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -83,12 +83,12 @@ class AdminController extends Controller
         return redirect()->route('skill-list')->with('success', 'Skill added successfully.');
     }
 
-    public function edit(Skill $skill)
+    public function editSkill(Skill $skill)
     {
         return view('admin.editSkill', compact('skill')); // Create a form view for editing a skill
     }
 
-    public function update(Request $request, Skill $skill)
+    public function updateSkill(Request $request, Skill $skill)
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -96,13 +96,19 @@ class AdminController extends Controller
 
         $skill->update($request->all());
 
-        return redirect()->route('skill-list')->with('success', 'Skill updated successfully.');
+        return redirect()->route('skill-list')->with('success', 'Skill updated successfully!');
     }
 
-    public function destroy(Skill $skill)
+    public function deleteSkill(Skill $skill)
     {
         $skill->delete();
 
-        return redirect()->route('skill-list')->with('success', 'Skill deleted successfully.');
+        return back()->with('success', 'Skill deleted successfully!');
+    }
+
+    public function deleteUser(User $id) 
+    {
+        $id->delete();
+        return back()->with('success', 'User account deleted successfully!');
     }
 }

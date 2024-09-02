@@ -21,7 +21,9 @@
             <div class="details row">
                 <div class="col">
                     <p class="text-cap profile-name">{{ $user->userInfo->name }}</p>
-                    <p class="text-cap"><i class='bx bx-map sub-text'></i>{{ $user->userInfo->state . ', ' . (str_contains($user->userInfo->city, 'City') ? $user->userInfo->city : $user->userInfo->city . ' City') }}</p>
+                    <p class="text-cap" id="location"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                    <input type="hidden" id="lat" value="{{ $user->userInfo->latitude }}">
+                    <input type="hidden" id="lng" value="{{ $user->userInfo->longitude }}">
                 </div>
                 @if($user->hasRole('PWD'))
                 <div class="col">
@@ -165,4 +167,39 @@
 
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var geocoder = new google.maps.Geocoder();
+
+        // Fetch latitude and longitude values
+        var lat = parseFloat(document.getElementById('lat').value);
+        var lng = parseFloat(document.getElementById('lng').value);
+        var locationElement = document.getElementById('location');
+
+        if (!isNaN(lat) && !isNaN(lng)) {
+            var latlng = {
+                lat: lat,
+                lng: lng
+            };
+
+            // Perform the geocode request
+            geocoder.geocode({
+                location: latlng
+            }, function(results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+                    } else {
+                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
+                    }
+                } else {
+                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
+                }
+            });
+        } else {
+            locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Invalid coordinates";
+        }
+    });
+</script>
+
 @endsection

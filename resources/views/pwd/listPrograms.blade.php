@@ -43,8 +43,8 @@
 
             <div class="prog-grid" id="prog-grid">
                 <div class="mb-4">
-                    <div class="container mb-2" style="width:100%;">
-                        <span style="padding-bottom:0.6rem;border-bottom:3px solid var(--primary-color);">Recommended</span>
+                    <div class="container recommend-label-container mb-2">
+                        <span class="recommend-label">Recommended</span>
                     </div>
                 </div>
 
@@ -68,7 +68,7 @@
                                         <div class="header">
                                             <h4 class="text-cap">{{$ranked['program']->title}}</h4>
                                             <p class="sub-text text-cap">{{$ranked['program']->agency->userInfo->name}}</p>
-                                            <p class="sub-text text-cap" id="location-{{ $ranked['program']->id }}" style="overflow-x:hidden; text-wrap:nowrap; text-overflow:ellipsis;"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                                            <p class="sub-text text-cap location" id="location-{{ $ranked['program']->id }}"><i class='bx bx-map sub-text'></i>Loading address...</p>
                                             <input type="hidden" id="lat-{{ $ranked['program']->id }}" value="{{ $ranked['program']->latitude }}">
                                             <input type="hidden" id="lng-{{ $ranked['program']->id }}" value="{{ $ranked['program']->longitude }}">
                                         </div>
@@ -104,12 +104,13 @@
                     </div>
                 </div>
                 @empty
-                <div class="sub-text" style="font-style:italic;font-weight:normal;text-align:center;margin-top:2rem">No results found.</div>
+                <div class="sub-text no-result">No results found.</div>
                 @endforelse
-                <div class="pagination">
-                    {{ $paginatedItems->links() }}
-                </div>
-
+            </div>
+        </div>
+        <div class="pagination-container">
+            <div class="pagination">
+                {{ $paginatedItems->links() }}
             </div>
         </div>
 

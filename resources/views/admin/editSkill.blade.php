@@ -7,7 +7,7 @@
         <a href="{{ route('skill-list') }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
         Edit Skill.
     </div>
-    <form action="{{ route('skills-update', $skill->id) }}" method="POST">
+    <form action="{{ route('skill-update', $skill->id) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="form-floating mb-3">

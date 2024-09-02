@@ -1,5 +1,5 @@
 <button type="button" id="add-skill" data-bs-toggle="modal" data-bs-target="#create-skill" class="submit-btn border-0">Add Skill</button>
-<form action="{{ route('skills-store') }}" method="POST">
+<form action="{{ route('skill-add') }}" method="POST">
     @csrf
     <div class="modal fade" id="create-skill" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
