@@ -28,10 +28,11 @@ class PwdController extends Controller
         $educations = EducationLevel::all();
         $query = TrainingProgram::query();
 
-        // $approvedProgramIds = TrainingApplication::where('user_id', auth()->id())
-        //     ->where('application_status', 'Approved')
-        //     ->pluck('training_program_id')
-        //     ->toArray();
+        // Get the collection of approved programs to not include in displaying
+        $approvedProgramIds = TrainingApplication::where('user_id', auth()->id())
+            ->where('application_status', 'Approved')
+            ->pluck('training_program_id')
+            ->toArray();
 
         // Filtering the programs through searching program title
         if ($request->filled('search')) {
@@ -45,16 +46,14 @@ class PwdController extends Controller
             });
         }
 
-        // $query->whereNotIn('id', $approvedProgramIds);
+        $query->whereNotIn('id', $approvedProgramIds);
 
         // Filtering the programs based on the user's disability
         $query->whereHas('disability', function ($q) use ($user) {
-            $q->where('program_disability.id', $user->disability_id);
-        });
+            $q->where('disability_id', $user->disability_id);
+        });    
         
-
         $filteredPrograms = $query->get();
-
 
         $rankedPrograms = [];
 
@@ -66,8 +65,6 @@ class PwdController extends Controller
                 'similarity' => $similarity
             ];
         }
-
-
 
         // Sorting the programs based on similarity score [ascending]
         usort($rankedPrograms, function ($a, $b) {
@@ -82,7 +79,7 @@ class PwdController extends Controller
 
         // $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
         $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
-        
+        Log::info('Paginated Items:', $paginatedItems->toArray());
         log::info("nakaabot ari gyuddd");
         return view('pwd.listPrograms', compact('paginatedItems', 'educations', 'educationCounts'));
     }
@@ -125,8 +122,7 @@ class PwdController extends Controller
 
         $distance = $this->calculateDistance($lat1, $lng1, $lat2, $lng2);
 
-        // Criteria: disability, location
-        
+        Log::info('Calculated Distance: ' . $distance);
 
         if ($distance <= 20) {
             $similarityScore += 20;
@@ -142,18 +138,28 @@ class PwdController extends Controller
         }
 
         if($user->age >= $program->start_age && $user->age <= $program->end_age){
-            $similarityScore += $weights['age'];
+            $similarityScore += 20;
+        }
+        else{
+            $similarityScore += 10;
         }
 
-        if($user->educational_id === $program->education_id){
-            $similarityScore += $weights['educ'];
+        if($user->educational_id >= $program->education_id){
+            $similarityScore += 20;
         }
+        else{
+            $similarityScore += 10;
+        }   
 
-        foreach($userSkills as $userSkill){
-            if ($userSkill->skill_id === $program->skill_id){
-                $similarityScore += $weights['skills'];
+        foreach ($userSkills as $userSkill) {
+            $matchingProgram = $program->whereHas('skill', function($q) use ($userSkill) {
+                $q->where('program_skill.id', $userSkill->skill_id);
+            })->exists(); 
+        
+            if ($matchingProgram) {
+                $similarityScore += 20;
             }
-        }
+        }        
 
         if($averageRating){
             $similarityScore += $averageRating;
@@ -162,8 +168,6 @@ class PwdController extends Controller
         return $similarityScore;
     }
 
-    
-
     public function showDetails($id)
     {
         $program = TrainingProgram::with('agency.userInfo', 'disability', 'education', 'crowdfund')->findOrFail($id);
@@ -171,26 +175,54 @@ class PwdController extends Controller
         $application = TrainingApplication::where('user_id', $userId)->get();
         $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
         $status = Enrollee::where('pwd_id', $userId)->get();
+
+        // Check if the user has completed the current program
         $isCompletedProgram = Enrollee::where('program_id', $program->id)
         ->where('pwd_id', $userId)
         ->where('completion_status', 'Completed')
         ->exists();
 
+        // Get all completed programs for the user
+        $completedPrograms = Enrollee::where('pwd_id', $userId)
+        ->where('completion_status', 'Completed')
+        ->pluck('program_id')
+        ->toArray();
+
+        // Collect all dates from the schedules of applied programs excluding completed programs
+        $appliedDates = $application->map(function ($app) use ($completedPrograms) {
+            if (!in_array($app->training_program_id, $completedPrograms)) {
+                // Split the schedule string into individual dates
+                return explode(',', $app->program->schedule);
+            }
+            return [];
+        })->flatten()->toArray(); // Flatten the array to have all dates in one array
+
+    Log::info('Applied Dates:', $appliedDates);
+
+
+
+      // Fetch all programs
+    $allPrograms = TrainingProgram::all();
+
+    // Filter programs with non-conflicting dates
+    $nonConflictingPrograms = $allPrograms->filter(function ($program) use ($appliedDates) {
+        $scheduleDates = explode(',', $program->schedule);
+
+        // Check if any date in the schedule conflicts with applied dates
+        foreach ($scheduleDates as $scheduleDate) {
+            if (in_array($scheduleDate, $appliedDates)) {
+                return false; // Conflict found, exclude this program
+            }
+        }
+        return true; // No conflicts, include this program
+    })->pluck('id')->toArray();
+
+        Log::info('NonConflictPrograms:', $nonConflictingPrograms);
+
         $enrolleeCount = Enrollee::where('program_id', $program->id)
             ->count();
 
         $slots = $program->participants - $enrolleeCount;
-
-        // Collect all end dates from the applications
-        $endDates = $application->map(function ($app) {
-            return $app->program->end;
-        })->toArray();
-
-        $nonConflictingPrograms = TrainingProgram::where(function ($query) use ($endDates) {
-            foreach ($endDates as $endDate) {
-                $query->where('start', '>', $endDate);
-            }
-        })->pluck('id')->toArray();
 
         $enrollees = Enrollee::where('program_id', $program->id)->get();
 

@@ -61,4 +61,9 @@ class TrainingProgram extends Model
     {
         return $this->belongsToMany(Skill::class, 'program_skill', 'training_program_id', 'skill_id');
     }
+
+    public function applications()
+    {
+        return $this->hasMany(TrainingApplication::class, 'training_program_id');
+    }
 }
