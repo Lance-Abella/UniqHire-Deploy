@@ -13,15 +13,13 @@ class TrainingProgram extends Model
         'agency_id',
         'title',
         'description',
-        'state',
-        'city',
+        'latitude',
+        'longitude',
         'participants',
         'schedule',
-        'disability_id',
         'education_id',
         'start_age',
         'end_age',
-        'skill_id',
     ];
 
     public function agency()
@@ -31,7 +29,7 @@ class TrainingProgram extends Model
 
     public function disability()
     {
-        return $this->belongsTo(Disability::class);
+        return $this->belongsToMany(Disability::class, 'program_disability', 'training_program_id', 'disability_id');
     }
 
     public function education()
@@ -61,6 +59,6 @@ class TrainingProgram extends Model
 
     public function skill()
     {
-        return $this->belongsTo(Skill::class, 'skill_id');
+        return $this->belongsToMany(Skill::class, 'program_skill', 'training_program_id', 'skill_id');
     }
 }

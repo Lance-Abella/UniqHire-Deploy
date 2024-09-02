@@ -21,32 +21,12 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <div class="form-floating mb-3">
-                <select class="form-select" id="provinceSelect" name="state" required placeholder="Province">
-                    <option value="" disabled selected>Select Province</option>
-                    <!-- Provinces will be populated dynamically -->
-                </select>
-                <label for="provinceSelect">Province</label>
-                @error('state')
-                <span class="error-msg">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-floating mb-3">
-                <select class="form-select" id="citySelect" name="city" required placeholder="City">
-                    <option value="" disabled selected>Select City</option>
-                    <!-- Cities will be populated dynamically -->
-                </select>
-                <label for="citySelect">City</label>
-                @error('city')
-                <span class="error-msg">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
-    </div>
+    <input type="hidden" id="lat" name="lat" value="{{ $program->latitude }}">
+    <input type="hidden" id="long" name="long" value="{{ $program->longitude }}">
+    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+    <label for="map">Select Your Location:</label>
+    <div id="map" style="height: 400px; width: 100%;"></div>
+    <p id="coordinates"></p>
     <div class="row">
         <div class="col">
             <div class="form-floating mb-3">
@@ -95,7 +75,10 @@
                 @foreach ($disabilities as $disability)
                 @if ($disability->disability_name != 'Not Applicable')
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{$disability->disability_name}}" id="flexCheckChecked{{$loop->index}}" name="disability[]">
+                    <input class="form-check-input" type="checkbox" value="{{ $disability->id }}" id="flexCheckChecked{{ $loop->index }}" name="disabilities[]"
+                        @if (isset($program->disability) && $program->disability->contains('disability_name', $disability->disability_name))
+                    checked
+                    @endif>
                     <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
                         {{$disability->disability_name}}
                     </label>
@@ -109,20 +92,22 @@
             <div class="req-container">
                 @foreach ($skills as $skill)
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{$skill->title}}" id="flexCheckChecked{{$loop->index}}" name="skill[]">
-                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                    <input class="form-check-input" type="checkbox" value="{{$skill->id}}" id="skill{{$loop->index}}" name="skills[]"
+                        @if (isset($program->skill) && $program->skill->contains('title', $skill->title))
+                    checked
+                    @endif>
+                    <label class="form-check-label" for="skill{{$loop->index}}">
                         {{$skill->title}}
                     </label>
                 </div>
                 @endforeach
             </div>
-
         </div>
     </div>
     <div class="row">
         <div class="col">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="participants" name="participants" value="{{old('participants')}}" required placeholder="Input Participants" oninput="formatNumber(this)">
+                <input type="text" class="form-control" id="participants" name="participants" value="{{ $program->participants }}" required placeholder="Input Participants" oninput="formatNumber(this)">
                 <label for="floatingInput">Number of Participants</label>
                 @error('participants')
                 <span class="error-msg">{{ $message }}</span>
@@ -134,10 +119,9 @@
                 <select class="form-select" id="floatingSelect" name="education" aria-label="Floating label select example">
                     @foreach ($levels as $level)
                     @if ($level->education_name != 'Not Applicable')
-                    <option value="{{ $level->id }}">{{ $level->education_name }}</option>
+                    <option value="{{ $level->id }}" @if($program->education->id == $level->id) selected @endif>{{ $level->education_name }}</option>
                     @endif
                     @endforeach
-
                 </select>
                 <label for="floatingSelect">Education Level (at least)</label>
             </div>
@@ -248,23 +232,7 @@
         }
         if (participantsInput) {
             formatNumber(participantsInput);
-        }
-
-        fetchProvinces();
-
-        var provinceSelect = document.getElementById('provinceSelect');
-        var citySelect = document.getElementById('citySelect');
-        var selectedProvince = "{{ $program->state }}"; // Assuming 'state' is the province code or name
-        var selectedCity = "{{ $program->city }}"; // Assuming 'city' is the city name
-
-        if (selectedProvince) {
-            fetchCities(selectedProvince);
-        }
-
-        provinceSelect.addEventListener('change', function() {
-            var provinceCode = this.value;
-            fetchCities(provinceCode);
-        });
+        }     
 
         let competencyCount = document.querySelectorAll('#competencyList .input-group').length;
         const addCompetencyBtn = document.getElementById('addCompetencyBtn');
@@ -314,52 +282,110 @@
         toggleButtons(); // Initialize the button states
     });
 
-    function fetchProvinces() {
-        fetch('https://psgc.cloud/api/provinces')
-            .then(response => response.json())
-            .then(data => {
-                var provinceSelect = document.getElementById('provinceSelect');
-                data.sort((a, b) => a.name.localeCompare(b.name));
-                data.forEach(province => {
-                    var option = document.createElement('option');
-                    option.value = province.name;
-                    option.text = province.name;
-                    provinceSelect.appendChild(option);
+    function initMap() {
+        var lat = parseFloat(document.getElementById('lat').value);
+        var lng = parseFloat(document.getElementById('long').value);
+        var latlng = { lat: lat, lng: lng };
+
+        // Create the map, centered at the initial location
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 8,
+            center: latlng
+        });
+
+        // Add a draggable marker to the map
+        var marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            draggable: true,  
+            title: 'Drag me to your location!'
+        });
+
+        // // Set the hidden input fields to the default location when the map is loaded
+        // document.getElementById('lat').value = lat;
+        // document.getElementById('long').value = lng;
+
+        function updateCoordinates(markerPosition) {
+            var lat = markerPosition.lat();
+            var lng = markerPosition.lng();
+            document.getElementById('lat').value = lat;
+            document.getElementById('long').value = lng;
+            document.getElementById('coordinates').innerText = 'Latitude: ' + lat + ', Longitude: ' + lng;
+        }
+
+         // Place the marker where the user clicks on the map
+        map.addListener('click', function(event) {
+            var clickedLocation = event.latLng;
+            marker.setPosition(clickedLocation); 
+            marker.setMap(map); 
+            updateCoordinates(clickedLocation); 
+        });
+
+        // Automatically update the coordinates when the marker is dragged
+        marker.addListener('dragend', function() {
+            updateCoordinates(marker.getPosition());
+        });
+
+        // Create the search box and link it to the UI element
+        var input = document.getElementById('pac-input');
+        var searchBox = new google.maps.places.SearchBox(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        // Bias the SearchBox results towards current map's viewport
+        map.addListener('bounds_changed', function() {
+            searchBox.setBounds(map.getBounds());
+        });
+
+        // Listen for the event fired when the user selects a prediction and retrieves more details for that place
+        searchBox.addListener('places_changed', function() {
+            var places = searchBox.getPlaces();
+
+            if (places.length == 0) {
+                return;
+            }
+
+            // Clear out the old marker
+            marker.setMap(null);
+
+            // For each place, get the icon, name, and location
+            var bounds = new google.maps.LatLngBounds();
+            places.forEach(function(place) {
+                if (!place.geometry || !place.geometry.location) {
+                    console.log("Returned place contains no geometry");
+                    return;
+                }
+
+                // Create a new marker for the selected place
+                marker = new google.maps.Marker({
+                    position: place.geometry.location,
+                    map: map,
+                    draggable: true
                 });
 
-                // Set the selected province
-                provinceSelect.value = "{{ $program->state }}";
-                console.log(provinceSelect.value);
-            })
-            .catch(error => console.error('Error fetching provinces:', error));
+                // Automatically update coordinates when the new marker is dragged
+                marker.addListener('dragend', function() {
+                    updateCoordinates(marker.getPosition());
+                });
+
+                // Immediately update the coordinates for the selected place
+                updateCoordinates(marker.getPosition());
+
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
+                }
+            });
+            map.fitBounds(bounds);
+        });
     }
 
-    function fetchCities(provinceCode) {
+    // Initialize the map and geocoding
+    window.onload = initMap;
 
-        fetch(`https://psgc.cloud/api/provinces/${provinceCode}/cities-municipalities`)
-            .then(response => response.json())
-            .then(data => {
-                var citySelect = document.getElementById('citySelect');
-                citySelect.innerHTML = '<option value="">Select City</option>';
-                data.sort((a, b) => a.name.localeCompare(b.name));
-                data.forEach(city => {
-                    var option = document.createElement('option');
-                    option.value = city.name.trim();
-                    option.text = city.name.trim();
-                    citySelect.appendChild(option);
-                });
+    
 
-                // Normalize both the program city and the options
-                var programCity = "{{ $program->city }}".trim().toLowerCase();
-
-                Array.from(citySelect.options).forEach(option => {
-                    if (option.value.trim().toLowerCase() === programCity) {
-                        option.selected = true;
-                    }
-                });
-
-            })
-            .catch(error => console.error('Error fetching cities:', error));
-    }
+    
 </script>
 @endsection

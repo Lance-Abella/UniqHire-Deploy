@@ -39,7 +39,7 @@ class AgencyController extends Controller
             ->with('crowdfund')
             ->get();
 
-        
+
 
         foreach ($programs as $program) {
             $endDate = new DateTime($program->end);
@@ -48,7 +48,7 @@ class AgencyController extends Controller
             $program->remainingDays = $interval->days;
 
             $program->enrolleeCount = Enrollee::where('program_id', $program->id)
-            ->count();
+                ->count();
 
             $program->slots = $program->participants - $program->enrolleeCount;
 
@@ -98,18 +98,17 @@ class AgencyController extends Controller
         // Validate the request data
         $request->validate([
             'title' => 'required|string|max:255',
-            'state' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
+            'lat' => 'required|numeric|between:-90,90',
+            'long' => 'required|numeric|between:-180,180',
             'description' => 'required|string',
             'schedule' => 'required|string',
-            // 'start_date' => 'required|date',
-            // 'end_date' => 'required|date',
             'start_age' => 'integer|min:1|max:99',
             'end_age' => 'integer|min:1|max:99',
             'participants' => 'required|max:255',
-            // 'disability' => 'required|exists:disabilities,id',
-            // 'education' => 'required|exists:education_levels,id',
-            'goal' => 'nullable|string',
+            'skills' => 'required|array',
+            'skills.*' => 'exists:skills,id',
+            'disabilities' => 'required|array',
+            'disabilities.*' => 'exists:disabilities,id',
             'competencies' => 'array|max:4',
             'competencies.*' => 'string|distinct',
         ]);
@@ -122,17 +121,20 @@ class AgencyController extends Controller
         $trainingProgram = TrainingProgram::create([
             'agency_id' => auth()->id(),
             'title' => $request->title,
-            'state' => $request->state,
-            'city' => $request->city,
+            'latitude' => $request->lat,
+            'longitude' => $request->long,
             'description' => $request->description,
             'schedule' => $request->schedule,
-            'disability_id' => $request->disability,
+            'disabilities' => $request->disability,
             'education_id' => $request->education,
-            'skill_id' => $request->skills,
+            'skills' => $request->skills,
             'start_age' => $request->start_age,
             'end_age' => $request->end_age,
             'participants' => $participants,
         ]);
+
+        $trainingProgram->skill()->attach($request->skills);
+        $trainingProgram->disability()->attach($request->disabilities);
 
         if ($request->has('competencies')) {
             $competencies = $request->competencies;
@@ -208,7 +210,7 @@ class AgencyController extends Controller
         $skills = Skill::all();
 
         // Return the view with all required data
-        return view('agency.editProg', compact('program', 'provinces', 'disabilities', 'levels', 'skills' ));
+        return view('agency.editProg', compact('program', 'provinces', 'disabilities', 'levels', 'skills'));
 
         // return redirect()->route('programs-manage');
     }
@@ -220,31 +222,38 @@ class AgencyController extends Controller
         if ($program && $program->agency_id == auth()->id()) {
             $request->validate([
                 'title' => 'required|string|max:255',
-                'state' => 'required|string|max:255',
-                'city' => 'required|string|max:255',
+                'lat' => 'required|numeric|between:-90,90',
+                'long' => 'required|numeric|between:-180,180',
                 'description' => 'required|string',
                 'schedule' => 'required|string',
                 'goal' => 'nullable|string',
+                'skills' => 'required|array',
+                'skills.*' => 'exists:skills,id',
+                'disabilities' => 'required|array',
+                'disabilities.*' => 'exists:disabilities,id',
                 'competencies' => 'array|max:4',
                 'competencies.*' => 'string|distinct',
-                'skills' => 'required|exists:skills,id',
                 'start_age' => 'integer|min:1|max:99',
                 'end_age' => 'integer|min:1|max:99',
+                'participants' => 'required|max:255',
             ]);
+
+            $participants = $this->convertToNumber($request->participants);
 
             $program->update([
                 'title' => $request->title,
-                'state' => $request->state,
-                'city' => $request->city,
+                'latitude' => $request->lat,
+                'longitude' => $request->long,
                 'description' => $request->description,
                 'schedule' => $request->schedule,
-                'disability_id' => $request->disability,
                 'education_id' => $request->education,
-                'skill_id' => $request->skills,
                 'start_age' => $request->start_age,
                 'end_age' => $request->end_age,
-
+                'participants' => $participants,
             ]);
+
+            $program->skill()->sync($request->skills);
+            $program->disability()->sync($request->disabilities);
 
             if ($request->has('competencies')) {
                 $competencies = $request->competencies;

@@ -14,11 +14,11 @@ class Skill extends Model
 
     public function skilluser()
     {
-        return $this->belongsToMany(SkillUser::class, 'skill_id');
+        return $this->belongsToMany(SkillUser::class, 'skill_id', 'skill_user', 'user_id');
     }
 
     public function trainingProgram()
     {
-        return $this->hasMany(Skill::class);
+        return $this->hasMany(Skill::class, 'program_skill', 'skill_id', 'program_id');
     }
 }

@@ -16,17 +16,16 @@ return new class extends Migration
             $table->foreignId('agency_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
             $table->text('description');
-            $table->string('state');
-            $table->string('city');
+            $table->decimal('latitude', 10, 8);
+            $table->decimal('longitude', 11, 8);
+
             $table->integer('participants')->default(0);
             $table->string('schedule');
-            //requirements
-            $table->foreignId('disability_id')->constrained('disabilities')->onDelete('cascade');
+            //requirements            
             $table->foreignId('education_id')->constrained('education_levels')->onDelete('cascade');
 
             $table->integer('start_age')->default(0);
-            $table->integer('end_age')->default(0);
-            $table->foreignId('skill_id')->constrained('skills')->onDelete('cascade');
+            $table->integer('end_age')->default(0);           
             // $table->foreignId('worktype_id')->constrained('work_types')->onDelete('cascade');
             // $table->foreignId('worksetup_id')->constrained('work_setups')->onDelete('cascade');
             $table->timestamps();
