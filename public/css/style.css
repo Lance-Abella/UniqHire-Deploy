@@ -659,7 +659,7 @@ table tbody .bx {
     box-shadow: var(--side-shadow-02);
     background-color: var(--bg-color-02);
     left: 7.5rem;
-    top: 8.8rem;
+    top: 8.9rem;
     /* z-index: 98; */
     overflow-y: scroll;
 }
@@ -846,9 +846,9 @@ table tbody .bx {
 }
 
 .pwd-browse-prog .recommend-label-container {
-    width:100%;
+    width:45rem;
     display: flex;
-    justify-content: center;
+    justify-content: start;
 }
 
 .pwd-browse-prog .prog-grid .location {
@@ -1569,6 +1569,21 @@ table tbody .bx {
     border:3px dashed var(--primary-color); 
     z-index:100;
 }
+
+/* .alert .close-btn {
+    position: absolute;
+    bottom: 4.3rem;
+    left: 28.5rem;
+    background-color: var(--primary-color);
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+.alert .close-btn .bx {
+    font-size: 30px;
+    color: var(--bg-color-01);
+    font-weight: 700;
+} */
 
 .alert a {
     font-weight: 700;
