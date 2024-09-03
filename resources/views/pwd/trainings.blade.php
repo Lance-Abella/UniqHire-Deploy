@@ -20,8 +20,7 @@
                         <tr>
                             <td class="table-head">Title</td>
                             <td class="table-head">Agency</td>
-                            <td class="table-head">Start</td>
-                            <td class="table-head">End</td>
+                            <td class="table-head">Schedule</td>
                             <td class="table-head">Status</td>
                             <td class="table-head"></td>
                         </tr>
@@ -31,8 +30,16 @@
                         <tr>
                             <td class="text-cap text-start title">{{$application->program->title}}</td>
                             <td class="text-cap">{{$application->program->agency->userInfo->name}}</td>
-                            <td>{{ \Carbon\Carbon::parse($application->program->start)->format('M d, Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($application->program->end)->format('M d, Y') }}</td>
+                            <td>
+                                <p>
+                                    @foreach(explode(',', $application->program->schedule) as $date)
+                                    {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
+                                    @if(!$loop->last)
+                                    <p></p>
+                                    @endif
+                                    @endforeach
+                                </p>
+                            </td>
                             <td class="status-cell">
                                 <p class="match-info 
                                 @if ($application->application_status == 'Pending')
@@ -82,8 +89,16 @@
                         <tr>
                             <td class="text-cap text-start title">{{$training->program->title}}</td>
                             <td class="text-cap">{{$training->program->agency->userInfo->name}}</td>
-                            <td>{{ \Carbon\Carbon::parse($training->program->start)->format('M d, Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($training->program->end)->format('M d, Y') }}</td>
+                            <td>
+                                <p>
+                                    @foreach(explode(',', $training->program->schedule) as $date)
+                                    {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
+                                    @if(!$loop->last)
+                                    <p></p>
+                                    @endif
+                                    @endforeach
+                                </p>
+                            </td>
                             <td class="status-cell">
                                 <p class="match-info @if ($training->completion_status == 'Ongoing')
                                 pending
