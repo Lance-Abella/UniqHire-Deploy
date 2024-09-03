@@ -641,12 +641,14 @@ table tbody .bx {
     padding-left: 8rem;
     margin-bottom: 3rem;
     display: flex;
+    justify-content: center;
     /* flex-direction: column; */
     width: 100vw;
+    height: 80vh;
 }
 
 .pwd-browse-prog .filter-container {
-    position: relative;
+    position: fixed;
     width: 18rem;
     /* margin-left: 3rem; */
     /* background-color: #04b000; */
@@ -656,8 +658,8 @@ table tbody .bx {
     height: 80vh;
     box-shadow: var(--side-shadow-02);
     background-color: var(--bg-color-02);
-    left: 2.5rem;
-    top: 1.8rem;
+    left: 7.5rem;
+    top: 8.8rem;
     /* z-index: 98; */
     overflow-y: scroll;
 }
@@ -845,6 +847,8 @@ table tbody .bx {
 
 .pwd-browse-prog .recommend-label-container {
     width:100%;
+    display: flex;
+    justify-content: center;
 }
 
 .pwd-browse-prog .prog-grid .location {
