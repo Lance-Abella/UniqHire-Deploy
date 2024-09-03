@@ -3,12 +3,7 @@
 @section('page-title', 'Welcome to UniqHire')
 @section('auth-content')
 <style>
-    .home-container {
-        padding-left: 3rem;
-        padding-right: 3rem;
-    }
-
-    .home-container .navbar {
+    .homepage .navbar {
         padding-left: 0;
     }
 
@@ -18,7 +13,7 @@
         margin-right: 4rem;
     }
 </style>
-<div class="home-container content-container">
+<div class="homepage content-container">
     <nav class="navbar border-bottom">
         <div class="navbar-container">
             <div>
@@ -30,7 +25,7 @@
             </div>
             <div>
                 <ul class="d-flex align-items-center">
-                    <li class="nav-item user-index">
+                    <li class="nav-item user-index" style="padding-right: 0;">
                         <form action="{{route('login-page')}}" method="get"><button class="submit-btn border-0" type="submit">Login</button></form>
                     </li>
                 </ul>
@@ -38,7 +33,7 @@
         </div>
     </nav>
 </div>
-<div class="home-container">
+<div class="home-container" style="padding-left: 2rem;">
     <div class="row home-top border-bottom">
         <div class="col-5 home-captions">
             <div class="header-caption mb-3">

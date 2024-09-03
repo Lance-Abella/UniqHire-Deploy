@@ -638,14 +638,15 @@ table tbody .bx {
 .pwd-browse-prog {
     position: absolute;
     top: 8rem;
+    padding-left: 8rem;
     margin-bottom: 3rem;
     display: flex;
-    flex-direction: column;
-    width: 100%;
+    /* flex-direction: column; */
+    width: 100vw;
 }
 
 .pwd-browse-prog .filter-container {
-    position: fixed;
+    position: relative;
     width: 18rem;
     /* margin-left: 3rem; */
     /* background-color: #04b000; */
@@ -655,9 +656,9 @@ table tbody .bx {
     height: 80vh;
     box-shadow: var(--side-shadow-02);
     background-color: var(--bg-color-02);
-    left: 8rem;
-    top: 8rem;
-    z-index: 98;
+    left: 2.5rem;
+    top: 1.8rem;
+    /* z-index: 98; */
     overflow-y: scroll;
 }
 
@@ -728,15 +729,15 @@ table tbody .bx {
 
 .pwd-browse-prog .outer {
     width: 90%;
-    height: 40rem;
+    height: 50rem;
     display: flex;
     justify-content: center;
     overflow-y: scroll;
 }
 
 .pwd-browse-prog .browse-area {
-    width: 90%;
-    margin-left: 12rem;
+    width: 70%;
+    /* margin-left: 12rem; */
 }
 
 .pwd-browse-prog .prog-grid {
@@ -803,12 +804,16 @@ table tbody .bx {
     height: 100%;
 }
 
-.pwd-browse-prog .prog-card .prog-texts-container, .pwd-browse-prog .prog-card .prog-texts-container .prog-head {
+.pwd-browse-prog .prog-card .prog-texts-container {
+    width: 45rem;
+}
+
+.pwd-browse-prog .prog-card .prog-texts-container .prog-head {
     width: 100%;
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container .header {
-    width: 25rem;
+    width: 30rem;
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container .header p {
@@ -816,13 +821,53 @@ table tbody .bx {
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container .date-posted {
-    width: 100%;
+    width: 25%;
+}
+
+.pwd-browse-prog .infos {
+    display: flex;
+    /* width: 100%; */
+    overflow-x: hidden;
+    text-wrap: nowrap;
+}
+
+.pwd-browse-prog .no-result {
+    font-style:italic;
+    font-weight:normal;
+    text-align:center;
+    margin-top:2rem;
+}
+
+.pwd-browse-prog .recommend-label {
+    padding-bottom:0.6rem;
+    border-bottom:3px solid var(--primary-color);
+}
+
+.pwd-browse-prog .recommend-label-container {
+    width:100%;
+}
+
+.pwd-browse-prog .prog-grid .location {
+    overflow-x:hidden; 
+    text-wrap:nowrap; 
+    text-overflow:ellipsis;
 }
 
 /* PAGINATION */
 /* .pagination {
     height: 2rem;
 } */
+
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+}
+
+.pagination {
+    width: 100%;
+}
 
 .pagination .page-item.active {
    background-color: var(--primary-color);
@@ -836,6 +881,7 @@ table tbody .bx {
 
 .pagination nav {
     width: 100%;
+    padding: 0.7rem;
 }
 
 .pagination .d-none {
@@ -1180,6 +1226,10 @@ table tbody .bx {
     margin-bottom: 1.5rem;
 }
 
+.agency-show-prog .apply-btn-container .error {
+    width:10rem;
+}
+
 .details-container .body .more-info {
     height: 10rem;
 }
@@ -1224,6 +1274,7 @@ table tbody .bx {
 
 .agency-show-prog .request-grid .request-container .owner-name {
     text-align: start;
+    width: 20rem;
 }
 
 .agency-show-prog .request-grid .request-container .request-owner p {
@@ -1237,6 +1288,9 @@ table tbody .bx {
 
 .agency-show-prog .request-grid .request-container .request-owner .location {
     font-size: 17px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
 }
 
 .agency-show-prog .request-grid .request-container .request-pic {
@@ -1423,7 +1477,7 @@ table tbody .bx {
     padding: 1rem;
 }
 
-.agency-show-prog .reviews .body-review .owner {
+.agency-show-prog .reviews .body-review .owner-name {
     font-weight: var(--header-extrabold);
 }
 
@@ -1503,6 +1557,21 @@ table tbody .bx {
 }
 
 /* PROFILE */
+.alert {
+    position:fixed; 
+    bottom:3.5rem; 
+    right:4rem; width:30rem; 
+    /* background-color:var(--primary-color);  */
+    border:3px dashed var(--primary-color); 
+    z-index:100;
+}
+
+.alert a {
+    font-weight: 700;
+    text-decoration: underline;
+    color: var(--text-error);
+}
+
 .profile-container, .agency-prog-container, .edit-form, .add-form {
     position: absolute;
     top: 9rem;
@@ -1727,120 +1796,91 @@ table tbody .bx {
 }
 
 .calendar-container .calendar {
-    width: 80%;
+    width: 80vw;
+    margin-bottom: 2rem;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--side-shadow-04);
     /* height: 10%; */
     /* height: 80vh;
     overflow-y: scroll; */
 }
 
-/* .fc-right .fc-button-group {
-    background-color: var(--primary-color);
-} */
- /* .fc-right .fc-button-group .fc-button {
-    background-color: var(--primary-color);
-    color: var(--primary-color);
-} */
-
-.fc-right .fc-button-group .fc-button.fc-state-default {
-    /* background: var(--primary-color-light); */
-    color: var(--primary-color);
-}
-
-.fc-right .fc-button-group .fc-button.fc-state-active {
-    background: var(--primary-color);
-    /* background-color: var(--bg-color-01); */
-    color: var(--bg-color-01);
-    /* font-weight: 700; */
-    text-decoration: underline;
-}
-
-.fc-right .fc-button-group .fc-button.fc-state-hover {
-    background-color: var(--hover-color);
-    color: var(--primary-color);
-}
-
-.fc-left .fc-button-group .fc-button.fc-state-hover {
-    background: var(--primary-color);
-    
-}
-
-.fc-left .fc-button-group .fc-button.fc-state-hover span {
-    color: var(--bg-color-01);
-}
-
-.fc-left .fc-today-button.fc-state-disabled {
-    background-color: var(--primary-color);
-    color: var(--bg-color-01);
-    /* font-weight: var(--header-extrabold); */
-}
-
-.fc-unthemed td.fc-today {
-    background: var(--primary-color-light);
-}
-
-.fc-event-container .fc-day-grid-event {
-    border-color: var(--primary-color);
-    background: var(--primary-color);
-    
-}
-
-.fc-event-container .fc-day-grid-event span {
-    color: var(--bg-color-01);
-    font-weight: var(--header-extrabold);
-    text-transform: capitalize;
-}
-
-.fc-toolbar.fc-header-toolbar {
-    margin: 0;
-    padding: 1.5rem;
+.fc .fc-toolbar.fc-header-toolbar {
     background-color: var(--primary-color-light);
-    border-top-right-radius: var(--border-radius);
-    border-top-left-radius: var(--border-radius);
-    border-top: 1px solid var(--primary-color);
+    padding: 2rem;
+    margin-bottom: 0;
+}
+
+.fc-toolbar-title {
+    font-weight: var(--header-extrabold);
+}
+
+/* .fc-view-harness {
     border-right: 1px solid var(--primary-color);
     border-left: 1px solid var(--primary-color);
+    border-bottom: 1px solid var(--primary-color);
+} */
+
+.fc-theme-standard td, .fc-theme-standard th {
+    border: 1px solid var(--hover-color);
 }
 
-.fc {
-    border: 1px dashed var(--primary-color);
-    padding: 1rem;
-    background-color: var(--bg-color-02);
-    border-radius: var(--border-radius);
-}
-
-.fc th, .fc td {
-    border: 1px solid var(--primary-color);
-    /* background-color: var(--bg-color-01); */
-}
-
-.fc-ltr .fc-basic-view .fc-day-top .fc-day-number {
-    padding: 0.5rem;
-}
-
-.fc-day-header {
+.fc-col-header-cell {
     background-color: var(--primary-color);
-    
 }
 
-.fc-day-header span {
+.fc-col-header-cell-cushion {
     color: var(--bg-color-01);
     font-size: 20px;
 }
 
-.fc-agenda-view .fc-day-grid .fc-row .fc-content-skeleton {
-    padding-top: 1rem;
+.fc .fc-button-primary, .fc .fc-button-primary:disabled {
+    background: var(--primary-color);
+    border: none;
 }
 
-.fc-day-grid-event  {
-    margin-top: 0.3rem;
+.fc-button-group .fc-button-primary:hover, .fc-today-button:hover {
+    background-color: var(--bg-color-01);
 }
-
-.fc-icon {
+.fc .fc-button-primary:hover span, .fc-today-button:hover {
     color: var(--primary-color);
 }
 
-.fc-center h2 {
-    font-weight: var(--header-extrabold);
+
+.fc .fc-button-primary span {
+    color: var(--bg-color-01);
+}
+
+.fc-h-event .fc-event-title-container {
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.3rem;
+}
+
+.fc-h-event {
+    border: none;
+}
+
+.fc-event-title {
+    color: var(--bg-color-01);
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.fc-daygrid-event-harness {
+    margin-bottom: 0.3rem;
+    
+}
+
+.fc-daygrid-day-number, .fc-daygrid-day-top {
+    padding-right: 0.5rem;
+    font-weight: bold;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: var(--primary-color-light);
 }
 
 /* TRAININGS */
@@ -1951,3 +1991,21 @@ table tbody .bx {
 /* .datepicker table tr td.active.active {
     background-color: var(--primary-color);
 } */
+
+/* ADMIN POV */
+.users-container {
+    width: 90%;
+    position: relative;
+    top: 8rem;
+    padding-left: 6rem;
+}
+
+.users-container .submit-btn,  .users-container .deny-btn{
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+}
+
+/* MAP */
+.map {
+    height: 400px; width: 100%;
+}

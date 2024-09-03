@@ -24,7 +24,7 @@
     <input type="hidden" id="long" name="long" required>
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     <label for="map">Select Your Location:</label>
-    <div id="map" style="height: 400px; width: 100%;"></div>                
+    <div id="map" class="map"></div>                
     <p id="coordinates"></p>
     <div class="row">
         <div class="col">

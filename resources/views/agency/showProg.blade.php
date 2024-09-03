@@ -68,18 +68,21 @@
                         <div class="d-flex justify-content-start mb-5">
                             <div class="more-info">
                                 <h5>Schedule</h5>
+                                <!-- <div style="height:5rem;overflow-y:scroll"> -->
                                 <p>
                                     @foreach(explode(',', $program->schedule) as $date)
-                                    {{ \Carbon\Carbon::parse(trim($date))->format('M d, Y') }}
+                                    {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
                                     @if(!$loop->last)
-                                    |
-                                    @endif
-                                    @endforeach
+                                <p></p>
+                                @endif
+                                @endforeach
                                 </p>
+                                <!-- </div> -->
+
                             </div>
                             <div class="more-info">
                                 <h5>Participants</h5>
-                                <p>{{ number_format($program->participants) . ' Persons' }}</p>
+                                <p>{{ number_format($program->participants) . ' Persons' }}&nbsp;&nbsp; <span class="sub-text">({{$slots}} remaining)</span></p>
                             </div>
                         </div>
                         <!-- AGE -->
@@ -260,11 +263,16 @@
     function initMap() {
         var lat = parseFloat(document.getElementById('lat').value);
         var lng = parseFloat(document.getElementById('lng').value);
-        var latlng = { lat: lat, lng: lng };
+        var latlng = {
+            lat: lat,
+            lng: lng
+        };
         var geocoder = new google.maps.Geocoder();
 
         // Reverse geocode to get the address
-        geocoder.geocode({ location: latlng }, function(results, status) {
+        geocoder.geocode({
+            location: latlng
+        }, function(results, status) {
             var locationElement = document.getElementById('location');
             if (status === 'OK') {
                 if (results[0]) {

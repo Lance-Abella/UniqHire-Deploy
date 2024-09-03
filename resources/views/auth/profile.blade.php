@@ -154,11 +154,6 @@
         yearEstablishedInput.max = currentYear;
     });
 
-    function clearFileInput(id) {
-        var input = document.getElementById(id);
-        input.value = '';
-    }
-
     function initMap() {
         var lat = parseFloat(document.getElementById('lat').value);
         var lng = parseFloat(document.getElementById('long').value);

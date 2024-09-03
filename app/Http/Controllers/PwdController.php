@@ -175,6 +175,7 @@ class PwdController extends Controller
         $application = TrainingApplication::where('user_id', $userId)->get();
         $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
         $status = Enrollee::where('pwd_id', $userId)->get();
+        $disabilityId = auth()->user()->userInfo->disability_id;
 
         // Check if the user has completed the current program
         $isCompletedProgram = Enrollee::where('program_id', $program->id)
@@ -187,6 +188,16 @@ class PwdController extends Controller
         ->where('completion_status', 'Completed')
         ->pluck('program_id')
         ->toArray();
+
+        $userHasReviewed = PwdFeedback::where('program_id', $id)
+        ->where('pwd_id', $userId)
+        ->exists();
+
+        $userReview = PwdFeedback::where('program_id', $id)
+        ->where('pwd_id', $userId)
+        ->first();
+
+        $rating = $userReview ? $userReview->rating : 0;
 
         // Collect all dates from the schedules of applied programs excluding completed programs
         $appliedDates = $application->map(function ($app) use ($completedPrograms) {
@@ -202,7 +213,9 @@ class PwdController extends Controller
 
 
       // Fetch all programs
-    $allPrograms = TrainingProgram::all();
+      $allPrograms = TrainingProgram::whereHas('disability', function ($query) use ($disabilityId) {
+        $query->where('disability_id', $disabilityId);
+    })->get();
 
     // Filter programs with non-conflicting dates
     $nonConflictingPrograms = $allPrograms->filter(function ($program) use ($appliedDates) {
@@ -232,28 +245,56 @@ class PwdController extends Controller
             $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0; // Calculate progress percentage
             $program->crowdfund->progress = $progress;
         }
-        return view('pwd.show', compact('program', 'reviews', 'application', 'nonConflictingPrograms', 'enrollees', 'status', 'isCompletedProgram', 'slots'));
+        return view('pwd.show', compact('program', 'reviews', 'application', 'nonConflictingPrograms', 'enrollees', 'status', 'isCompletedProgram', 'slots', 'userHasReviewed', 'rating', 'userReview'));
     }
 
     public function showCalendar(Request $request)
     {
-        Log::info("calendar reached in showCalendar!");
-    
-        $userId = Auth()->user()->id;
-    
-        if ($request->ajax()) {
-            // Get the training programs based on the enrollee's application for the authenticated user
-            $trainingDates = TrainingProgram::whereIn('id', function ($query) use ($userId) {
+        Log::info("showCalendar method called for user ID: " . auth()->user()->id);
+
+        // Check if the request is an AJAX request
+        if ($request->expectsJson()) {
+            Log::info("AJAX request detected in showCalendar.");
+
+            $userId = auth()->user()->id;
+
+            // Fetch ongoing training programs for the authenticated user
+            $trainingPrograms = TrainingProgram::whereIn('id', function ($query) use ($userId) {
                 $query->select('program_id')
                     ->from('enrollees')
                     ->where('pwd_id', $userId)
                     ->where('completion_status', 'Ongoing');
-            })
-            ->get(['id', 'title', 'start', 'end']);
-            Log::info("TrainingDataes Ni:", $trainingDates->toArray());
-            return response()->json($trainingDates);
+            })->get(['id', 'title', 'schedule']); 
+
+            Log::info("Training Programs Retrieved:", $trainingPrograms->toArray());
+
+            $events = [];
+
+            // Loop through each training program and format the schedule dates
+            foreach ($trainingPrograms as $program) {
+                $scheduleDates = explode(',', $program->schedule);
+
+                foreach ($scheduleDates as $date) {
+                    // Convert MM/DD/YYYY to YYYY-MM-DD
+                    $dateParts = explode('/', $date);
+                    if (count($dateParts) == 3) {
+                        $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
+                        $events[] = [
+                            'id' => $program->id,
+                            'title' => $program->title,
+                            'start' => $formattedDate, // FullCalendar expects `start` for all-day events
+                            'allDay' => true
+                        ];
+                    }
+                }
+            }
+
+            Log::info("Events:", $events);
+
+            return response()->json($events); // Return events as JSON for AJAX request
         }
-        
+
+        // If not an AJAX request, return the view
         return view('pwd.calendar');
     }
 
@@ -284,12 +325,27 @@ class PwdController extends Controller
         ]);
 
         try {
-            PwdFeedback::create([
-                'program_id' => $request->program_id,
-                'pwd_id' => $request->user()->id,
-                'rating' => $request->rating,
-                'content' => $request->content,
-            ]);
+            $userId = $request->user()->id;
+
+            // Check if the user has already reviewed this program
+            $existingReview = PwdFeedback::where('program_id', $request->program_id)
+                ->where('pwd_id', $userId)
+                ->first();
+            if ($existingReview) {
+                // Update existing review
+                $existingReview->update([
+                    'rating' => $request->rating,
+                    'content' => $request->content,
+                ]);
+            } else {
+                // Create a new review
+                PwdFeedback::create([
+                    'program_id' => $request->program_id,
+                    'pwd_id' => $userId,
+                    'rating' => $request->rating,
+                    'content' => $request->content,
+                ]);
+            }
             // return response()->json(['success' => true, 'message' => 'Feedback submitted successfully.']);
             return back()->with('success', 'Thank you for leaving us a review!');
         } catch (\Exception $e) {
