@@ -54,8 +54,7 @@ class NewTrainingProgramNotification extends Notification
         return [
             'title' => $this->trainingProgram->title,
             'description' => $this->trainingProgram->description,
-            'start_date' => $this->trainingProgram->start,
-            'end_date' => $this->trainingProgram->end,
+            'start_date' => $this->trainingProgram->schedule,
             'training_program_id' => $this->trainingProgram->id,
             'agency_name' => $this->trainingProgram->agency->userInfo->name,
             'url' => url('training-details/' . $this->trainingProgram->id),

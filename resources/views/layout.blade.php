@@ -238,9 +238,9 @@
                                     notification.data.program_title +
                                     '</span>' +
                                     '<div class="notif-content sub-text">' +
-                                    ' has been accepted by'
-                                '<span class="notif-owner text-cap">' +
-                                notification.data.agency_name +
+                                    ' has been accepted by ' +
+                                    '<span class="notif-owner text-cap">' +
+                                    notification.data.agency_name +
                                     '</span>' +
                                     '. Click to view details.' +
                                     '</div>'
