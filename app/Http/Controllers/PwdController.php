@@ -115,26 +115,40 @@ class PwdController extends Controller
         $userSkills = SkillUser::where('user_id', $user->id)->get();
         $totalRating = PwdFeedback::where('program_id', $program->id)->sum('rating');
         $ratingCount = PwdFeedback::where('program_id', $program->id)->count();
-        $programCount =
-            $averageRating = $ratingCount > 0 ? $totalRating / $ratingCount : 0;
-        $lat1 = $user->latitude;
-        $lng1 = $user->longitude;
-        $lat2 = $program->latitude;
-        $lng2 = $program->longitude;
+        $filteredPrograms = TrainingProgram::whereHas('disability', function ($q) use ($user) {
+            $q->where('disability_id', $user->disability_id);
+        })->get();
+        $averageRating = $ratingCount > 0 ? $totalRating / $ratingCount : 0;
 
-        $distance = $this->calculateDistance($lat1, $lng1, $lat2, $lng2);
+        $distances = [];
 
-        Log::info('Calculated Distance: ' . $distance);
-
-        if ($distance <= 20) {
-            $similarityScore += 30;
-        } else if ($distance > 20 && $distance <= 40) {
-            $similarityScore += 20;
-        } else if ($distance > 40 && $distance <= 60) {
-            $similarityScore += 10;
-        } else {
-            $similarityScore += 5;
+        foreach ($filteredPrograms as $prog) {
+            $distanceValue = $this->calculateDistance($user->latitude, $user->longitude, $prog->latitude, $prog->longitude);
+            $distances[] = [
+                'program_id' => $prog->id,
+                'distance' => $distanceValue
+            ];
         }
+
+        // Sort distances by the 'distance' value in ascending order
+        usort($distances, function ($a, $b) {
+            return $a['distance'] <=> $b['distance'];
+        });
+
+        $numberOfDistances = count($distances);
+
+        $difference = $numberOfDistances > 1 ? 30 / ($numberOfDistances) : 0;
+
+        // Loop through distances to find the matching program ID
+        foreach ($distances as $index => $distanceItem) {
+            if ($distanceItem['program_id'] == $program->id) {
+                $similarityScore += max(0, 30 - ($difference * $index));
+                break;
+            }
+        }
+
+
+
 
         if ($user->age >= $program->start_age && $user->age <= $program->end_age) {
             $similarityScore += 20;

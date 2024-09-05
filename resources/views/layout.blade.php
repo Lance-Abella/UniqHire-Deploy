@@ -165,8 +165,11 @@
                     </nav>
                 </div>
                 @if (Auth::user()->userInfo->skills->isEmpty() && Auth::user()->hasRole('PWD'))
-                <div class="d-flex justify-content-center">
-                    <div class="alert bg-success-subtle">
+                <div class="alert bg-success-subtle d-flex justify-content-center alert-dismissible fade show" role="alert">
+                    <div class="close-btn d-flex justify-content-center align-items-center">
+                        <button type="button" class="border-0" data-bs-dismiss="alert" aria-label="Close"><i class='bx bx-minus'></i></button>
+                    </div>
+                    <div class="">
                         Add skill/s to your profile to get better recommendations. <a href="{{route('profile')}}">Check and Edit Profile.</a>
                     </div>
                 </div>

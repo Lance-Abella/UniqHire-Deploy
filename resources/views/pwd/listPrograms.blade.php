@@ -43,14 +43,11 @@
 
             <div class="prog-grid" id="prog-grid">
                 <div class="mb-4">
-                    <div class="container recommend-label-container mb-2">
+                    <div class="recommend-label-container">
                         <span class="recommend-label">Recommended</span>
                     </div>
                 </div>
-
-
                 @forelse ($paginatedItems as $ranked)
-
                 <div class="row prog-card mb-2" data-program-id="{{ $ranked['program']->id }}" data-lat="{{ $ranked['program']->latitude }}" data-lng="{{ $ranked['program']->longitude }}">
                     <input type="text" name="" value="{{$ranked['similarity']}}" id="">
                     <div class="col ">

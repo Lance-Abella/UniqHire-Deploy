@@ -26,7 +26,9 @@ class AuthController extends Controller
         $user = User::find($id);
         $levels = EducationLevel::all();
         $disabilities = Disability::all();
-        $skills = Skill::all();
+        $addedSkillIds = SkillUser::where('user_id', $id)->pluck('skill_id')->toArray();
+        $skills = Skill::whereNotIn('id', $addedSkillIds)->get();
+        // $skills = Skill::all();
         $skilluser = SkillUser::where('user_id', $id)->get();
         $experiences = Experience::where('user_id', $id)->get();
         $certifications = Enrollee::where('pwd_id', $id)->where('completion_status', 'Completed')->get();
