@@ -1570,20 +1570,29 @@ table tbody .bx {
     z-index:100;
 }
 
-/* .alert .close-btn {
+.alert .close-btn {
     position: absolute;
     bottom: 4.3rem;
     left: 28.5rem;
     background-color: var(--primary-color);
     border-radius: 100%;
     cursor: pointer;
+    width: 2rem;
+    height: 2rem;
+}
+
+.alert .close-btn button {
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .alert .close-btn .bx {
-    font-size: 30px;
+    font-size: 25px;
     color: var(--bg-color-01);
     font-weight: 700;
-} */
+}
 
 .alert a {
     font-weight: 700;
