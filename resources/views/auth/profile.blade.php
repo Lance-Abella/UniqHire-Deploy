@@ -6,9 +6,9 @@
     <div class="profile-info mb-4">
         <div class="profile-pic" @if (!empty($user->userInfo->profile_path)) style=" background-image: url({{ asset($user->userInfo->profile_path) }}); background-repeat: no-repeat; background-size: cover; " @endif>
             @if (!empty($user->userInfo->profile_path))
-            <form action="{{route('remove-pic')}}" method="POST" class="d-flex justify-content-center">
+            <form id="remove-pic" action="{{route('remove-pic')}}" method="POST" class="d-flex justify-content-center">
                 @csrf
-                <button type="submit" class="deny-btn border-0"><i class='bx bx-trash'></i></button>
+                <button type="submit" class="deny-btn border-0" onclick="confirmRemoveProfile(event, 'remove-pic')"><i class='bx bx-trash'></i></button>
             </form>
             @else
             <span>{{ strtoupper(substr($user->userInfo->name, 0, 1)) }}</span>
@@ -154,10 +154,30 @@
         yearEstablishedInput.max = currentYear;
     });
 
+    function confirmRemoveProfile(event, formId) {
+        event.preventDefault();
+        Swal.fire({
+            title: "Confirmation",
+            text: "Do you really want to remove your profile picture?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirm"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
+    }
+
     function initMap() {
         var lat = parseFloat(document.getElementById('lat').value);
         var lng = parseFloat(document.getElementById('long').value);
-        var latlng = { lat: lat, lng: lng };
+        var latlng = {
+            lat: lat,
+            lng: lng
+        };
 
         // Create the map, centered at the initial location
         var map = new google.maps.Map(document.getElementById('map'), {
@@ -169,7 +189,7 @@
         var marker = new google.maps.Marker({
             position: latlng,
             map: map,
-            draggable: true,  
+            draggable: true,
             title: 'Drag me to your location!'
         });
 
@@ -185,12 +205,12 @@
             document.getElementById('coordinates').innerText = 'Latitude: ' + lat + ', Longitude: ' + lng;
         }
 
-         // Place the marker where the user clicks on the map
+        // Place the marker where the user clicks on the map
         map.addListener('click', function(event) {
             var clickedLocation = event.latLng;
-            marker.setPosition(clickedLocation); 
-            marker.setMap(map); 
-            updateCoordinates(clickedLocation); 
+            marker.setPosition(clickedLocation);
+            marker.setMap(map);
+            updateCoordinates(clickedLocation);
         });
 
         // Automatically update the coordinates when the marker is dragged
@@ -255,7 +275,9 @@
         var geocoder = new google.maps.Geocoder();
 
         // Reverse geocode to get the address
-        geocoder.geocode({ location: latlng }, function(results, status) {
+        geocoder.geocode({
+            location: latlng
+        }, function(results, status) {
             var locationElement = document.getElementById('location');
             if (status === 'OK') {
                 if (results[0]) {
