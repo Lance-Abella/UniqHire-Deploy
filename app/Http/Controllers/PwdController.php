@@ -115,7 +115,8 @@ class PwdController extends Controller
         $userSkills = SkillUser::where('user_id', $user->id)->get();
         $totalRating = PwdFeedback::where('program_id', $program->id)->sum('rating');
         $ratingCount = PwdFeedback::where('program_id', $program->id)->count();
-        $averageRating = $ratingCount > 0 ? $totalRating / $ratingCount : 0;
+        $programCount =
+            $averageRating = $ratingCount > 0 ? $totalRating / $ratingCount : 0;
         $lat1 = $user->latitude;
         $lng1 = $user->longitude;
         $lat2 = $program->latitude;
@@ -231,6 +232,7 @@ class PwdController extends Controller
         Log::info('NonConflictPrograms:', $nonConflictingPrograms);
 
         $enrolleeCount = Enrollee::where('program_id', $program->id)
+            ->where('completion_status', 'Ongoing')
             ->count();
 
         $slots = $program->participants - $enrolleeCount;
