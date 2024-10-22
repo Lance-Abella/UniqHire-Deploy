@@ -5,33 +5,10 @@
 @section('page-content')
 
 <div class="pwd-browse-prog">
-    <div class="filter-container">
-        <form action="{{ route('pwd-list-program') }}" method="GET" id="filterForm">
-            <div class="d-flex justify-content-between mb-3">
-                <h3>Filter</h3>
-                <i class='bx bx-filter-alt fs-3 sub-text'></i>
-            </div>
-            <div class="mb-3">
-                <span>
-                    <p>Education Level</p>
-                </span>
-                @foreach($educations as $education)
-                @if($education->id !== 1)
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{$education->education_name}}" id="flexCheckChecked{{$loop->index}}" name="education[]" onchange="submitForm()" {{ in_array($education->education_name, request()->input('education', [])) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
-                        {{$education->education_name}} &nbsp;<span class="count sub-text">({{ $educationCounts[$education->id]->program_count }})</span>
-                    </label>
-                </div>
-                @endif
-                @endforeach
-            </div>
-        </form>
-    </div>
     <div class="d-flex flex-column align-items-center browse-area">
         <div class="mb-4 searchbar-container">
             <div class="col d-flex justify-content-center">
-                <form role="search" action="{{ route('pwd-list-program') }}" method="GET" id="searchForm">
+                <form role="search" action="{{ route('list-of-tp') }}" method="GET" id="searchForm">
                     <div class="d-flex searchbar">
                         <input class="form-control" type="search" placeholder="Search Training Programs" aria-label="Search" id="searchInput" onchange="checkAndSubmit()" name="search" value="{{ request('search') }}">
                         <button class="submit-btn border-0" type="submit">Search</button>

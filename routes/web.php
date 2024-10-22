@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PwdController;
+use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\UserInfoController;
 use App\Http\Controllers\NotificationController;
 use App\Models\UserInfo;
@@ -84,4 +85,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/training-programs', [PwdController::class, 'showTrainings'])->middleware('role:PWD')->name('trainings');
     Route::get('/training-program/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('show-details');
     Route::post('/training-program/rate', [PwdController::class, 'rateProgram'])->middleware('role:PWD')->name('rate-program');
+
+    //SPONSOR Middleware
+    Route::get('/browse/list-of-programs', [SponsorController::class, 'showTrainingLists'])->middleware('role:Sponsor')->name('list-of-tp');
 });
