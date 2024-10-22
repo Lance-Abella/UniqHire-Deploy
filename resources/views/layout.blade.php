@@ -7,6 +7,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <title>UniqHire | @yield('page-title')</title>
         @include('slugs.links')
+        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
         <link rel="icon" href="{{ asset('images/tab-icon.png') }}">
 
     </head>
