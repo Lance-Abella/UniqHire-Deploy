@@ -12,6 +12,8 @@ class NotificationController extends Controller
     public function getNotifications()
     {
         $notifications = auth()->user()->unreadNotifications;
+        // Log::info('Notifications fetched for user: ' . auth()->user()->id);
+        // Log::info($notifications);
         return response()->json($notifications);
     }
 

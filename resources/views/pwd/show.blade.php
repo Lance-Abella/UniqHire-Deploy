@@ -104,9 +104,9 @@
                                 @foreach(explode(',', $program->schedule) as $date)
                                 {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
                                 @if(!$loop->last)
-                                <p></p>
-                                @endif
-                                @endforeach
+                            <p></p>
+                            @endif
+                            @endforeach
                             </p>
                         </div>
                         <div class="more-info">
@@ -139,7 +139,7 @@
                             </ul>
                         </div>
                         <div class="more-info">
-                            <h5>Education Level</h5>
+                            <h5>Education Level (at least)</h5>
                             <span class="match-info">{{ $program->education->education_name }}</span>
                         </div>
                     </div>
