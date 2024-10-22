@@ -261,7 +261,7 @@ class AuthController extends Controller
         } else {
             $email = $request->email;
         }
-        
+
         Log::info("Kaabot ari!");
         $request->validate([
             'password' => 'required|string|min:4|max:255|confirmed',
@@ -276,8 +276,8 @@ class AuthController extends Controller
             'founder' => 'nullable|string|max:255',
             'year_established' => 'nullable|integer|min:1000|max:3000',
             'email' => 'required|email',
-            'skills' => 'required|array|min:1',
-            'skills.*' => 'exists:skills,id',
+            // 'skills' => 'required|array|min:1',
+            // 'skills.*' => 'exists:skills,id',
             // 'role' => 'required|string|exists:roles,id',
         ]);
         Log::info("Nalapas sa validation!");
@@ -293,7 +293,7 @@ class AuthController extends Controller
         $user->role()->attach($request->role);
         Log::info("Registration reaches here!");
 
-        $userInfo = UserInfo::create([
+        UserInfo::create([
             'user_id' => $user->id,
             'disability_id' => $request->disability,
             'educational_id' => $request->education,
@@ -307,7 +307,7 @@ class AuthController extends Controller
             'year_established' => $request->year_established ?? 0,
         ]);
 
-        $userInfo->skills()->attach($request->skills);
+        // $userInfo->skills()->attach($request->skills);
 
         // return redirect()->route('login-page');
         return redirect()->route('login-page')->with('success', 'Account registered successfully!');

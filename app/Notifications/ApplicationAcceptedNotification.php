@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\TrainingProgram;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -16,7 +17,7 @@ class ApplicationAcceptedNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct($trainingProgram)
+    public function __construct(TrainingProgram $trainingProgram)
     {
         $this->trainingProgram = $trainingProgram;
     }
@@ -48,7 +49,7 @@ class ApplicationAcceptedNotification extends Notification
      *
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toArray($notifiable)
     {
         return [
             'program_title' => $this->trainingProgram->title,

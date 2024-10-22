@@ -50,12 +50,14 @@ class PwdApplicationNotification extends Notification
      *
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable)
+    public function toArray($notifiable)
     {
         return [
+            'title' => $this->trainingApplication->trainingProgram->title,
             'training_program_id' => $this->trainingApplication->training_program_id,
             'user_id' => $this->trainingApplication->user_id,
             'status' => $this->trainingApplication->application_status,
+            'url' => url('/show-program/' . $this->trainingApplication->id),
         ];
     }
 }
