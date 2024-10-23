@@ -16,15 +16,15 @@
 
         </div>
         <div class="d-flex justify-content-between header">
-            <div class="details row">
-                <div class="col">
+            <div class="details ">
+                <div class="">
                     <p class="text-cap profile-name">{{ $user->userInfo->name }}</p>
                     <p class="text-cap" id="location"><i class='bx bx-map sub-text'></i>Loading address...</p>
                     <input type="hidden" id="lat" value="{{ $latitude }}">
                     <input type="hidden" id="lng" value="{{ $longitude }}">
                 </div>
                 @if($user->hasRole('PWD'))
-                <div class="col">
+                <div class="">
                     <p class="text-cap age"><strong>Age:</strong>
                         @if ($user->userInfo->age != 0)
                         {{ $user->userInfo->age }} years old
@@ -36,7 +36,7 @@
                     <p class="text-cap"> <strong>Disability:</strong>&nbsp;&nbsp;&nbsp;<span class="match-info">{{ $user->userInfo->disability->disability_name }}</span></p>
                 </div>
                 @elseif($user->hasRole('Training Agency'))
-                <div class="col">
+                <div class="">
                     <p class="text-cap age"><strong>Founder:</strong>
                         @if ($user->userInfo->founder != null)
                         {{ $user->userInfo->founder }}
@@ -119,29 +119,28 @@
                 <div>
                     @include('slugs.editExperiences')
                 </div>
-                @elseif($user->hasRole('Training Agency'))
-                <div class="bio-item exp">
-                    <div>
-                        <h4 class="mb-3">Awards & Recognitions</h4>
-                        @if ($user->userInfo->awards != null)
-                        <p>{!! nl2br(e($user->userInfo->awards)) !!}</p>
-                        @else
-                        <p class="about sub-text">No data yet</p>
-                        @endif
-                    </div>
-                    <div>
-                        <h4 class="mb-3">Affiliations</h4>
-                        @if ($user->userInfo->affiliations != null)
-                        <p>{!! nl2br(e($user->userInfo->affiliations)) !!}</p>
-                        @else
-                        <p class="about sub-text">No data yet</p>
-                        @endif
-                    </div>
-                </div>
-                @endif
             </div>
+            @elseif($user->hasRole('Training Agency'))
+            <div class="bio-item exp">
+                <div>
+                    <h4 class="mb-3">Awards & Recognitions</h4>
+                    @if ($user->userInfo->awards != null)
+                    <p>{!! nl2br(e($user->userInfo->awards)) !!}</p>
+                    @else
+                    <p class="about sub-text">No data yet</p>
+                    @endif
+                </div>
+                <div>
+                    <h4 class="mb-3">Affiliations</h4>
+                    @if ($user->userInfo->affiliations != null)
+                    <p>{!! nl2br(e($user->userInfo->affiliations)) !!}</p>
+                    @else
+                    <p class="about sub-text">No data yet</p>
+                    @endif
+                </div>
+            </div>
+            @endif
         </div>
-
     </div>
 </div>
 @endsection

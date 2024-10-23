@@ -32,117 +32,123 @@
             });
         </script>
         @endif
-        <div class="layout-container">
+        <div class="layout-container 
+        @if (Auth::check()) grid-container @endif
+        ">
             @if (Auth::check())
-            <nav class="sidebar">
-                <header class="">
-                    <div class="logo-sidebar">
-                        <span class="logo-img">
-                            <!-- <img src="{{ asset('images/tab-icon.png')}} " alt=""> -->
-                            <i class='bx bx-menu side-icon'></i>
-                        </span>
-                        <div class="logo-name">
+            <div class="grid-left">
+                <div class="sidebar-sticky">
+                    <nav class="sidebar">
+                        <header class="">
+                            <div class="logo-sidebar">
+                                <span class="logo-img">
+                                    <!-- <img src="{{ asset('images/tab-icon.png')}} " alt=""> -->
+                                    <i class='bx bx-menu side-icon'></i>
+                                </span>
+                                <div class="logo-name">
+                                </div>
+                            </div>
+                        </header>
+                        <div class="sidebar-menu">
+                            <ul class="">
+                                <li class="side-item">
+                                    <a href="{{ route('profile')}}" class="side-item-link {{ request()->routeIs('profile') ? 'active' : '' }}">
+                                        <i class='bx bx-user-circle side-icon'></i>
+                                        <span class="side-title">Profile</span>
+                                    </a>
+                                </li>
+
+                                <!-- PWD ROLE ACCESS -->
+                                @if (Auth::user()->hasRole('PWD'))
+                                <li class="side-item">
+                                    <a href="{{route('trainings')}}" class="side-item-link trainings-drop {{ request()->routeIs('trainings', 'show-details') ? 'active' : '' }}">
+                                        <i class='bx bxs-school side-icon'></i>
+                                        <span class="side-title">Trainings</span>
+                                    </a>
+                                </li>
+                                <li class="side-item">
+                                    <a href="{{ route('pwd-calendar') }}" class="side-item-link {{ request()->routeIs('pwd-calendar') ? 'active' : '' }}">
+                                        <i class='bx bx-calendar side-icon'></i>
+                                        <span class="side-title">Calendar</span>
+                                    </a>
+                                </li>
+                                <li class="side-item">
+                                    <a href="#" class="side-item-link">
+                                        <i class='bx bx-cog side-icon'></i>
+                                        <span class="side-title">Settings</span>
+                                    </a>
+                                </li>
+
+                                @endif
+
+                                <!-- ADMIN ROLE ACCESS -->
+                                @if (Auth::user()->hasRole('Admin'))
+                                <li class="side-item"><a href="{{route('pwd-list')}}" class="side-item-link">
+                                        <i class='bx bx-handicap side-icon'></i>
+                                        <span class="side-title">PWDs</span>
+                                    </a></li>
+                                <li class="side-item"><a href="{{route('trainer-list')}}" class="side-item-link">
+                                        <i class='bx bxs-school side-icon'></i>
+                                        <span class="side-title">Training Agencies</span>
+                                    </a></li>
+                                <li class="side-item"><a href="{{route('employee-list')}}" class="side-item-link">
+                                        <i class='bx bx-briefcase-alt-2 side-icon'></i>
+                                        <span class="side-title">Employers</span>
+                                    </a></li>
+                                <li class="side-item"><a href="{{route('sponsor-list')}}" class="side-item-link">
+                                        <i class='bx bx-dollar-circle side-icon'></i>
+                                        <span class="side-title">Sponsors</span>
+                                    </a></li>
+                                <li class="side-item"><a href="{{route('skill-list')}}" class="side-item-link">
+                                        <i class='bx bxs-brain side-icon'></i>
+                                        <span class="side-title">Manage Skills</span>
+                                    </a></li>
+                                <li class="side-item"><a href="" class="side-item-link">
+                                        <i class='bx bx-cog side-icon'></i>
+                                        <span class="side-title">Settings</span>
+                                    </a></li>
+                                <!-- <li><a href="#"><i class='bx bx-briefcase-alt-2 side-icon'></i><span class="side-title">Employers</span></a></li> -->
+                                @endif
+                                <!-- TRAINER ROLE ACCESS -->
+                                @if (Auth::user()->hasRole('Training Agency'))
+                                <li class="side-item">
+                                    <a href="{{route('programs-manage')}}" class="side-item-link {{ request()->routeIs('programs-manage', 'programs-add', 'programs-edit', 'programs-show') ? 'active' : '' }}">
+                                        <i class='bx bxs-school side-icon'></i>
+                                        <span class="side-title">Training Programs</span>
+                                    </a>
+                                </li>
+                                <li class="side-item">
+                                    <a href="{{ route('agency-calendar') }}" class="side-item-link {{ request()->routeIs('agency-calendar') ? 'active' : '' }}">
+                                        <i class='bx bx-calendar side-icon'></i>
+                                        <span class="side-title">Calendar</span>
+                                    </a>
+                                </li>
+                                @endif
+
+                                <!-- <li><a href="#"><i class='bx bx-cog side-icon'></i><span class="side-title">Sponsor</span></a></li> -->
+                            </ul>
+                            <div class="sidebar-bottom">
+                                <li class=""><a href="{{ url('/logout')}}" class="side-item-link"><i class='bx bx-log-out-circle side-icon'></i><span class="side-title">Logout</span></a></li>
+                            </div>
                         </div>
-                    </div>
-                </header>
-                <div class="sidebar-menu">
-                    <ul class="">
-                        <li class="side-item">
-                            <a href="{{ route('profile')}}" class="{{ request()->routeIs('profile') ? 'active' : '' }}">
-                                <i class='bx bx-user-circle side-icon'></i>
-                                <span class="side-title">Profile</span>
-                            </a>
-                        </li>
-
-                        <!-- PWD ROLE ACCESS -->
-                        @if (Auth::user()->hasRole('PWD'))
-                        <li class="side-item">
-                            <a href="{{route('trainings')}}" class="trainings-drop {{ request()->routeIs('trainings', 'show-details') ? 'active' : '' }}">
-                                <i class='bx bxs-school side-icon'></i>
-                                <span class="side-title">Trainings</span>
-                            </a>
-                        </li>
-                        <li class="side-item">
-                            <a href="{{ route('pwd-calendar') }}" class="{{ request()->routeIs('pwd-calendar') ? 'active' : '' }}">
-                                <i class='bx bx-calendar side-icon'></i>
-                                <span class="side-title">Calendar</span>
-                            </a>
-                        </li>
-                        <li class="side-item">
-                            <a href="#">
-                                <i class='bx bx-cog side-icon'></i>
-                                <span class="side-title">Settings</span>
-                            </a>
-                        </li>
-
-                        @endif
-
-                        <!-- ADMIN ROLE ACCESS -->
-                        @if (Auth::user()->hasRole('Admin'))
-                        <li class="side-item"><a href="{{route('pwd-list')}}">
-                                <i class='bx bx-handicap side-icon'></i>
-                                <span class="side-title">PWDs</span>
-                            </a></li>
-                        <li class="side-item"><a href="{{route('trainer-list')}}">
-                                <i class='bx bxs-school side-icon'></i>
-                                <span class="side-title">Training Agencies</span>
-                            </a></li>
-                        <li class="side-item"><a href="{{route('employee-list')}}">
-                                <i class='bx bx-briefcase-alt-2 side-icon'></i>
-                                <span class="side-title">Employers</span>
-                            </a></li>
-                        <li class="side-item"><a href="{{route('sponsor-list')}}">
-                                <i class='bx bx-dollar-circle side-icon'></i>
-                                <span class="side-title">Sponsors</span>
-                            </a></li>
-                        <li class="side-item"><a href="{{route('skill-list')}}">
-                                <i class='bx bxs-brain side-icon'></i>
-                                <span class="side-title">Manage Skills</span>
-                            </a></li>
-                        <li class="side-item"><a href="">
-                                <i class='bx bx-cog side-icon'></i>
-                                <span class="side-title">Settings</span>
-                            </a></li>
-                        <!-- <li><a href="#"><i class='bx bx-briefcase-alt-2 side-icon'></i><span class="side-title">Employers</span></a></li> -->
-                        @endif
-                        <!-- TRAINER ROLE ACCESS -->
-                        @if (Auth::user()->hasRole('Training Agency'))
-                        <li class="side-item">
-                            <a href="{{route('programs-manage')}}" class="{{ request()->routeIs('programs-manage', 'programs-add', 'programs-edit', 'programs-show') ? 'active' : '' }}">
-                                <i class='bx bxs-school side-icon'></i>
-                                <span class="side-title">Training Programs</span>
-                            </a>
-                        </li>
-                        <li class="side-item">
-                            <a href="{{ route('agency-calendar') }}" class="{{ request()->routeIs('agency-calendar') ? 'active' : '' }}">
-                                <i class='bx bx-calendar side-icon'></i>
-                                <span class="side-title">Calendar</span>
-                            </a>
-                        </li>
-                        @endif
-
-                        <!-- <li><a href="#"><i class='bx bx-cog side-icon'></i><span class="side-title">Sponsor</span></a></li> -->
-                    </ul>
-                    <div class="sidebar-bottom">
-                        <li class=""><a href="{{ url('/logout')}}"><i class='bx bx-log-out-circle side-icon'></i><span class="side-title">Logout</span></a></li>
-                    </div>
+                    </nav>
                 </div>
-            </nav>
-            <div class="">
-                <div class=" content-container">
+            </div>
+            <div class="grid-right">
+                <div class="content-container nav-sticky">
                     <nav class="navbar border-bottom">
                         <div class="navbar-container">
                             <div>
                                 <ul class="d-flex align-items-center">
                                     <li class="logo-container"><a href="#"><img class="logo" src="{{ asset('images/logo.png') }}" alt=""></a></li>
-                                    <li class="nav-item"><a href="{{route('home')}}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
+                                    <li class="nav-item "><a href="{{route('home')}}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
                                     @if (Auth::user()->hasRole('PWD'))
-                                    <li class="nav-item"><a href="{{route('pwd-list-program')}}" class="{{ request()->routeIs('pwd-list-program', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
-                                    <li class="nav-item"><a href="">Find Work</a></li>
+                                    <li class="nav-item "><a href="{{route('pwd-list-program')}}" class="{{ request()->routeIs('pwd-list-program', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
+                                    <li class="nav-item "><a href="">Find Work</a></li>
                                     @endif
                                     @if (Auth::user()->hasRole('Sponsor'))
-                                    <li class="nav-item"><a href="{{route('list-of-tp')}}" class="{{ request()->routeIs('list-of-tp', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
-                                    <li class="nav-item"><a href="">Find Work</a></li>
+                                    <li class="nav-item "><a href="{{route('list-of-tp')}}" class="{{ request()->routeIs('list-of-tp', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
+                                    <li class="nav-item "><a href="">Find Work</a></li>
                                     @endif
 
                                     <!-- <li class="nav-item"><a href="{{ route('home') }}/#about" class="">About</a></li> -->
@@ -179,13 +185,17 @@
                 </div>
                 @endif
 
-                <div class="content-container">
+                <div class="content-container page-content">
                     @yield('page-content')
                 </div>
+                @include('slugs.footer')
             </div>
             @else
-            <div class="container-fluid">
+            <div class="">
                 @yield('auth-content')
+                @if(Route::currentRouteName() == 'landing')
+                @include('slugs.footer')
+                @endif
             </div>
             @endif
         </div>
