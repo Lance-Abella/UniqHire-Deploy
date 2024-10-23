@@ -191,8 +191,11 @@
                 @include('slugs.footer')
             </div>
             @else
-            <div class="container-fluid">
+            <div class="">
                 @yield('auth-content')
+                @if(Route::currentRouteName() == 'landing')
+                @include('slugs.footer')
+                @endif
             </div>
             @endif
         </div>

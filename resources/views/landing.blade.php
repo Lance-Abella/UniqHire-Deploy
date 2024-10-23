@@ -7,13 +7,17 @@
         padding-left: 0;
     }
 
+    .landing {
+        padding: 0 1rem;
+    }
+
     .nav-item .submit-btn {
         padding: 0.5rem;
         width: 7rem;
         margin-right: 4rem;
     }
 </style>
-<div class="homepage content-container">
+<div class=" mb-2">
     <nav class="navbar border-bottom">
         <div class="navbar-container">
             <div>
@@ -33,9 +37,9 @@
         </div>
     </nav>
 </div>
-<div class="home-container" style="padding-left: 2rem;">
-    <div class="row home-top border-bottom">
-        <div class="col-5 home-captions">
+<div class="home-container landing hompage">
+    <div class="welcome mb-4 border-bottom">
+        <div class="welcome-left">
             <div class="header-caption mb-3">
                 <h1 class="header-text">Find Opportunity in UniqHire</h1>
             </div>
@@ -43,44 +47,40 @@
                 <p>Welcome to Uniqhire, where every ability finds opportunity! Creating bridges to people with disabilities, fostering inclusivity and celebrating diverse talents. Join us in building a world where everyone thrives!</p>
             </div>
             <div class="">
-                <a href="{{route('login-page')}}" class="btn-outline">Explore</a>
+                <button type="button" class="btn-outline">Explore</button>
             </div>
-            </form>
         </div>
-        <div class="col">
-            <div id="carouselExample" class="carousel slide carousel-container">
-                <div class="carousel-inner">
-                    @foreach ( $images as $index => $image )
-                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                        <img src="{{ asset($image) }}" class="d-block w-100" alt="...">
+        <div id="carouselExample" class="carousel slide carousel-container welcome-right">
+            <div class="carousel-inner">
+                @foreach ( $images as $index => $image )
+                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                    <img src="{{ asset($image) }}" class="d-block w-100" alt="...">
 
-                    </div>
-                    @endforeach
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+                @endforeach
             </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
     </div>
-    <div class="row home-row mt-5 home-top">
-        <div class="col">
+    <div class="mission-vision border-bottom">
+        <div class="mission">
             <h2 class="mb-4">Mission</h2>
             <p>UniqHire aims to bridge the gap between PWD users, Training Agencies, Companies, and Sponsors by providing a user-friendly platform that simplifies transactions, enhances communication, and promotes equal opportunities for all stakeholders in a transparent and efficient manner.</p>
         </div>
-        <div class="col-1"></div>
-        <div class="col mb-4">
+        <div class="vision ">
             <h2 class="mb-4">Vision</h2>
             <p>To create an inclusive, accessible, and empowering platform where PWD users, Training Agencies, Companies, and Sponsors seamlessly connect and collaborate, fostering opportunities for growth, employment, and mutual support.</p>
         </div>
     </div>
-    <div class="row d-flex align-items-center home-row mb-5 home-top border-bottom text-center count-user-row">
-        <div class="col">
+    <div class="statistics mb-4 border-bottom">
+        <div class="stats-1 d-flex align-items-center justify-content-center">
             <div class="d-flex flex-column justify-content-center text-center">
                 <i class='bx bx-handicap count-index-icon'></i>
                 <span class="user-count">
@@ -89,7 +89,7 @@
                 </span>
             </div>
         </div>
-        <div class="col">
+        <div class="stats-2 d-flex align-items-center justify-content-center">
             <div class="d-flex flex-column justify-content-center text-center">
                 <i class='bx bxs-school count-index-icon'></i>
                 <span class="user-count">
@@ -98,7 +98,7 @@
                 </span>
             </div>
         </div>
-        <div class="col">
+        <div class="stats-3 d-flex align-items-center justify-content-center">
             <div class="d-flex flex-column justify-content-center text-center">
                 <i class='bx bx-briefcase-alt-2 count-index-icon'></i>
                 <span class="user-count">
@@ -107,7 +107,7 @@
                 </span>
             </div>
         </div>
-        <div class="col">
+        <div class="stats-4 d-flex align-items-center justify-content-center">
             <div class="d-flex flex-column justify-content-center text-center">
                 <i class='bx bx-money-withdraw count-index-icon'></i>
                 <span class="user-count">
@@ -117,107 +117,17 @@
             </div>
         </div>
     </div>
-    <!-- <hr> -->
-
-    <div class="row home-row mb-5 home-top border-bottom">
-        <div class="col " id="about">
+    <div class="about mb-4" id="about">
+        <div class="team">
+            <img src="{{asset('/images/team.png')}}" alt="">
+        </div>
+        <div class="about-text">
             <h2 class="mb-4">About Us</h2>
             <p class="mb-4">UniqHire is dedicated to creating opportunities for individuals with disabilities. We believe in a world where everyone, regardless of their abilities, can thrive and contribute to the workforce. Our platform connects talented individuals with disabilities to training programs and job opportunities tailored to their unique skills and aspirations.</p>
         </div>
     </div>
+    <div>
 
-    <div class="row home-row mb-5 home-top">
-        <div class="col" id="socials">
-            <h2 class="mb-4">Socials</h2>
-            <div class="row mb-4">
-                <div class="col">
-                    <div class="">
-                        <span>
-                            <i class='bx bxl-facebook-circle'></i> Facebook
-                            <p><a href="#">facebook.com/uniqhire</a></p>
-                        </span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div>
-                        <span>
-                            <i class='bx bxl-instagram-alt'></i> Instagram
-                            <p><a href="#">instagram.com/uniqhire</a></p>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col">
-                    <div class="">
-                        <span>
-                            <i class='bx bxl-twitter'></i> Twitter
-                            <p><a href="#">twitter.com/uniqhire</a></p>
-                        </span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div>
-                        <span>
-                            <i class='bx bxl-youtube'></i> Youtube
-                            <p><a href="#">youtube.com/uniqhire</a></p>
-                        </span>
-                    </div>
-                </div>
-
-
-            </div>
-
-
-        </div>
-        <div class="col-1"></div>
-        <div class="col">
-            <form action="">
-                <div class="" id="contact">
-                    <h2 class="mb-4">Send us a message</h2>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="floatingInput" name="firsname" placeholder="First Name">
-                                <label for="floatingInput">First Name</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="floatingInput" name="title" placeholder="Last Name">
-                                <label for="floatingInput">Last Name</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="floatingInput" name="subject" required placeholder="Subject">
-                                <label for="floatingInput">Subject</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control" placeholder="Description" id="floatingTextarea2" name="description" style="height: 200px"></textarea>
-                                <label for="floatingTextarea2">Description</label>
-                                @error('description')
-                                <span class="error-msg">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row d-flex justify-content-center">
-                        <!-- <div class=""> -->
-                        <button type="submit" class="border-0 submit-btn">Send</button>
-                        <!-- </div> -->
-
-                    </div>
-                </div>
-
-            </form>
-        </div>
     </div>
 </div>
 
