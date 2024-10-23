@@ -13,8 +13,10 @@
                     <div class="request-container">
                         <a href="{{ route('show-profile', $request->user->id) }}">
                             <div class="request-owner mb-2">
-                                <div class="request-pic">
-
+                                <div class="request-pic" @if (!empty($request->user->userInfo->profile_path)) style=" background-image: url({{ asset($request->user->userInfo->profile_path) }}); background-repeat: no-repeat; background-size: cover; " @endif>
+                                    @if (empty($request->user->userInfo->profile_path))
+                                    <span>{{ strtoupper(substr($request->user->userInfo->name, 0, 1)) }}</span>
+                                    @endif
                                 </div>
                                 <div class="owner-name">
                                     <p class="fs-5">{{ $request->user->userInfo->name }}</p>
