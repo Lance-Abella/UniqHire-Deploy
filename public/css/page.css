@@ -462,6 +462,56 @@ footer .btn button {
     display: none;
 }
 
+.dropdown-toggle {
+    display: flex;
+}
+
+span.badge {
+    position: absolute;
+    top: 2.7rem;
+    right: 1.3rem;
+    border: 1.5px solid white;
+}
+
+.layout-container .dropdown-menu.show {
+    position: absolute;
+    top: 4rem;
+    right: 2rem;
+    width: 30rem;
+    min-height: fit-content;
+    max-height: 20rem;
+    overflow-y: scroll;
+}
+
+.layout-container .dropdown-menu.show li a {
+    height: fit-content;
+    padding: 1rem;
+}
+
+.layout-container .dropdown-menu.show li a,
+.layout-container .dropdown-menu .dropdown-item .notif-content {
+    overflow: hidden;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+}
+
+.layout-container .dropdown-menu.show li a:hover {
+    background-color: var(--primary-color-light);
+}
+
+.layout-container .dropdown-menu .dropdown-item .notif-owner {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.layout-container .dropdown-menu .dropdown-item .notif-content {
+    font-size: 17px;
+}
+
+.layout-container .dropdown-menu .dropdown-item div.sub-text {
+    font-weight: normal;
+}
+
 .layout-container .bxs-inbox {
     color: var(--primary-color);
     font-size: 33px;
@@ -711,42 +761,14 @@ footer .btn button {
 /* PWD BROWSE PROG */
 .pwd-browse-prog {
     display: grid;
-    grid-template-columns: 0.5fr 2fr;
+    grid-template-columns: 15rem 1fr;
     grid-template-areas: "filter list";
-}
-
-.pwd-browse-prog .filter-container {
-    grid-area: filter;
-    width: 18rem;
-    /* margin-left: 3rem; */
-    /* background-color: #04b000; */
-    border: 1px solid lightgray;
-    height: 80vh;
-    box-shadow: var(--side-shadow-02);
-    background-color: var(--bg-color-02);
-    padding: 1.5rem;
-}
-
-.pwd-browse-prog .filter-container .count {
-    font-weight: normal;
-    color: var(--primary-color);
-}
-
-.pwd-browse-prog .filter-container i {
-    width: 3rem;
-}
-
-.pwd-browse-prog .filter-container span p {
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.pwd-browse-prog .filter-container .form-check {
-    width: 13rem;
+    min-height: 100vh;
 }
 
 .pwd-browse-prog .list {
     grid-area: list;
+    overflow-y: scroll;
 }
 
 .pwd-browse-prog .searchbar {
@@ -797,17 +819,24 @@ footer .btn button {
     color: var(--primary-color);
 }
 
+.pwd-browse-prog .prog-grid-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
 .pwd-browse-prog .prog-card {
-    width: 50rem;
+    width: 38rem;
     height: 13rem;
     background-color: var(--bg-color-02);
     box-shadow: var(--side-shadow-03);
     border-radius: var(--border-radius);
 }
 
-.pwd-browse-prog .prog-card .prog-img {
-    width: 5.5rem;
-    height: 5rem;
+.pwd-browse-prog .prog-card .prog-img,
+.pwd-browse-prog .job-card .prog-img {
+    min-width: 5.5rem;
+    min-height: 5rem;
     background-color: var(--primary-color-light);
     margin-right: 1rem;
     border-radius: var(--border-radius);
@@ -817,13 +846,15 @@ footer .btn button {
     align-items: center;
 }
 
-.pwd-browse-prog .prog-card .prog-img span {
+.pwd-browse-prog .prog-card .prog-img span,
+.pwd-browse-prog .job-card .prog-img span {
     font-size: 2rem;
     font-weight: var(--header-extrabold);
     color: var(--primary-color);
 }
 
-.pwd-browse-prog .prog-card .prog-desc {
+.pwd-browse-prog .prog-card .prog-desc,
+.pwd-browse-prog .job-card .prog-desc {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -833,19 +864,22 @@ footer .btn button {
     height: 2.5rem;
 }
 
-.pwd-browse-prog .prog-card h4 {
+.pwd-browse-prog .prog-card h4,
+.pwd-browse-prog .job-card h4 {
     font-weight: var(--header-extrabold);
     overflow: hidden;
     text-overflow: ellipsis;
     text-wrap: nowrap;
 }
 
-.pwd-browse-prog .prog-card .prog-texts {
+.pwd-browse-prog .prog-card .prog-texts,
+.pwd-browse-prog .job-card .prog-texts {
     padding: 1rem;
 }
 
 .pwd-browse-prog .prog-card:hover,
-.agency-prog-container .prog-card:hover {
+.agency-prog-container .prog-card:hover,
+.pwd-browse-prog .job-card:hover {
     background-color: var(--white-bg);
 }
 
@@ -855,7 +889,7 @@ footer .btn button {
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container {
-    width: 45rem;
+    width: 100%;
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container .prog-head {
@@ -863,14 +897,16 @@ footer .btn button {
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container .header {
-    width: 30rem;
+    width: 20rem;
 }
 
-.pwd-browse-prog .prog-card .prog-texts-container .header p {
+.pwd-browse-prog .prog-card .prog-texts-container .header p,
+.pwd-browse-prog .job-card .prog-texts-container .header p {
     margin: 0;
 }
 
-.pwd-browse-prog .prog-card .prog-texts-container .date-posted {
+.pwd-browse-prog .prog-card .prog-texts-container .date-posted,
+.pwd-browse-prog .job-card .prog-texts-container .date-posted {
     width: 25%;
 }
 
@@ -885,6 +921,77 @@ footer .btn button {
     overflow-x: hidden;
     text-wrap: nowrap;
     text-overflow: ellipsis;
+}
+
+/* FILTER */
+
+.filter-container {
+    grid-area: filter;
+    /* width: 18rem; */
+    /* margin-left: 3rem; */
+    /* background-color: #04b000; */
+    border: 1px solid lightgray;
+    height: 100%;
+    box-shadow: var(--side-shadow-02);
+    background-color: var(--bg-color-02);
+    padding: 1.5rem;
+}
+
+.filter-container .count {
+    font-weight: normal;
+    color: var(--primary-color);
+}
+
+.filter-container i {
+    width: 3rem;
+}
+
+.filter-container span p {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.filter-container .form-check {
+    width: 11rem;
+}
+
+/* PAGINATION */
+
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+}
+
+.pagination {
+    width: 100%;
+}
+
+.pagination .page-item.active {
+    background-color: var(--primary-color);
+}
+.pagination .page-item.active .page-link {
+    color: var(--white-bg);
+    font-weight: bold;
+    border: 1px solid var(--white-bg);
+}
+
+.pagination nav {
+    width: 100%;
+    padding: 0.7rem;
+}
+
+.pagination .d-none {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 10px;
+}
+
+.pagination .page-link {
+    background-color: var(--primary-color-light);
+    color: var(--primary-color);
 }
 
 /* PROG DETAILS */
@@ -2034,4 +2141,19 @@ table tbody .bx {
 }
 .controls:focus {
     border-color: #4d90fe;
+}
+
+/* PWD BROWSE JOBS */
+.pwd-browse-job .prog-grid-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.pwd-browse-job .job-card {
+    height: 14rem;
+    width: 25rem;
+    background-color: var(--bg-color-02);
+    border-radius: var(--border-radius);
+    box-shadow: var(--side-shadow-03);
 }

@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/training-programs', [PwdController::class, 'showTrainings'])->middleware('role:PWD')->name('trainings');
     Route::get('/training-program/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('show-details');
     Route::post('/training-program/rate', [PwdController::class, 'rateProgram'])->middleware('role:PWD')->name('rate-program');
+    Route::get('/browse/job-postings', [PwdController::class, 'showJobs'])->middleware('role:PWD')->name('pwd-list-job');
 
     //SPONSOR Middleware
     Route::get('/browse/list-of-programs', [SponsorController::class, 'showTrainingLists'])->middleware('role:Sponsor')->name('list-of-tp');
