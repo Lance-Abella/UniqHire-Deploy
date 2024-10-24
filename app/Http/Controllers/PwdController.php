@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PwdController extends Controller
 {
-
     public function showPrograms(Request $request)
     {
         $user = auth()->user()->userInfo;
@@ -72,7 +71,7 @@ class PwdController extends Controller
         });
 
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 5;
+        $perPage = 14;
         $currentItems = array_slice($rankedPrograms, ($currentPage - 1) * $perPage, $perPage);
         $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedPrograms), $perPage);
         $paginatedItems->setPath($request->url());
@@ -393,5 +392,13 @@ class PwdController extends Controller
         }
 
         return back()->with('success', 'Application sent successfully!');
+    }
+
+
+    // HIRING SIDE
+    public function showJobs()
+    {
+        $educations = EducationLevel::all();
+        return view('pwd.listJobs', compact('educations'));
     }
 }

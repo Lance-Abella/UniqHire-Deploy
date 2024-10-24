@@ -9,7 +9,7 @@
         <form action="{{ route('pwd-list-program') }}" method="GET" id="filterForm">
             <div class="d-flex justify-content-between mb-3">
                 <h3>Filter</h3>
-                <i class='bx bx-filter-alt fs-3 sub-text'></i>
+                <i class='bx bx-filter-alt fs-3 sub-text text-end'></i>
             </div>
             <div class="mb-3">
                 <span>
@@ -30,7 +30,7 @@
     </div>
     <div class="list">
         <div class="mb-4 searchbar-container">
-            <div class="col d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
                 <form role="search" action="{{ route('pwd-list-program') }}" method="GET" id="searchForm">
                     <div class="d-flex searchbar">
                         <input class="form-control" type="search" placeholder="Search Training Programs" aria-label="Search" id="searchInput" onchange="checkAndSubmit()" name="search" value="{{ request('search') }}">
@@ -39,74 +39,77 @@
                 </form>
             </div>
         </div>
-        <div class="d-flex justify-content-center">
+        <div class="d-flex flex-column align-items-center">
             <div class="prog-grid" id="prog-grid">
                 <div class="mb-4">
                     <div class="recommend-label-container">
                         <span class="recommend-label">Recommended</span>
                     </div>
                 </div>
-                @forelse ($paginatedItems as $ranked)
-                <div class="row prog-card mb-2" data-program-id="{{ $ranked['program']->id }}" data-lat="{{ $ranked['program']->latitude }}" data-lng="{{ $ranked['program']->longitude }}">
-                    <input type="hidden" name="" value="{{$ranked['similarity']}}" id="">
-                    <div class="col ">
-                        <a href="{{ route('training-details', $ranked['program']->id ) }}" class="d-flex prog-texts">
-                            <div class="prog-texts-container">
-                                <div class=" d-flex mb-2">
-                                    <div class="prog-img" @if (!empty($ranked['program']->agency->userInfo->profile_path)) style=" background-image: url({{ asset($ranked['program']->agency->userInfo->profile_path) }}); background-repeat: no-repeat; background-size: cover; " @endif>
+                <div class="prog-grid-list">
+                    @forelse ($paginatedItems as $ranked)
+                    <div class="prog-card" data-program-id="{{ $ranked['program']->id }}" data-lat="{{ $ranked['program']->latitude }}" data-lng="{{ $ranked['program']->longitude }}">
+                        <input type="hidden" name="" value="{{$ranked['similarity']}}" id="">
+                        <div class="">
+                            <a href="{{ route('training-details', $ranked['program']->id ) }}" class="d-flex prog-texts">
+                                <div class="prog-texts-container">
+                                    <div class=" d-flex mb-2">
+                                        <div class="prog-img" @if (!empty($ranked['program']->agency->userInfo->profile_path)) style=" background-image: url({{ asset($ranked['program']->agency->userInfo->profile_path) }}); background-repeat: no-repeat; background-size: cover; " @endif>
 
-                                        @if (empty($ranked['program']->agency->userInfo->profile_path))
-                                        <span>{{ strtoupper(substr($ranked['program']->agency->userInfo->name, 0, 1)) }}</span>
-                                        @endif
+                                            @if (empty($ranked['program']->agency->userInfo->profile_path))
+                                            <span>{{ strtoupper(substr($ranked['program']->agency->userInfo->name, 0, 1)) }}</span>
+                                            @endif
 
-                                    </div>
-                                    <div class="d-flex justify-content-between prog-head">
-                                        <div class="header">
-                                            <h4 class="text-cap">{{$ranked['program']->title}}</h4>
-                                            <p class="sub-text text-cap">{{$ranked['program']->agency->userInfo->name}}</p>
-                                            <p class="sub-text text-cap location" id="location-{{ $ranked['program']->id }}"><i class='bx bx-map sub-text'></i>Loading address...</p>
-                                            <input type="hidden" id="lat-{{ $ranked['program']->id }}" value="{{ $ranked['program']->latitude }}">
-                                            <input type="hidden" id="lng-{{ $ranked['program']->id }}" value="{{ $ranked['program']->longitude }}">
                                         </div>
-                                        <div class="text-end date-posted">
-                                            <p class="text-end">{{ $ranked['program']->created_at->diffForHumans() }}</p>
+                                        <div class="d-flex justify-content-between prog-head">
+                                            <div class="header">
+                                                <h4 class="text-cap">{{$ranked['program']->title}}</h4>
+                                                <p class="sub-text text-cap">{{$ranked['program']->agency->userInfo->name}}</p>
+                                                <p class="sub-text text-cap location" id="location-{{ $ranked['program']->id }}"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                                                <input type="hidden" id="lat-{{ $ranked['program']->id }}" value="{{ $ranked['program']->latitude }}">
+                                                <input type="hidden" id="lng-{{ $ranked['program']->id }}" value="{{ $ranked['program']->longitude }}">
+                                            </div>
+                                            <div class="text-end date-posted">
+                                                <p class="text-end">{{ $ranked['program']->created_at->diffForHumans() }}</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row prog-desc mb-1">
+                                        <p>{{$ranked['program']->description}}</p>
+                                    </div>
+                                    <div class="infos">
+                                        <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
+                                        @foreach ($ranked['program']->disability as $disability)
+                                        <div class="disability-item" data-disability-id="{{ $disability->id }}">
+                                            {{$disability->disability_name}}
+                                        </div>
+                                        @endforeach
+
+                                        <div class="match-info @if (Auth::user()->userInfo->education->id != $ranked['program']->education->id) notmatch-info @endif">
+                                            {{$ranked['program']->education->education_name}}
+                                        </div>
+                                        <div class="match-info @if (Auth::user()->userInfo->age < $ranked['program']->start_age || Auth::user()->userInfo->age > $ranked['program']->end_age) notmatch-info @endif">
+                                            {{$ranked['program']->start_age . ' - ' . $ranked['program']->end_age}}
                                         </div>
                                     </div>
-
                                 </div>
-                                <div class="row prog-desc mb-1">
-                                    <p>{{$ranked['program']->description}}</p>
-                                </div>
-                                <div class="infos">
-                                    <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
-                                    @foreach ($ranked['program']->disability as $disability)
-                                    <div class="disability-item" data-disability-id="{{ $disability->id }}">
-                                        {{$disability->disability_name}}
-                                    </div>
-                                    @endforeach
-
-                                    <div class="match-info @if (Auth::user()->userInfo->education->id != $ranked['program']->education->id) notmatch-info @endif">
-                                        {{$ranked['program']->education->education_name}}
-                                    </div>
-                                    <div class="match-info @if (Auth::user()->userInfo->age < $ranked['program']->start_age || Auth::user()->userInfo->age > $ranked['program']->end_age) notmatch-info @endif">
-                                        {{$ranked['program']->start_age . ' - ' . $ranked['program']->end_age}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="fs-3 d-flex flex-column align-items-center justify-content-center">
+                                <!-- <div class="fs-3 d-flex flex-column align-items-center justify-content-center">
                                 >
-                            </div>
-                        </a>
+                            </div> -->
+                            </a>
+                        </div>
                     </div>
+                    @empty
+                    <div class="sub-text no-result">No results found.</div>
+                    @endforelse
                 </div>
-                @empty
-                <div class="sub-text no-result">No results found.</div>
-                @endforelse
+
             </div>
-        </div>
-        <div class="pagination-container">
-            <div class="pagination">
-                {{ $paginatedItems->links() }}
+            <div class="pagination-container">
+                <div class="pagination">
+                    {{ $paginatedItems->links() }}
+                </div>
             </div>
         </div>
     </div>
@@ -257,7 +260,11 @@
                 var locationElement = document.getElementById('location-' + programId);
                 if (status === 'OK') {
                     if (results[0]) {
-                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+                        var addressParts = results[0].formatted_address.split(',');
+                        // Extract the city and country (assuming the city is at index 1 and the country at index 3)
+                        var city = addressParts[1].trim(); // City (e.g., "Cebu City")
+                        var country = addressParts[addressParts.length - 1].trim();
+                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + city + ", " + country;
                     } else {
                         locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
                     }
