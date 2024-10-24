@@ -89,4 +89,7 @@ Route::middleware('auth')->group(function () {
 
     //SPONSOR Middleware
     Route::get('/browse/list-of-programs', [SponsorController::class, 'showTrainingLists'])->middleware('role:Sponsor')->name('list-of-tp');
+    Route::get('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('trainingprog-details');
+    Route::post('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('trainingprog-details');
+    Route::get('/training-program/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('show-progdetails');
 });

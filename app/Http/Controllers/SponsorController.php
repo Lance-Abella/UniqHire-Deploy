@@ -3,54 +3,84 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\UserInfo;
 use App\Models\TrainingProgram;
-use App\Models\Disability;
 use App\Models\EducationLevel;
-use App\Models\TrainingApplication;
-use App\Models\User;
-use App\Models\SkillUser;
-use App\Http\Requests\StoreUserInfoRequest;
-use App\Http\Requests\UpdateUserInfoRequest;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers;
 use App\Models\Enrollee;
 use App\Models\PwdFeedback;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Pagination\LengthAwarePaginator;
-use App\Notifications\PwdApplicationNotification;
-use Illuminate\Support\Facades\Auth;
-
 
 class SponsorController extends Controller
 {
     public function showTrainingLists(Request $request)
     {
         $educations = EducationLevel::all();
-        $query = TrainingProgram::query();
 
-        // Filtering the programs through searching program title
+        // Fetch programs that have crowdfunding events
+        $query = TrainingProgram::query()->whereHas('crowdfund');
+
+        // Filter programs by search query (if provided)
         if ($request->filled('search')) {
             $query->where("title", "LIKE", "%" . $request->search . "%");
         }
 
-        // Filtering the programs based on education [multiple selection]
-        if (isset($request->education) && ($request->education != null)) {
+        // Filter programs by education levels (if selected)
+        if ($request->filled('education')) {
             $query->whereHas('education', function ($q) use ($request) {
                 $q->whereIn('education_name', $request->education);
             });
         }
 
-        // Fetch all available programs
-        $allPrograms = $query->get();
+        // Fetch all programs with crowdfunding events
+        $allPrograms = $query->with('crowdfund', 'agency.userInfo')->get();
 
+        // Paginate results (5 programs per page)
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $perPage = 5;
-        $currentItems = array_slice($allPrograms->toArray(), ($currentPage - 1) * $perPage, $perPage);
-        $paginatedItems = new LengthAwarePaginator($currentItems, $allPrograms->count(), $perPage);
-        $paginatedItems->setPath($request->url());
+        $currentItems = $allPrograms->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        $paginatedItems = new LengthAwarePaginator($currentItems, $allPrograms->count(), $perPage, $currentPage, [
+            'path' => $request->url(),
+        ]);
 
-        $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
+        // Log the paginated items for debugging
         Log::info('Paginated Items:', $paginatedItems->toArray());
 
+        // Get the count of programs for each education level
+        $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
+
+        // Return the view with paginated programs and education filters
         return view('sponsor.listTrainProg', compact('paginatedItems', 'educations', 'educationCounts'));
+    }
+
+    public function showProgDetails($id)
+    {
+        // Fetch the program details with related data
+        $program = TrainingProgram::with('agency.userInfo', 'disability', 'education', 'crowdfund')->findOrFail($id);
+
+        // Get the count of current enrollees
+        $enrolleeCount = Enrollee::where('program_id', $program->id)
+            ->where('completion_status', 'Ongoing')
+            ->count();
+
+        // Calculate available slots for the program
+        $slots = $program->participants - $enrolleeCount;
+
+        // Fetch reviews for the program
+        $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
+
+        // Fetch all enrollees for the program
+        $enrollees = Enrollee::where('program_id', $program->id)->get();
+
+        // Handle crowdfunding details if applicable
+        if ($program->crowdfund) {
+            $raisedAmount = $program->crowdfund->raised_amount ?? 0; // Default to 0 if raised_amount is null
+            $goal = $program->crowdfund->goal ?? 1; // Default to 1 to avoid division by zero
+            $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0; // Calculate progress percentage
+            $program->crowdfund->progress = $progress;
+        }
+
+        // Return the view for program details
+        return view('sponsor.showTrainProgDetails', compact('program', 'reviews', 'enrollees', 'slots'));
     }
 }
