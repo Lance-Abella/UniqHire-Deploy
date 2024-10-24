@@ -282,6 +282,8 @@
             submenu.classList.toggle('active-drop');
             icon.classList.toggle('arrow-down');
         }
+
+        
     </script>
 
     </html>

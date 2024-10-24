@@ -23,6 +23,7 @@
     </div>
     <input type="hidden" id="lat" name="lat" value="{{ $program->latitude }}">
     <input type="hidden" id="long" name="long" value="{{ $program->longitude }}">
+    <input type="hidden" id="loc" name="loc" required>
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     <label for="map">Select Your Location:</label>
     <div id="map" class="map"></div>
@@ -285,7 +286,10 @@
     function initMap() {
         var lat = parseFloat(document.getElementById('lat').value);
         var lng = parseFloat(document.getElementById('long').value);
-        var latlng = { lat: lat, lng: lng };
+        var latlng = {
+            lat: lat,
+            lng: lng
+        };
 
         // Create the map, centered at the initial location
         var map = new google.maps.Map(document.getElementById('map'), {
@@ -297,7 +301,7 @@
         var marker = new google.maps.Marker({
             position: latlng,
             map: map,
-            draggable: true,  
+            draggable: true,
             title: 'Drag me to your location!'
         });
 
@@ -305,20 +309,51 @@
         // document.getElementById('lat').value = lat;
         // document.getElementById('long').value = lng;
 
+         // Function to reverse geocode based on lat and lng
+        function reverseGeocode(lat, lng) {
+            var geocoder = new google.maps.Geocoder();
+            var latlng = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
+            // Reverse geocode to get the address
+            geocoder.geocode({ location: latlng }, function(results, status) {
+                var locationElement = document.getElementById('loc');
+                if (status === 'OK') {
+                    if (results[0]) {
+                        var addressParts = results[0].formatted_address.split(',');
+                        // Extract the city and country (assuming city at index 1 and country at the end)
+                        var city = addressParts[1].trim();
+                        var country = addressParts[addressParts.length - 1].trim();
+                        locationElement.value =  city + ", " + country;
+                        console.log("locationElement value: " + locationElement.value);
+                    } else {
+                        locationElement.value = "No address found";
+                    }
+                } else {
+                    locationElement.value = "Geocoder failed: " + status;
+                }
+            });
+        }
+
+
         function updateCoordinates(markerPosition) {
             var lat = markerPosition.lat();
             var lng = markerPosition.lng();
             document.getElementById('lat').value = lat;
             document.getElementById('long').value = lng;
             document.getElementById('coordinates').innerText = 'Latitude: ' + lat + ', Longitude: ' + lng;
+
+            reverseGeocode(lat, lng);
         }
 
-         // Place the marker where the user clicks on the map
+        // Call reverseGeocode with the default initial location when the map is initialized
+        reverseGeocode(latlng.lat, latlng.lng);
+
+        // Place the marker where the user clicks on the map
         map.addListener('click', function(event) {
             var clickedLocation = event.latLng;
-            marker.setPosition(clickedLocation); 
-            marker.setMap(map); 
-            updateCoordinates(clickedLocation); 
+            marker.setPosition(clickedLocation);
+            marker.setMap(map);
+            updateCoordinates(clickedLocation);
         });
 
         // Automatically update the coordinates when the marker is dragged
@@ -381,7 +416,7 @@
         });
     }
 
-    // Initialize the map and geocoding
+     // Initialize the map and geocoding
     window.onload = initMap;
 
     

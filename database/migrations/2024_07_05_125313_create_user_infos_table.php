@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('contactnumber');
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
+            $table->string('location')->nullable();
             $table->string('pwd_card')->nullable();
             $table->integer('age')->default(0);
             $table->text('about')->nullable();

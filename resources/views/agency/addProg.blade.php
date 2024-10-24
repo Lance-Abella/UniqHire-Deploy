@@ -22,6 +22,7 @@
     </div>
     <input type="hidden" id="lat" name="lat" required>
     <input type="hidden" id="long" name="long" required>
+    <input type="hidden" id="loc" name="loc" required>
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     <label for="map">Select Your Location:</label>
     <div id="map" class="map"></div>                
@@ -276,6 +277,31 @@
     document.getElementById('lat').value = initialLocation.lat;
     document.getElementById('long').value = initialLocation.lng;
 
+    // Function to reverse geocode based on lat and lng
+        function reverseGeocode(lat, lng) {
+            var geocoder = new google.maps.Geocoder();
+            var latlng = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
+            // Reverse geocode to get the address
+            geocoder.geocode({ location: latlng }, function(results, status) {
+                var locationElement = document.getElementById('loc');
+                if (status === 'OK') {
+                    if (results[0]) {
+                        var addressParts = results[0].formatted_address.split(',');
+                        // Extract the city and country (assuming city at index 1 and country at the end)
+                        var city = addressParts[1].trim();
+                        var country = addressParts[addressParts.length - 1].trim();
+                        locationElement.value =  city + ", " + country;
+                        console.log("locationElement value: " + locationElement.value);
+                    } else {
+                        locationElement.value = "No address found";
+                    }
+                } else {
+                    locationElement.value = "Geocoder failed: " + status;
+                }
+            });
+        }
+
     // Update hidden inputs and display coordinates
     function updateCoordinates(markerPosition) {
         var lat = markerPosition.lat();
@@ -283,7 +309,12 @@
         document.getElementById('lat').value = lat;
         document.getElementById('long').value = lng;
         document.getElementById('coordinates').innerText = 'Latitude: ' + lat + ', Longitude: ' + lng;
+
+        reverseGeocode(lat, lng);
     }
+
+    // Call reverseGeocode with the default initial location when the map is initialized
+    reverseGeocode(initialLocation.lat, initialLocation.lng);
 
     // Place the marker where the user clicks on the map
     map.addListener('click', function(event) {

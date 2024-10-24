@@ -15,6 +15,7 @@ class TrainingProgram extends Model
         'description',
         'latitude',
         'longitude',
+        'location',
         'participants',
         'schedule',
         'education_id',
