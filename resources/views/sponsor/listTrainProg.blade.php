@@ -4,151 +4,85 @@
 
 @section('page-content')
 
-<div class="pwd-browse-prog">
-    <div class="d-flex flex-column align-items-center browse-area">
+<div class="pwd-browse-prog d-flex flex-column align-items-center" style="padding-top: 50px;">
+    <div class="browse-area" style="width: 100%; max-width: 900px;">
+        <!-- Search Bar -->
         <div class="mb-4 searchbar-container">
-            <div class="col d-flex justify-content-center">
-                <form role="search" action="{{ route('list-of-tp') }}" method="GET" id="searchForm">
-                    <div class="d-flex searchbar">
-                        <input class="form-control" type="search" placeholder="Search Training Programs" aria-label="Search" id="searchInput" onchange="checkAndSubmit()" name="search" value="{{ request('search') }}">
-                        <button class="submit-btn border-0" type="submit">Search</button>
-                    </div>
-                </form>
-            </div>
+            <form role="search" action="{{ route('list-of-tp') }}" method="GET" id="searchForm" class="w-100">
+                <div class="d-flex searchbar w-100">
+                    <input class="form-control me-2" type="search" placeholder="Search Training Programs" aria-label="Search" id="searchInput" onchange="checkAndSubmit()" name="search" value="{{ request('search') }}">
+                    <button class="submit-btn border-0" type="submit">Search</button>
+                </div>
+            </form>
         </div>
-        <div class="outer">
 
+        <!-- Program Grid -->
+        <div class="outer w-100">
             <div class="prog-grid" id="prog-grid">
-                <div class="mb-4">
+                <!-- Recommendation Label -->
+                <div class="mb-4 text-center">
                     <div class="recommend-label-container">
                         <span class="recommend-label">Recommended</span>
                     </div>
                 </div>
-                @forelse ($paginatedItems as $ranked)
-                <div class="row prog-card mb-2" data-program-id="{{ $ranked['program']->id }}" data-lat="{{ $ranked['program']->latitude }}" data-lng="{{ $ranked['program']->longitude }}">
-                    <input type="text" name="" value="{{$ranked['similarity']}}" id="">
-                    <div class="col ">
-                        <a href="{{ route('training-details', $ranked['program']->id ) }}" class="d-flex prog-texts">
-                            <div class="prog-texts-container">
-                                <div class=" d-flex mb-2">
-                                    <div class="prog-img" @if (!empty($ranked['program']->agency->userInfo->profile_path)) style=" background-image: url({{ asset($ranked['program']->agency->userInfo->profile_path) }}); background-repeat: no-repeat; background-size: cover; " @endif>
 
-                                        @if (empty($ranked['program']->agency->userInfo->profile_path))
-                                        <span>{{ strtoupper(substr($ranked['program']->agency->userInfo->name, 0, 1)) }}</span>
+                <!-- Training Programs -->
+                @forelse ($paginatedItems as $program)
+                <div class="row prog-card mb-2">
+                    <div class="col">
+                        <a href="{{ route('trainingprog-details', $program->id) }}" class="d-flex prog-texts">
+                            <div class="prog-texts-container w-100">
+                                <div class="d-flex mb-2 align-items-center">
+                                    <!-- Agency Profile Image -->
+                                    <div class="prog-img"
+                                        @if (!empty($program->agency->userInfo->profile_path))
+                                        style="background-image: url({{ asset($program->agency->userInfo->profile_path) }}); background-repeat: no-repeat; background-size: cover;"
+                                        @endif>
+                                        @if (empty($program->agency->userInfo->profile_path))
+                                        <span>{{ strtoupper(substr($program->agency->userInfo->name, 0, 1)) }}</span>
                                         @endif
-
-                                    </div>
-                                    <div class="d-flex justify-content-between prog-head">
-                                        <div class="header">
-                                            <h4 class="text-cap">{{$ranked['program']->title}}</h4>
-                                            <p class="sub-text text-cap">{{$ranked['program']->agency->userInfo->name}}</p>
-                                            <p class="sub-text text-cap location" id="location-{{ $ranked['program']->id }}"><i class='bx bx-map sub-text'></i>Loading address...</p>
-                                            <input type="hidden" id="lat-{{ $ranked['program']->id }}" value="{{ $ranked['program']->latitude }}">
-                                            <input type="hidden" id="lng-{{ $ranked['program']->id }}" value="{{ $ranked['program']->longitude }}">
-                                        </div>
-                                        <div class="text-end date-posted">
-                                            <p class="text-end">{{ $ranked['program']->created_at->diffForHumans() }}</p>
-                                        </div>
                                     </div>
 
-                                </div>
-                                <div class="row prog-desc mb-1">
-                                    <p>{{$ranked['program']->description}}</p>
-                                </div>
-                                <div class="infos">
-                                    <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
-                                    @foreach ($ranked['program']->disability as $disability)
-                                    <div class="disability-item" data-disability-id="{{ $disability->id }}">
-                                        {{$disability->disability_name}}
+                                    <!-- Program Header -->
+                                    <div class="prog-head ms-3">
+                                        <h4>{{ $program->title }}</h4>
+                                        <p>{{ $program->agency->userInfo->name }}</p>
+                                        <p>{{ $program->created_at->diffForHumans() }}</p>
                                     </div>
-                                    @endforeach
+                                </div>
+                                <!-- Program Description -->
+                                <p>{{ $program->description }}</p>
 
-                                    <div class="match-info @if (Auth::user()->userInfo->education->id != $ranked['program']->education->id) notmatch-info @endif">
-                                        {{$ranked['program']->education->education_name}}
-                                    </div>
-                                    <div class="match-info @if (Auth::user()->userInfo->age < $ranked['program']->start_age || Auth::user()->userInfo->age > $ranked['program']->end_age) notmatch-info @endif">
-                                        {{$ranked['program']->start_age . ' - ' . $ranked['program']->end_age}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="fs-3 d-flex flex-column align-items-center justify-content-center">
-                                >
+                                <!-- Crowdfunding Information -->
+                                @if ($program->crowdfund)
+                                <p>Goal: {{ $program->crowdfund->goal }}</p>
+                                @endif
                             </div>
                         </a>
                     </div>
                 </div>
                 @empty
-                <div class="sub-text no-result">No results found.</div>
+                <div class="sub-text no-result text-center">No programs available.</div>
                 @endforelse
             </div>
         </div>
-        <div class="pagination-container">
+
+        <!-- Pagination -->
+        <div class="pagination-container mt-4">
             <div class="pagination">
                 {{ $paginatedItems->links() }}
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Assume userDisabilityId is available from the backend (you can inject it into a script tag or pass it as a data attribute)
-        var userDisabilityId = parseInt(document.getElementById('user-disability').value, 10);
-
-        // Get all programs' disability containers
-        var disabilityItems = document.querySelectorAll('.disability-item');
-
-        disabilityItems.forEach(function(item) {
-            var programDisabilityId = parseInt(item.getAttribute('data-disability-id'), 10);
-
-            // Check if the user's disability matches this program's disability
-            if (programDisabilityId === userDisabilityId) {
-                item.classList.add('match-info');
-                item.classList.remove('notmatch-info');
-            } else {
-                item.classList.add('notmatch-info');
-                item.classList.remove('match-info');
-            }
-        });
-
-        var geocoder = new google.maps.Geocoder();
-
-        document.querySelectorAll('.prog-card').forEach(function(card) {
-            var programId = card.getAttribute('data-program-id');
-            var lat = parseFloat(card.getAttribute('data-lat'));
-            var lng = parseFloat(card.getAttribute('data-lng'));
-            var latlng = {
-                lat: lat,
-                lng: lng
-            };
-
-            geocoder.geocode({
-                location: latlng
-            }, function(results, status) {
-                var locationElement = document.getElementById('location-' + programId);
-                if (status === 'OK') {
-                    if (results[0]) {
-                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
-                    } else {
-                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
-                    }
-                } else {
-                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
-                }
-            });
-        });
-    });
-
-    function submitForm() {
-        document.getElementById('filterForm').submit();
-    }
-
     function checkAndSubmit() {
         var searchInput = document.getElementById('searchInput');
-        if (searchInput.value.trim() === ' ') {
+        if (searchInput.value.trim() === '') {
             document.getElementById('searchForm').submit();
         }
     }
 </script>
+
 @endsection
