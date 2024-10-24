@@ -184,7 +184,9 @@
                     </div>
                 </div>
                 @endif
-
+                <div class="scroll-top">
+                    <a href="#"><i class='bx bx-chevron-up'></i></a>
+                </div>
                 <div class="content-container page-content">
                     @yield('page-content')
                 </div>
@@ -281,6 +283,15 @@
             submenu.classList.toggle('active-drop');
             icon.classList.toggle('arrow-down');
         }
+
+        window.addEventListener('scroll', function() {
+            var scrollButton = document.querySelector('.scroll-top');
+            if (window.scrollY > 100) { // Show when scrolled down 100px
+                scrollButton.classList.add('visible');
+            } else {
+                scrollButton.classList.remove('visible');
+            }
+        });
     </script>
 
     </html>

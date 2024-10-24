@@ -12,6 +12,10 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     /* COLORS */
     --bg-color-01: #f2f1ee;
@@ -422,7 +426,6 @@ footer .btn button {
     position: -moz-sticky;
     position: -ms-sticky;
     position: -o-sticky;
-    position: sticky;
     top: 0;
     z-index: 99;
     background-color: var(--bg-color-01);
@@ -2156,4 +2159,80 @@ table tbody .bx {
     background-color: var(--bg-color-02);
     border-radius: var(--border-radius);
     box-shadow: var(--side-shadow-03);
+}
+
+/* SCROLL TOP */
+.scroll-top {
+    position: fixed;
+    bottom: 4rem;
+    right: 3rem;
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--primary-color-light);
+    display: none;
+    z-index: 99;
+    border: 2px dotted var(--bg-color-01);
+}
+
+.scroll-top.visible {
+    display: block; /* Show the button when the user scrolls down */
+}
+
+.scroll-top:hover {
+    background-color: var(--primary-color);
+}
+
+.scroll-top:hover a {
+    transform: translateY(-4px);
+}
+
+.scroll-top a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.scroll-top .bx {
+    font-size: 50px;
+    color: var(--bg-color-01);
+}
+
+/* MOBILE RESPONSIVE */
+@media screen and (max-width: 900px) and (orientation: portrait) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+    }
+
+    .welcome,
+    .about {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .team img {
+        height: 30rem;
+    }
+
+    .pwd-browse-prog {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-container {
+        display: none;
+    }
+
+    .pwd-browse-prog .prog-grid-list {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .pwd-browse-prog .prog-card {
+        width: 100%;
+    }
+
+    footer {
+        position: relative;
+        bottom: 0;
+    }
 }
