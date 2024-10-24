@@ -9,7 +9,7 @@
         <a href="{{ route('programs-manage') }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
         @endif
     </div>
-    <div class="d-flex outer">
+    <div class="detailed-prog">
         <div class="prog-details">
             <div class="d-flex header">
                 <div class="mb-3 titles">

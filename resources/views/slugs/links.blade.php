@@ -25,7 +25,8 @@
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places"></script>
 
 <!-- CSS -->
-<link rel="stylesheet" href="{{ asset('css/style.css') }}">
+<!-- <link rel="stylesheet" href="{{ asset('css/style.css') }}"> -->
+<link rel="stylesheet" href="{{ asset('css/page.css') }}">
 
 <!-- BOX ICONS -->
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
