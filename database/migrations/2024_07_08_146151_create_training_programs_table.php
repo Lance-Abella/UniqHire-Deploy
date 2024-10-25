@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
+            $table->string('location')->nullable();
 
             $table->integer('participants')->default(0);
             $table->string('schedule');

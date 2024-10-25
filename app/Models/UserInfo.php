@@ -17,6 +17,7 @@ class UserInfo extends Model
         'contactnumber',
         'latitude',
         'longitude',
+        'location',
         'pwd_card',
         'age',
         'about',
