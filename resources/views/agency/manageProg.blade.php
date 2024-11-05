@@ -17,7 +17,7 @@
             <a href="{{ route('programs-show', $program->id) }}" class="prog-texts">
                 <h3 class="text-cap">{{ $program->title }}</h3>
                 <p class="sub-text prog-loc text-cap" id="location-{{ $program->id }}">
-                    <i class='bx bx-map sub-text prog-loc'></i>Loading address...
+                    <i class='bx bx-map sub-text prog-loc'></i>{{ $program->location }}
                 </p>
                 <input type="hidden" id="lat" value="{{ $program->latitude }}">
                 <input type="hidden" id="lng" value="{{ $program->longitude }}">
@@ -57,38 +57,34 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var geocoder = new google.maps.Geocoder();
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     var geocoder = new google.maps.Geocoder();
 
-        document.querySelectorAll('.prog-card').forEach(function(card) {
-            var programId = card.getAttribute('data-program-id');
-            var lat = parseFloat(card.getAttribute('data-lat'));
-            var lng = parseFloat(card.getAttribute('data-lng'));
-            var latlng = {
-                lat: lat,
-                lng: lng
-            };
+    //     document.querySelectorAll('.prog-card').forEach(function(card) {
+    //         var programId = card.getAttribute('data-program-id');
+    //         var lat = parseFloat(card.getAttribute('data-lat'));
+    //         var lng = parseFloat(card.getAttribute('data-lng'));
+    //         var latlng = {
+    //             lat: lat,
+    //             lng: lng
+    //         };
 
-            geocoder.geocode({
-                location: latlng
-            }, function(results, status) {
-                var locationElement = document.getElementById('location-' + programId);
-                if (status === 'OK') {
-                    if (results[0]) {
-                        var addressParts = results[0].formatted_address.split(',');
-                        // Extract the city and country (assuming the city is at index 1 and the country at index 3)
-                        var city = addressParts[1].trim(); // City (e.g., "Cebu City")
-                        var country = addressParts[addressParts.length - 1].trim();
-                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + city + ", " + country;
-                    } else {
-                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
-                    }
-                } else {
-                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
-                }
-            });
-        });
-    });
+    //         geocoder.geocode({
+    //             location: latlng
+    //         }, function(results, status) {
+    //             var locationElement = document.getElementById('location-' + programId);
+    //             if (status === 'OK') {
+    //                 if (results[0]) {
+    //                     locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+    //                 } else {
+    //                     locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
+    //                 }
+    //             } else {
+    //                 locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
+    //             }
+    //         });
+    //     });
+    // });
 </script>
 
 @endsection
