@@ -46,8 +46,11 @@
                         <span class="recommend-label">Recommended</span>
                     </div>
                 </div>
+                @if ($paginatedItems->isEmpty())
+                <div class="sub-text no-result">No results found.</div>
+                @else
                 <div class="prog-grid-list">
-                    @forelse ($paginatedItems as $ranked)
+                    @foreach ($paginatedItems as $ranked)
                     <div class="prog-card" data-program-id="{{ $ranked['program']->id }}" data-lat="{{ $ranked['program']->latitude }}" data-lng="{{ $ranked['program']->longitude }}">
                         <input type="hidden" name="" value="{{$ranked['similarity']}}" id="">
                         <div class="">
@@ -100,11 +103,9 @@
                             </a>
                         </div>
                     </div>
-                    @empty
-                    <div class="sub-text no-result">No results found.</div>
-                    @endforelse
+                    @endforeach
                 </div>
-
+                @endif
             </div>
             <div class="pagination-container">
                 <div class="pagination">

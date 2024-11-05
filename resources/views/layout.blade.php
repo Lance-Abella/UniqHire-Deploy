@@ -125,6 +125,15 @@
                                 </li>
                                 @endif
 
+                                @if (Auth::user()->hasRole('Employer'))
+                                <li class="side-item">
+                                    <a href="{{route('manage-jobs')}}" class="side-item-link {{ request()->routeIs('manage-jobs') ? 'active' : '' }}">
+                                        <i class='bx bx-briefcase side-icon'></i>
+                                        <span class="side-title">Job Listings</span>
+                                    </a>
+                                </li>
+                                @endif
+
                                 <!-- <li><a href="#"><i class='bx bx-cog side-icon'></i><span class="side-title">Sponsor</span></a></li> -->
                             </ul>
                             <div class="sidebar-bottom">

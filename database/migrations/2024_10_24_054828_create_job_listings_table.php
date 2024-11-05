@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('job_listings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('employer_id')->constrained('users')->onDelete('cascade');
+            $table->string('position');
+            $table->text('description');
+            $table->double('salary')->default(0);
+            $table->date('end_date');
+            $table->decimal('latitude', 10, 8);
+            $table->decimal('longitude', 11, 8);
+            // $table->foreignId('worktype_id')->constrained('work_types')->onDelete('cascade');
+            // $table->foreignId('worksetup_id')->constrained('work_setups')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\PwdController;
 use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\UserInfoController;
@@ -65,10 +66,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/add-program', [AgencyController::class, 'addProgram'])->middleware('role:Training Agency');
     Route::get('/show-program/{id}', [AgencyController::class, 'showProgramDetails'])->middleware('role:Training Agency')->name('programs-show');
     Route::delete('/delete-program/{id}', [AgencyController::class, 'deleteProgram'])->middleware('role:Training Agency')->name('programs-delete');
-
     Route::get('/edit-program/{id}', [AgencyController::class, 'editProgram'])->middleware('role:Training Agency')->name('programs-edit');
     Route::put('/edit-program/{id}', [AgencyController::class, 'updateProgram'])->middleware('role:Training Agency');
-
     Route::get('/agency/calendar', [AgencyController::class, 'showCalendar'])->middleware('role:Training Agency')->name('agency-calendar');
     // Route::post('/agency/action', [AgencyController::class, 'action'])->middleware('role:Training Agency')->name('agency-action');
     Route::post('/agency/accept', [AgencyController::class, 'accept'])->middleware('role:Training Agency')->name('agency-accept');
@@ -87,9 +86,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/training-program/rate', [PwdController::class, 'rateProgram'])->middleware('role:PWD')->name('rate-program');
     Route::get('/browse/job-postings', [PwdController::class, 'showJobs'])->middleware('role:PWD')->name('pwd-list-job');
 
+
     //SPONSOR Middleware
     Route::get('/browse/list-of-programs', [SponsorController::class, 'showTrainingLists'])->middleware('role:Sponsor')->name('list-of-tp');
     Route::get('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('trainingprog-details');
     Route::post('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('trainingprog-details');
     Route::get('/training-program/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('show-progdetails');
+
+
+    // Employer Middleware
+    Route::get('/manage-jobs', [EmployerController::class, 'manageJobs'])->middleware('role:Employer')->name('manage-jobs');
+    Route::get('/add-job', [EmployerController::class, 'showAddForm'])->middleware('role:Employer')->name('add-job');
+    Route::post('/add-job', [EmployerController::class, 'addJob'])->middleware('role:Employer')->name('job-add');
 });

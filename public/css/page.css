@@ -838,7 +838,7 @@ span.badge {
 
 .pwd-browse-prog .prog-card .prog-img,
 .pwd-browse-prog .job-card .prog-img {
-    min-width: 5.5rem;
+    min-width: 5rem;
     min-height: 5rem;
     background-color: var(--primary-color-light);
     margin-right: 1rem;
@@ -964,7 +964,7 @@ span.badge {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 80%;
+    /* width: 80%; */
 }
 
 .pagination {
@@ -1667,10 +1667,13 @@ span.badge {
 }
 
 /* AGENCY MANAGE PROG */
-.agency-prog-container {
-    height: 100vh;
-}
+/* .agency-prog-container .manage-outer {
+    display: flex;
+    justify-content: center;
+} */
 .agency-prog-container .prog-grid {
+    position: relative;
+    left: 2.5rem;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
@@ -2147,6 +2150,10 @@ table tbody .bx {
 }
 
 /* PWD BROWSE JOBS */
+.prog-grid {
+    width: 80%;
+}
+
 .pwd-browse-job .prog-grid-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('page-title', 'Training Programs')
+@section('page-title', 'Manage Training Programs')
 @section('page-content')
 <div class="d-flex flex-column agency-prog-container pb-4">
     <div class="row mb-2">
@@ -75,7 +75,11 @@
                 var locationElement = document.getElementById('location-' + programId);
                 if (status === 'OK') {
                     if (results[0]) {
-                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + results[0].formatted_address;
+                        var addressParts = results[0].formatted_address.split(',');
+                        // Extract the city and country (assuming the city is at index 1 and the country at index 3)
+                        var city = addressParts[1].trim(); // City (e.g., "Cebu City")
+                        var country = addressParts[addressParts.length - 1].trim();
+                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + city + ", " + country;
                     } else {
                         locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
                     }
