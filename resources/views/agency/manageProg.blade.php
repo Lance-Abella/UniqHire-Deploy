@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('page-title', 'Training Programs')
+@section('page-title', 'Manage Training Programs')
 @section('page-content')
 <div class="d-flex flex-column agency-prog-container pb-4">
     <div class="row mb-2">

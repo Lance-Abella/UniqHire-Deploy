@@ -7,7 +7,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <title>UniqHire | @yield('page-title')</title>
         @include('slugs.links')
-        <!-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) -->
+
         <link rel="icon" href="{{ asset('images/tab-icon.png') }}">
 
     </head>
@@ -126,6 +126,15 @@
                                 </li>
                                 @endif
 
+                                @if (Auth::user()->hasRole('Employer'))
+                                <li class="side-item">
+                                    <a href="{{route('manage-jobs')}}" class="side-item-link {{ request()->routeIs('manage-jobs') ? 'active' : '' }}">
+                                        <i class='bx bx-briefcase side-icon'></i>
+                                        <span class="side-title">Job Listings</span>
+                                    </a>
+                                </li>
+                                @endif
+
                                 <!-- <li><a href="#"><i class='bx bx-cog side-icon'></i><span class="side-title">Sponsor</span></a></li> -->
                             </ul>
                             <div class="sidebar-bottom">
@@ -185,7 +194,9 @@
                     </div>
                 </div>
                 @endif
-
+                <div class="scroll-top">
+                    <a href="#"><i class='bx bx-chevron-up'></i></a>
+                </div>
                 <div class="content-container page-content">
                     @yield('page-content')
                 </div>
@@ -283,7 +294,14 @@
             icon.classList.toggle('arrow-down');
         }
 
-        
+        window.addEventListener('scroll', function() {
+            var scrollButton = document.querySelector('.scroll-top');
+            if (window.scrollY > 100) { // Show when scrolled down 100px
+                scrollButton.classList.add('visible');
+            } else {
+                scrollButton.classList.remove('visible');
+            }
+        });
     </script>
 
     </html>
