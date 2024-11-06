@@ -72,7 +72,9 @@
                                     <label for="education-level">Education Level</label>
                                 </div>
                             </div>
-                            @elseif ($user->hasRole('Training Agency'))
+                            @elseif ($user->hasRole('Training Agency') || $user->hasRole('Sponsor') || $user->hasRole('Employer'))
+                            <!-- <input type="text" name="disability" value="1">
+                            <input type="text" name="education" value="1"> -->
                             <div class="col">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="floatingInput" name="founder" value="{{ $user->userInfo->founder }}" placeholder="Founder">
@@ -181,13 +183,18 @@
         // document.getElementById('lat').value = lat;
         // document.getElementById('long').value = lng;
 
-         // Function to reverse geocode based on lat and lng
+        // Function to reverse geocode based on lat and lng
         function reverseGeocode(lat, lng) {
             var geocoder = new google.maps.Geocoder();
-            var latlng = { lat: parseFloat(lat), lng: parseFloat(lng) };
+            var latlng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng)
+            };
 
             // Reverse geocode to get the address
-            geocoder.geocode({ location: latlng }, function(results, status) {
+            geocoder.geocode({
+                location: latlng
+            }, function(results, status) {
                 var locationElement = document.getElementById('loc');
                 if (status === 'OK') {
                     if (results[0]) {
@@ -195,7 +202,7 @@
                         // Extract the city and country (assuming city at index 1 and country at the end)
                         var city = addressParts[1].trim();
                         var country = addressParts[addressParts.length - 1].trim();
-                        locationElement.value =  city + ", " + country;
+                        locationElement.value = city + ", " + country;
                         console.log("locationElement value: " + locationElement.value);
                     } else {
                         locationElement.value = "No address found";
@@ -288,6 +295,6 @@
         });
     }
 
-     // Initialize the map and geocoding
+    // Initialize the map and geocoding
     window.onload = initMap;
 </script>

@@ -35,7 +35,7 @@
                     </p>
                     <p class="text-cap"> <strong>Disability:</strong>&nbsp;&nbsp;&nbsp;<span class="match-info">{{ $user->userInfo->disability->disability_name }}</span></p>
                 </div>
-                @elseif($user->hasRole('Training Agency'))
+                @elseif($user->hasRole('Training Agency') || $user->hasRole('Sponsor') || $user->hasRole('Employer'))
                 <div class="">
                     <p class="text-cap age"><strong>Founder:</strong>
                         @if ($user->userInfo->founder != null)
@@ -169,5 +169,4 @@
             }
         });
     }
-
 </script>
