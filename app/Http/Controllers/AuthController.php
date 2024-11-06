@@ -69,7 +69,7 @@ class AuthController extends Controller
             $userInfo->save();
         }
 
-        if ($user->hasRole('Training Agency')) {
+        if ($user->hasRole('Training Agency') || $user->hasRole('Sponsor') || $user->hasRole('Employer')) {
             $user->userInfo->update([
                 'name' => $request->name,
                 'contactnumber' => $request->contactnumber,
@@ -79,8 +79,8 @@ class AuthController extends Controller
                 'about' => $request->about,
                 'founder' => $request->founder,
                 'year_established' => $request->year_established,
-                'awards' => $request->awards,
-                'affiliations' => $request->affiliations,
+                'awards' => $request->awards ?? '',
+                'affiliations' => $request->affiliations ?? '',
             ]);
         } else {
             $user->userInfo->update([
