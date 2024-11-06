@@ -767,6 +767,7 @@ span.badge {
     grid-template-columns: 15rem 1fr;
     grid-template-areas: "filter list";
     min-height: 100vh;
+    /* overflow-y: hidden; */
 }
 
 .pwd-browse-prog .list {

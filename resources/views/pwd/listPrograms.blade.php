@@ -28,7 +28,7 @@
             </div>
         </form>
     </div>
-    <div class="list">
+    <div class="list" style="width:80%">
         <div class="mb-4 searchbar-container">
             <div class="d-flex justify-content-center">
                 <form role="search" action="{{ route('pwd-list-program') }}" method="GET" id="searchForm">
