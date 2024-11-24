@@ -83,4 +83,11 @@ class SponsorController extends Controller
         // Return the view for program details
         return view('sponsor.showTrainProgDetails', compact('program', 'reviews', 'enrollees', 'slots'));
     }
+
+    public function payment(){
+        return view('slugs.payment');
+    }
+
+    
+    
 }

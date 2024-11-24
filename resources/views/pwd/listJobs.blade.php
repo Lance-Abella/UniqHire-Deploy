@@ -8,27 +8,13 @@
                 <h3>Filter</h3>
                 <i class='bx bx-filter-alt fs-3 sub-text text-end'></i>
             </div>
-            <div class="mb-3">
-                <span>
-                    <p>Education Level</p>
-                </span>
-                @foreach($educations as $education)
-                @if($education->id !== 1)
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{$education->education_name}}" id="flexCheckChecked{{$loop->index}}" name="education[]" onchange="submitForm()" {{ in_array($education->education_name, request()->input('education', [])) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
-                        {{$education->education_name}} &nbsp;<span class="count sub-text">(1)</span>
-                    </label>
-                </div>
-                @endif
-                @endforeach
-            </div>
+            
         </form>
     </div>
     <div class="list">
         <div class="mb-4 searchbar-container">
             <div class="d-flex justify-content-center">
-                <form role="search" action="{{ route('list-of-tp') }}" method="GET" id="searchForm">
+                <form role="search" action="{{ route('pwd-list-job') }}" method="GET" id="searchForm">
                     <div class="d-flex searchbar">
                         <input class="form-control" type="search" placeholder="Search Jobs" aria-label="Search" id="searchInput" onchange="checkAndSubmit()" name="search" value="{{ request('search') }}">
                         <button class="submit-btn border-0" type="submit">Search</button>
@@ -45,15 +31,19 @@
                     </div>
                 </div>
                 <div class="prog-grid-list">
-                    <div class="job-card mb-2">
+                    @foreach ($paginatedItems as $ranked)
+                    
+                    <div class="job-card mb-2" data-program-id="{{ $ranked['job']->id }}" data-lat="{{ $ranked['job']->latitude }}" data-lng="{{ $ranked['job']->longitude }}">
+                        <input type="text" name="" value="{{$ranked['similarity']}}" id="">
+                        
                         <a href="" class="d-flex prog-texts">
                             <div class="prog-texts-container">
                                 <div class="d-flex mb-2">
                                     <div class="prog-img"></div>
                                     <div class="prog-head">
                                         <div class="header">
-                                            <h4 class="text-cap">Position</h4>
-                                            <p class="sub-text text-cap">Company</p>
+                                            <h4 class="text-cap">{{$ranked['job']->position}}</h4>
+                                            <p class="sub-text text-cap">{{$ranked['job']->employer->userInfo->name}}</p>
                                             <p class="sub-text text-cap location">
                                                 <i class='bx bx-map sub-text'></i>Loading address...
                                             </p>
@@ -64,7 +54,7 @@
                                     </div>
                                 </div>
                                 <div class="prog-desc">
-                                    <p><span><i class='bx bx-money'></i> Salary: 10000</span> | <span><i class='bx bx-briefcase'></i> Work Setup: On-site</span></p>
+                                    <p><span><i class='bx bx-money'></i> Salary: {{$ranked['job']->salary}}</span> | <span><i class='bx bx-briefcase'></i> Work Setup: On-site</span></p>
                                 </div>
                                 <div class="infos">
                                     <div class="match-info">qwe</div>
@@ -72,6 +62,7 @@
                             </div>
                         </a>
                     </div>
+                    @endforeach
                 </div>
             </div>
             <div class="pagination-container">
