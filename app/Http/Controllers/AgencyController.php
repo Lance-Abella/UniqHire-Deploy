@@ -401,11 +401,21 @@ class AgencyController extends Controller
         $enrolleeId = $validatedData['enrolleeId'];
         $completionStatus = 'Completed';
 
+        // Find the enrollee and update completion status
         $enrollee = Enrollee::findOrFail($enrolleeId);
         $enrollee->update(['completion_status' => $completionStatus]);
 
-        return back()->with('success', 'Enrollee completed the training');
+        // Insert a new row in the certification_details table
+        DB::table('certification_details')->insert([
+            'program_id' => $enrollee->program_id, // assuming program_id is a property of the Enrollee model
+            'user_id' => $enrollee->pwd_id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', 'Enrollee completed the training and certification record created.');
     }
+
 
 
 

@@ -67,4 +67,9 @@ class TrainingProgram extends Model
     {
         return $this->hasMany(TrainingApplication::class, 'training_program_id');
     }
+
+    public function certificationDetails()
+    {
+        return $this->hasMany(CertificationDetail::class, 'program_id');  
+    }
 }

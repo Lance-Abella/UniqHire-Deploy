@@ -211,6 +211,7 @@
             </div>
             @endif
         </div>
+        @stack('map-scripts')
     </body>
     <script>
         $(document).ready(function() {
