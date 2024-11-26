@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
+            $table->string('location')->nullable();
             // $table->foreignId('worktype_id')->constrained('work_types')->onDelete('cascade');
             // $table->foreignId('worksetup_id')->constrained('work_setups')->onDelete('cascade');
             $table->timestamps();

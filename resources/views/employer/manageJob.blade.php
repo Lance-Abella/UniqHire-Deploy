@@ -18,7 +18,7 @@
                 <a href="" class="prog-texts">
                     <h3 class="text-cap">{{$job->position}}</h3>
                     <p class="sub-text prog-loc text-cap" id="location-{{ $job->id }}">
-                        <i class='bx bx-map sub-text prog-loc'></i>Loading address...
+                        <i class='bx bx-map sub-text prog-loc'></i>{{$job->location}}
                     </p>
                     <input type="hidden" id="lat" value="{{$job->latitude}}">
                     <input type="hidden" id="lng" value="{{$job->longitude}}">

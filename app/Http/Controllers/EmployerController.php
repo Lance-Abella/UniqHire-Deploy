@@ -40,6 +40,7 @@ class EmployerController extends Controller
             'description' => 'required|string',
             'lat' => 'required|numeric|between:-90,90',
             'long' => 'required|numeric|between:-180,180',
+            'loc' => 'nullable|string|max:255',
             'end_date' => 'required|date',
             'skills' => 'required|array',
             'skills.*' => 'exists:skills,id',
@@ -56,6 +57,7 @@ class EmployerController extends Controller
             'salary' => $salary,
             'latitude' => $request->lat,
             'longitude' => $request->long,
+            'location' => $request->loc,
             'end_date' => $request->end_date,
         ]);
 
