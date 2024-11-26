@@ -122,7 +122,7 @@ class PwdController extends Controller
 
         return $similarityScore;
     }
-    
+
     public function showPrograms(Request $request)
     {
         $user = auth()->user()->userInfo;
@@ -185,7 +185,7 @@ class PwdController extends Controller
         return view('pwd.listPrograms', compact('paginatedItems', 'educations', 'educationCounts'));
     }
 
-    
+
 
     public function showDetails($id)
     {
@@ -415,12 +415,12 @@ class PwdController extends Controller
 
 
         // Retrieve user's skills and certifications
-            // $userSkills = SkillUser::where('user_id', $user->id)->with('skill')->get();
-            // $certifiedSkills = DB::table('certification_details')
-            // ->join('program_skill', 'certification_details.program_id', '=', 'program_skill.training_program_id')
-            // ->where('certification_details.user_id', $user->user_id)
-            // ->pluck('program_skill.skill_id')  // Get the skill_id associated with the program
-            // ->toArray();
+        // $userSkills = SkillUser::where('user_id', $user->id)->with('skill')->get();
+        // $certifiedSkills = DB::table('certification_details')
+        // ->join('program_skill', 'certification_details.program_id', '=', 'program_skill.training_program_id')
+        // ->where('certification_details.user_id', $user->user_id)
+        // ->pluck('program_skill.skill_id')  // Get the skill_id associated with the program
+        // ->toArray();
         //     $programIds = DB::table('certification_details')
         // ->where('user_id', $user->user_id)
         // ->pluck('program_id')
@@ -467,7 +467,7 @@ class PwdController extends Controller
         // Retrieve certified skills of the user from CertificationDetails
         $certifiedSkills = [];
         $certificationDetails = CertificationDetail::where('user_id', $user->id)->get();
-        
+
         foreach ($certificationDetails as $certification) {
             // Find the training program and load its skills
             $program = TrainingProgram::with('skill')->find($certification->program_id);
@@ -479,7 +479,7 @@ class PwdController extends Controller
                 }
             }
         }
-    
+
 
         // Remove duplicates from certified skills but count duplicates for scoring
         // $certifiedSkillsCount = array_count_values($certifiedSkills);
@@ -492,7 +492,7 @@ class PwdController extends Controller
                 $similarityScore += 1; // Add 1 point for each matching skill
             }
         }
-        
+
         // Compare certified skills with current job skills
         foreach ($certifiedSkills as $certifiedSkillId) {
             // Check if the certified skill ID exists in the current job's skill IDs
@@ -513,7 +513,7 @@ class PwdController extends Controller
         $user = auth()->user()->userInfo;
         $query = JobListing::query();
         $certified = DB::table("certification_details")->where('user_id', $user->user_id)
-                     ->get();
+            ->get();
 
         // Get the collection of approved programs to not include in displaying
         $approvedJobIds = JobApplication::where('user_id', auth()->id())
@@ -562,7 +562,7 @@ class PwdController extends Controller
         // $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
         Log::info('Paginated Items:', $paginatedItems->toArray());
         log::info("nakaabot ari gyuddd");
-        
+
         return view('pwd.listJobs', compact('paginatedItems'));
     }
 }

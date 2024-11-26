@@ -73,8 +73,6 @@
                                 </div>
                             </div>
                             @elseif ($user->hasRole('Training Agency') || $user->hasRole('Sponsor') || $user->hasRole('Employer'))
-                            <!-- <input type="text" name="disability" value="1">
-                            <input type="text" name="education" value="1"> -->
                             <div class="col">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="floatingInput" name="founder" value="{{ $user->userInfo->founder }}" placeholder="Founder">
