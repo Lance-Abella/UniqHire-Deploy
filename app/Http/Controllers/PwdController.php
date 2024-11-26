@@ -26,68 +26,6 @@ use Illuminate\Support\Facades\DB;
 
 class PwdController extends Controller
 {
-    public function showPrograms(Request $request)
-    {
-        $user = auth()->user()->userInfo;
-        $educations = EducationLevel::all();
-        $query = TrainingProgram::query();
-
-        // Get the collection of approved programs to not include in displaying
-        $approvedProgramIds = TrainingApplication::where('user_id', auth()->id())
-            ->where('application_status', 'Approved')
-            ->pluck('training_program_id')
-            ->toArray();
-
-        // Filtering the programs through searching program title
-        if ($request->filled('search')) {
-            $query->where("title", "LIKE", "%" . $request->search . "%");
-        }
-
-        // Filtering the programs based on education [multiple selection]
-        if (isset($request->education) && ($request->education != null)) {
-            $query->whereHas('education', function ($q) use ($request) {
-                $q->whereIn('education_name', $request->education);
-            });
-        }
-
-        $query->whereNotIn('id', $approvedProgramIds);
-
-        // Filtering the programs based on the user's disability
-        $query->whereHas('disability', function ($q) use ($user) {
-            $q->where('disability_id', $user->disability_id);
-        });
-
-        $filteredPrograms = $query->get();
-
-        $rankedPrograms = [];
-
-        foreach ($filteredPrograms as $program) {
-            $similarity = $this->calculateProgSimilarity($user, $program);
-            Log::info("Similarity score for program ID {$program->id}: " . $similarity);
-            $rankedPrograms[] = [
-                'program' => $program,
-                'similarity' => $similarity
-            ];
-        }
-
-        // Sorting the programs based on similarity score [ascending]
-        usort($rankedPrograms, function ($a, $b) {
-            return $b['similarity'] <=> $a['similarity'];
-        });
-
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 14;
-        $currentItems = array_slice($rankedPrograms, ($currentPage - 1) * $perPage, $perPage);
-        $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedPrograms), $perPage);
-        $paginatedItems->setPath($request->url());
-
-        // $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
-        $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
-        Log::info('Paginated Items:', $paginatedItems->toArray());
-        log::info("nakaabot ari gyuddd");
-        return view('pwd.listPrograms', compact('paginatedItems', 'educations', 'educationCounts'));
-    }
-
     private function calculateDistance($lat1, $lng1, $lat2, $lng2)
     {
         $earthRadius = 6371; // Radius of the earth in km
