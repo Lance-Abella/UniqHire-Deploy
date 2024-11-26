@@ -11,6 +11,8 @@ use App\Models\TrainingApplication;
 use App\Models\User;
 use App\Models\SkillUser;
 use App\Models\JobListing;
+use App\Models\JobApplication;
+use App\Models\CertificationDetail;
 use App\Http\Requests\StoreUserInfoRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
 use App\Models\Enrollee;
@@ -19,6 +21,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Notifications\PwdApplicationNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class PwdController extends Controller
 {
@@ -102,7 +106,7 @@ class PwdController extends Controller
         return round($distance, 2);
     }
 
-    private function calculateProgSimilarity($user, $program)
+    private function calculateProgramSimilarity($user, $program)
     {
         $similarityScore = 0;
         $weights = [
@@ -180,6 +184,70 @@ class PwdController extends Controller
 
         return $similarityScore;
     }
+
+    public function showPrograms(Request $request)
+    {
+        $user = auth()->user()->userInfo;
+        $educations = EducationLevel::all();
+        $query = TrainingProgram::query();
+
+        // Get the collection of approved programs to not include in displaying
+        $approvedProgramIds = TrainingApplication::where('user_id', auth()->id())
+            ->where('application_status', 'Approved')
+            ->pluck('training_program_id')
+            ->toArray();
+
+        // Filtering the programs through searching program title
+        if ($request->filled('search')) {
+            $query->where("title", "LIKE", "%" . $request->search . "%");
+        }
+
+        // Filtering the programs based on education [multiple selection]
+        if (isset($request->education) && ($request->education != null)) {
+            $query->whereHas('education', function ($q) use ($request) {
+                $q->whereIn('education_name', $request->education);
+            });
+        }
+
+        $query->whereNotIn('id', $approvedProgramIds);
+
+        // Filtering the programs based on the user's disability
+        $query->whereHas('disability', function ($q) use ($user) {
+            $q->where('disability_id', $user->disability_id);
+        });
+
+        $filteredPrograms = $query->get();
+
+        $rankedPrograms = [];
+
+        foreach ($filteredPrograms as $program) {
+            $similarity = $this->calculateProgramSimilarity($user, $program);
+            Log::info("Similarity score for program ID {$program->id}: " . $similarity);
+            $rankedPrograms[] = [
+                'program' => $program,
+                'similarity' => $similarity
+            ];
+        }
+
+        // Sorting the programs based on similarity score [ascending]
+        usort($rankedPrograms, function ($a, $b) {
+            return $b['similarity'] <=> $a['similarity'];
+        });
+
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 14;
+        $currentItems = array_slice($rankedPrograms, ($currentPage - 1) * $perPage, $perPage);
+        $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedPrograms), $perPage);
+        $paginatedItems->setPath($request->url());
+
+        // $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
+        $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
+        Log::info('Paginated Items:', $paginatedItems->toArray());
+        log::info("nakaabot ari gyuddd");
+        return view('pwd.listPrograms', compact('paginatedItems', 'educations', 'educationCounts'));
+    }
+
+
 
     public function showDetails($id)
     {
@@ -397,6 +465,7 @@ class PwdController extends Controller
 
 
     // HIRING SIDE
+
     private function calculateJobSimilarity($user, $currentJob)
     {
         $similarityScore = 0;
@@ -405,6 +474,26 @@ class PwdController extends Controller
         $filteredJobs = JobListing::whereHas('disability', function ($q) use ($user) {
             $q->where('disability_id', $user->disability_id);
         })->get();
+
+
+        // Retrieve user's skills and certifications
+        // $userSkills = SkillUser::where('user_id', $user->id)->with('skill')->get();
+        // $certifiedSkills = DB::table('certification_details')
+        // ->join('program_skill', 'certification_details.program_id', '=', 'program_skill.training_program_id')
+        // ->where('certification_details.user_id', $user->user_id)
+        // ->pluck('program_skill.skill_id')  // Get the skill_id associated with the program
+        // ->toArray();
+        //     $programIds = DB::table('certification_details')
+        // ->where('user_id', $user->user_id)
+        // ->pluck('program_id')
+        // ->toArray();
+
+        // $certifiedSkills = DB::table('program_skill')
+        // ->whereIn('training_program_id', $programIds)
+        // ->pluck('skill_id')
+        // ->toArray();
+
+        // Calculate distance scoring (assuming calculateDistance is predefined)
         $distances = [];
         foreach ($filteredJobs as $job) {
             $distanceValue = $this->calculateDistance($user->latitude, $user->longitude, $job->latitude, $job->longitude);
@@ -429,12 +518,113 @@ class PwdController extends Controller
             }
         }
         Log::info("Nakaabot diri");
+
+
+        // Retrieve existing skills of the user
+        $userSkills = SkillUser::where('user_id', $user->id)->with('skill')->get();
+        $existingSkills = $userSkills->pluck('skill_id')->toArray();
+
+        $currentJobSkillIds = $currentJob->skill->pluck('id')->toArray();
+
+        // Retrieve certified skills of the user from CertificationDetails
+        $certifiedSkills = [];
+        $certificationDetails = CertificationDetail::where('user_id', $user->id)->get();
+
+        foreach ($certificationDetails as $certification) {
+            // Find the training program and load its skills
+            $program = TrainingProgram::with('skill')->find($certification->program_id);
+
+            if ($program) {
+                // Iterate over the skills associated with the program
+                foreach ($program->skill as $skill) {
+                    $certifiedSkills[] = $skill->id; // Add skill IDs to the array
+                }
+            }
+        }
+
+
+        // Remove duplicates from certified skills but count duplicates for scoring
+        // $certifiedSkillsCount = array_count_values($certifiedSkills);
+
+        // $currentJob->load('skill');
+
+        // Compare existing skills with current job skills
+        foreach ($existingSkills as $existingSkillId) {
+            if (in_array($existingSkillId, $currentJobSkillIds)) {
+                $similarityScore += 1; // Add 1 point for each matching skill
+            }
+        }
+
+        // Compare certified skills with current job skills
+        foreach ($certifiedSkills as $certifiedSkillId) {
+            // Check if the certified skill ID exists in the current job's skill IDs
+            if (in_array($certifiedSkillId, $currentJobSkillIds)) {
+                $similarityScore += 20; // Add 20 points for each matching skill, accounting for duplicates
+            }
+        }
+        Log::info('Existing Skills:', $existingSkills);
+        Log::info('Certified Skills:', $certifiedSkills);
+        Log::info('Current Job Skills:', $currentJobSkillIds);
+
         return $similarityScore;
     }
 
-    public function showJobs()
+
+    public function showJobs(Request $request)
     {
-        $educations = EducationLevel::all();
-        return view('pwd.listJobs', compact('educations'));
+        $user = auth()->user()->userInfo;
+        $query = JobListing::query();
+        $certified = DB::table("certification_details")->where('user_id', $user->user_id)
+            ->get();
+
+        // Get the collection of approved programs to not include in displaying
+        $approvedJobIds = JobApplication::where('user_id', auth()->id())
+            ->where('application_status', 'Approved')
+            ->pluck('job_id')
+            ->toArray();
+
+        // Filtering the programs based on education [multiple selection]
+        // if (isset($request->education) && ($request->education != null)) {
+        //     $query->whereHas('education', function ($q) use ($request) {
+        //         $q->whereIn('education_name', $request->education);
+        //     });
+        // }
+
+        $query->whereNotIn('id', $approvedJobIds);
+
+        // Filtering the jobs based on the user's disability
+        $query->whereHas('disability', function ($q) use ($user) {
+            $q->where('disability_id', $user->disability_id);
+        });
+
+        $filteredJobs = $query->get();
+
+        $rankedJobs = [];
+
+        foreach ($filteredJobs as $job) {
+            $similarity = $this->calculateJobSimilarity($user, $job);
+            Log::info("Similarity score for program ID {$job->id}: " . $similarity);
+            $rankedJobs[] = [
+                'job' => $job,
+                'similarity' => $similarity
+            ];
+        }
+
+        // Sorting the programs based on similarity score [ascending]
+        usort($rankedJobs, function ($a, $b) {
+            return $b['similarity'] <=> $a['similarity'];
+        });
+
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 14;
+        $currentItems = array_slice($rankedJobs, ($currentPage - 1) * $perPage, $perPage);
+        $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedJobs), $perPage);
+        $paginatedItems->setPath($request->url());
+
+        // $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
+        Log::info('Paginated Items:', $paginatedItems->toArray());
+        log::info("nakaabot ari gyuddd");
+
+        return view('pwd.listJobs', compact('paginatedItems'));
     }
 }

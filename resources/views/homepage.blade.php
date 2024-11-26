@@ -7,6 +7,7 @@
         <div class="welcome-left">
             <div class="header-caption mb-3">
                 <h1 class="header-text">Find Opportunity in UniqHire</h1>
+                @include('slugs.payment')
             </div>
             <div class="sub-caption mb-4">
                 <p>Welcome to Uniqhire, where every ability finds opportunity! Creating bridges to people with disabilities, fostering inclusivity and celebrating diverse talents. Join us in building a world where everyone thrives!</p>

@@ -19,7 +19,7 @@ Route::get('/forgot-password', [AuthController::class, 'showForgotPass'])->name(
 
 
 Route::get('/register', [AuthController::class, 'showRegistration'])->name('register-form');
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 
 Route::get('/logout', [AuthController::class, 'logout']);
@@ -92,6 +92,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('trainingprog-details');
     Route::post('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('trainingprog-details');
     Route::get('/training-program/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('show-progdetails');
+    Route::post('/training-program/payment', [SponsorController::class, 'payment'])->middleware('role:Sponsor')->name('payment');
 
 
     // Employer Middleware
