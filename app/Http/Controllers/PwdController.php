@@ -10,6 +10,7 @@ use App\Models\EducationLevel;
 use App\Models\TrainingApplication;
 use App\Models\User;
 use App\Models\SkillUser;
+use App\Models\JobListing;
 use App\Http\Requests\StoreUserInfoRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
 use App\Models\Enrollee;
@@ -57,7 +58,7 @@ class PwdController extends Controller
         $rankedPrograms = [];
 
         foreach ($filteredPrograms as $program) {
-            $similarity = $this->calculateSimilarity($user, $program);
+            $similarity = $this->calculateProgSimilarity($user, $program);
             Log::info("Similarity score for program ID {$program->id}: " . $similarity);
             $rankedPrograms[] = [
                 'program' => $program,
@@ -101,7 +102,7 @@ class PwdController extends Controller
         return round($distance, 2);
     }
 
-    private function calculateSimilarity($user, $program)
+    private function calculateProgSimilarity($user, $program)
     {
         $similarityScore = 0;
         $weights = [
@@ -396,6 +397,41 @@ class PwdController extends Controller
 
 
     // HIRING SIDE
+    private function calculateJobSimilarity($user, $currentJob)
+    {
+        $similarityScore = 0;
+
+        // Filter jobs based on user disability
+        $filteredJobs = JobListing::whereHas('disability', function ($q) use ($user) {
+            $q->where('disability_id', $user->disability_id);
+        })->get();
+        $distances = [];
+        foreach ($filteredJobs as $job) {
+            $distanceValue = $this->calculateDistance($user->latitude, $user->longitude, $job->latitude, $job->longitude);
+            $distances[] = [
+                'job_id' => $job->id,
+                'distance' => $distanceValue
+            ];
+        }
+        Log::info('Distances:', $distances);
+
+        usort($distances, function ($a, $b) {
+            return $a['distance'] <=> $b['distance'];
+        });
+
+        $numberOfDistances = count($distances);
+        $difference = $numberOfDistances > 1 ? 30 / ($numberOfDistances) : 0;
+
+        foreach ($distances as $index => $distanceItem) {
+            if ($distanceItem['job_id'] == $currentJob->id) {
+                $similarityScore += max(0, 30 - ($difference * $index));
+                break;
+            }
+        }
+        Log::info("Nakaabot diri");
+        return $similarityScore;
+    }
+
     public function showJobs()
     {
         $educations = EducationLevel::all();
