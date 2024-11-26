@@ -152,6 +152,8 @@
                                     <form action="{{ route('mark-complete') }}" method="POST">
                                         @csrf
                                         <input type="hidden" value="{{$enrollee->id}}" name="enrolleeId">
+                                        <input type="hidden" value="{{$enrollee->pwd_id}}" name="userId">
+                                        <input type="hidden" value="{{$program->id}}" name="programId">
                                         @if ($enrollee->completion_status == 'Ongoing')
                                         <button class="submit-btn border-0">Completed?</button>
                                         @else
