@@ -1,9 +1,12 @@
 @extends ('layout')
+
 @section('page-title', 'Find Work')
+
 @section('page-content')
+
 <div class="pwd-browse-prog pwd-browse-job mb-3">
     <div class="filter-container">
-        <form action="{{ route('pwd-list-program') }}" method="GET" id="filterForm">
+        <form action="{{ route('pwd-list-job') }}" method="GET" id="filterForm">
             <div class="d-flex justify-content-between mb-3">
                 <h3>Filter</h3>
                 <i class='bx bx-filter-alt fs-3 sub-text text-end'></i>
@@ -39,7 +42,7 @@
                     <div class="job-card mb-2" data-program-id="{{ $ranked['job']->id }}" data-lat="{{ $ranked['job']->latitude }}" data-lng="{{ $ranked['job']->longitude }}">
                         <input type="text" name="" value="{{$ranked['similarity']}}" id="">
 
-                        <a href="" class="d-flex prog-texts">
+                        <a href="{{ route('job-details', $ranked['job']->id) }}" class="d-flex prog-texts">
                             <div class="prog-texts-container">
                                 <div class="d-flex mb-2">
                                     <div class="prog-img" @if (!empty($ranked['job']->employer->userInfo->profile_path)) style=" background-image: url({{ asset($ranked['job']->employer->userInfo->profile_path) }}); background-repeat: no-repeat; background-size: cover; " @endif>
