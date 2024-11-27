@@ -145,7 +145,7 @@
                 </div>
             </div>
             <div class="grid-right">
-                <div class="content-container nav-sticky">
+                <div class="content-container nav-sticky mb-4">
                     <nav class="navbar border-bottom">
                         <div class="navbar-container">
                             <div>

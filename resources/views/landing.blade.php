@@ -8,7 +8,7 @@
     }
 
     .landing {
-        padding: 0 1rem;
+        padding: 0 2rem;
     }
 
     .nav-item .submit-btn {
@@ -17,7 +17,7 @@
         /* margin-right: 4rem; */
     }
 </style>
-<div class=" mb-2">
+<div class="mb-4">
     <nav class="navbar border-bottom">
         <div class="navbar-container">
             <div>

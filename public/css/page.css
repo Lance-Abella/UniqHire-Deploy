@@ -448,7 +448,7 @@ footer .btn button {
 
 /* CONTENT CONTAINER */
 .page-content {
-    padding: 1rem 1.5rem 0 1.5rem;
+    padding: 0 0 0 1.5rem;
 }
 
 /* DATE PICKER */
@@ -712,7 +712,7 @@ span.badge {
 }
 
 .team img {
-    height: 21rem;
+    height: 27rem;
 }
 
 .about-text {
