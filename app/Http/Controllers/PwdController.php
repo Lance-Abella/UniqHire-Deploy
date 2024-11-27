@@ -270,6 +270,25 @@ class PwdController extends Controller
         return view('pwd.show', compact('program', 'reviews', 'application', 'nonConflictingPrograms', 'enrollees', 'status', 'isCompletedProgram', 'slots', 'userHasReviewed', 'rating', 'userReview'));
     }
 
+    public function showListingDetails($id)
+    {
+        $listing = JobListing::with('employer.userInfo', 'disability')->findOrFail($id);
+        $userId = auth()->user()->id;
+        $applications = JobApplication::where('user_id', $userId)->get();
+        $status = JobApplication::where('job_id', $userId)->get();
+        $disabilityId = auth()->user()->userInfo->disability_id;
+
+        $enrollees = JobApplication::where('job_id', $listing->id)->get();
+
+        if ($listing->crowdfund) {
+            $raisedAmount = $program->crowdfund->raised_amount ?? 0; // Default to 0 if raised_amount is null
+            $goal = $program->crowdfund->goal ?? 1; // Default to 1 to avoid division by zero
+            $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0; // Calculate progress percentage
+            $listing->crowdfund->progress = $progress;
+        }
+        return view('pwd.showListingDetails', compact('listing', 'enrollees', 'status'));
+    }
+
     public function showCalendar(Request $request)
     {
         Log::info("showCalendar method called for user ID: " . auth()->user()->id);
