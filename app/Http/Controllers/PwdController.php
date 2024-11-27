@@ -515,6 +515,7 @@ class PwdController extends Controller
         $user = auth()->user()->userInfo;
         $query = JobListing::query();
         $setups = WorkSetup::all();
+        $types = WorkType::all();
         $certified = DB::table("certification_details")->where('user_id', $user->user_id)
             ->get();
 
@@ -530,6 +531,10 @@ class PwdController extends Controller
         //         $q->whereIn('education_name', $request->education);
         //     });
         // }
+
+        if ($request->filled('min_salary') && $request->filled('max_salary')) {
+            $query->whereBetween('salary', [$request->min_salary, $request->max_salary]);
+        }
 
         $query->whereNotIn('id', $approvedJobIds);
 
@@ -568,6 +573,6 @@ class PwdController extends Controller
         Log::info('Paginated Items:', $paginatedItems->toArray());
         log::info("nakaabot ari gyuddd");
 
-        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts'));
+        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types'));
     }
 }

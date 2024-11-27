@@ -14,12 +14,39 @@
                 </span>
                 @foreach($setups as $setup)
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{$setup->name}}" id="flexCheckChecked{{$loop->index}}" name="setup[]" onchange="submitForm()" {{ in_array($setup->name, request()->input('education', [])) ? 'checked' : '' }}>
+                    <input class="form-check-input" type="checkbox" value="{{$setup->name}}" id="flexCheckChecked{{$loop->index}}" name="setup[]" onchange="submitForm()" {{ in_array($setup->name, request()->input('setup', [])) ? 'checked' : '' }}>
                     <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
-                        {{$setup->name}} &nbsp;<span class="count sub-text">({{ $setupCounts[$setup->id]->setup_count }})</span>
+                        {{$setup->name}} &nbsp;<span class="count sub-text">({{ $setupCounts[$setup->id]->job_count }})</span>
                     </label>
                 </div>
                 @endforeach
+            </div>
+            <div class="mb-3">
+                <span>
+                    <p>Work Type</p>
+                </span>
+                @foreach($types as $type)
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{$type->name}}" id="flexCheckChecked{{$loop->index}}" name="type[]" onchange="submitForm()" {{ in_array($type->name, request()->input('setup', [])) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                        {{$type->name}} &nbsp;<span class="count sub-text">({{ $typeCounts[$type->id]->job_count }})</span>
+                    </label>
+                </div>
+                @endforeach
+            </div>
+            <div class="mb-3">
+                <span>
+                    <p>Salary Range</p>
+                </span>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Min.</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Max.</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                </div>
+                <input type="range" class="form-range" id="customRange1">
             </div>
         </form>
     </div>
@@ -80,15 +107,24 @@
                                                     {{ floor($diff / 3600) }}h
                                                     @else
                                                     {{ $ranked['job']->created_at->diffForHumans() }}
-                                                    @endif</p>
+                                                    @endif
+                                                    </p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="prog-desc">
-                                    <p><span><i class='bx bx-money'></i> Salary: {{ $ranked['job']->salary }}</span> | <span><i class='bx bx-briefcase'></i> Work petup: On-site</span></p>
+                                <div class="row prog-desc mb-1">
+                                    <p>{{$ranked['job']->description}}</p>
                                 </div>
                                 <div class="infos">
-                                    <div class="match-info">qwe</div>
+                                    <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
+                                    @foreach ($ranked['job']->disability as $disability)
+                                    <div class="disability-item" data-disability-id="{{ $disability->id }}">
+                                        {{$disability->disability_name}}
+                                    </div>
+                                    @endforeach
+                                    <div class="match-info">
+                                        {{number_format($ranked['job']->salary, 0, '.', ',') . ' PHP'}}
+                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -97,11 +133,33 @@
                 </div>
                 @endif
             </div>
-            <div class="pagination-container">
+            <div class=" pagination-container">
 
             </div>
 
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Assume userDisabilityId is available from the backend (you can inject it into a script tag or pass it as a data attribute)
+        var userDisabilityId = parseInt(document.getElementById('user-disability').value, 10);
+
+        // Get all programs' disability containers
+        var disabilityItems = document.querySelectorAll('.disability-item');
+
+        disabilityItems.forEach(function(item) {
+            var programDisabilityId = parseInt(item.getAttribute('data-disability-id'), 10);
+
+            // Check if the user's disability matches this program's disability
+            if (programDisabilityId === userDisabilityId) {
+                item.classList.add('match-info');
+                item.classList.remove('notmatch-info');
+            } else {
+                item.classList.add('notmatch-info');
+                item.classList.remove('match-info');
+            }
+        });
+    });
+</script>
 @endsection
