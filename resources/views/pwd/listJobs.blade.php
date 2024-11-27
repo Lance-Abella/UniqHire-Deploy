@@ -44,20 +44,19 @@
                 </span>
                 <div class="input-group input-group-sm mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm">Min</span>
-                    <input type="number" class="form-control" name="minSalary" id="minSalaryInput" value="{{request()->minSalary}}" oninput="updateRangeFromInput()" readonly>
+                    <input type="number" class="form-control" name="minSalary" id="minSalaryInput" value="{{request()->minSalary ?? 0}}" oninput="updateRangeFromInput()" readonly>
                 </div>
                 <div class="input-group input-group-sm mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm">Max</span>
-                    <input type="number" class="form-control" name="maxSalary" id="maxSalaryInput" value="{{request()->maxSalary}}" oninput="updateRangeFromInput()" readonly>
+                    <input type="number" class="form-control" name="maxSalary" id="maxSalaryInput" value="{{request()->maxSalary ?? 100000}}" oninput="updateRangeFromInput()" readonly>
                 </div>
                 <div class="slider">
                     <div class="progress">
                     </div>
                 </div>
                 <div class="range-input">
-                    <input type="range" name="" class="min-range" min="0" max="100000" value="{{request()->minSalary}}" step="500" id="minRange" oninput="rangeInput()">
-                    <input type="range" name="" class="max-range" min="0" max="100000" value="{{request()->maxSalary}}" step="500" id="maxRange" oninput="rangeInput()">
-
+                    <input type="range" name="" class="min-range" min="0" max="100000" value="{{request()->minSalary ?? 0}}" step="500" id="minRange" oninput="rangeInput()">
+                    <input type="range" name="" class="max-range" min="0" max="100000" value="{{request()->maxSalary ?? 100000}}" step="500" id="maxRange" oninput="rangeInput()">
                 </div>
             </div>
             <div class="d-flex justify-content-center align-items-center">
