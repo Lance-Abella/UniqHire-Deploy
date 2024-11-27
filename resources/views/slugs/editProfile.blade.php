@@ -150,8 +150,8 @@
 </form>
 
 @push('map-scripts')
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places&loading=async&callback=initMap"></script>
-<script src="{{ asset('js/initMap.js') }}"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places&loading=async&callback=editInitMap"></script>
+<script src="{{ asset('js/editInitMap.js') }}"></script>
 @endpush
 
 <script>
