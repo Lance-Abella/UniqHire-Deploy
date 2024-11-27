@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('certification_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("program_id")->constrained("training_programs")->onDelete("cascade");
-            $table->foreignId("user_id")->constrained("users")->onDelete("cascade");            
+            $table->foreignId('program_id')->constrained('training_programs')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('user_infos')->onDelete('cascade');
             $table->timestamps();
         });
     }

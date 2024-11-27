@@ -99,4 +99,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/manage-jobs', [EmployerController::class, 'manageJobs'])->middleware('role:Employer')->name('manage-jobs');
     Route::get('/add-job', [EmployerController::class, 'showAddForm'])->middleware('role:Employer')->name('add-job');
     Route::post('/add-job', [EmployerController::class, 'addJob'])->middleware('role:Employer')->name('job-add');
+    Route::get('/show-job/{id}', [EmployerController::class, 'showJobDetails'])->name('jobs-show');
 });

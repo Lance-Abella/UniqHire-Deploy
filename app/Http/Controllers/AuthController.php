@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CertificationDetail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -31,7 +32,7 @@ class AuthController extends Controller
         // $skills = Skill::all();
         $skilluser = SkillUser::where('user_id', $id)->get();
         $experiences = Experience::where('user_id', $id)->get();
-        $certifications = Enrollee::where('pwd_id', $id)->where('completion_status', 'Completed')->get();
+        $certifications = CertificationDetail::where('user_id', $id)->get();
         $latitude = $user->userInfo->latitude;
         $longitude = $user->userInfo->longitude;
 

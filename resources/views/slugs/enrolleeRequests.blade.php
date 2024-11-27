@@ -22,7 +22,7 @@
                                     <p class="fs-5">{{ $request->user->userInfo->name }}</p>
                                     <input type="hidden" class="lat" value="{{ $request->user->userInfo->latitude }}">
                                     <input type="hidden" class="lng" value="{{ $request->user->userInfo->longitude }}">
-                                    <p class="sub-text mb-2 location text-cap" id="location"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                                    <p class="sub-text mb-2 location text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $request->user->userInfo->location}}</p>
                                     <span class="match-info">{{ $request->user->userInfo->disability->disability_name }}</span>
                                 </div>
                             </div>

@@ -51,4 +51,9 @@ class UserInfo extends Model
     {
         return $this->hasMany(SkillUser::class, 'user_id');
     }
+
+    public function certificates()
+    {
+        return $this->hasMany(CertificationDetail::class);
+    }
 }

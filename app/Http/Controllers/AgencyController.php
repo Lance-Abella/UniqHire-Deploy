@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
+use function Laravel\Prompts\table;
+
 class AgencyController extends Controller
 {
     private function convertToNumber($number)
@@ -395,9 +397,32 @@ class AgencyController extends Controller
     public function markComplete(Request $request)
     {
         $validatedData = $request->validate([
-            'enrolleeId' => 'required|exists:enrollees,id'
+            'enrolleeId' => 'required|exists:enrollees,id',
+            'userId' => 'required|exists:users,id',
+            'programId' => 'required|exists:training_programs,id'
         ]);
 
+        $programId = $validatedData['programId'];
+        $userId = $validatedData['userId'];
+
+        $progSkills = DB::table('program_skill')
+            ->where('training_program_id', $programId)
+            ->pluck('skill_id') // Fetching only the skill IDs
+            ->toArray();
+
+        // Fetch skills already assigned to the user
+        $userSkills = SkillUser::where('user_id', $userId)
+            ->pluck('skill_id')
+            ->toArray();
+
+        foreach ($progSkills as $skillId) {
+            if (!in_array($skillId, $userSkills)) {
+                SkillUser::create([
+                    'user_id' => $userId,
+                    'skill_id' => $skillId,
+                ]);
+            }
+        }
         $enrolleeId = $validatedData['enrolleeId'];
         $completionStatus = 'Completed';
 

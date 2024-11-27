@@ -12,6 +12,8 @@ use Illuminate\Database\Seeder;
 use App\Models\Role;
 use App\Models\UserInfo;
 use App\Models\TrainingProgram;
+use App\Models\WorkSetup;
+use App\Models\WorkType;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -43,13 +45,20 @@ class DatabaseSeeder extends Seeder
         $somecoll = EducationLevel::create(['education_name' => 'Some College']);
         $vocational = EducationLevel::create(['education_name' => 'Vocational']);
         $bachdegree = EducationLevel::create(['education_name' => "Bachelor's Degree"]);
-        
+
 
         $programming = Skill::create(['title' => 'Programming']);
         $communication = Skill::create(['title' => 'Communication']);
         $graphic = Skill::create(['title' => 'Graphic Design']);
         $data_analysis = Skill::create(['title' => 'Data Analysis']);
         $carpentry = Skill::create(['title' => 'Carpentry']);
+
+        $onsite = WorkSetup::create(['name' => 'Onsite']);
+        $remote = WorkSetup::create(['name' => 'Remote']);
+        $hybrid = WorkSetup::create(['name' => 'Hybrid']);
+
+        $fulltime = WorkType::create(['name' => 'Full-time']);
+        $parttime = WorkType::create(['name' => 'Part-time']);
 
 
         $adminuser = User::create([
