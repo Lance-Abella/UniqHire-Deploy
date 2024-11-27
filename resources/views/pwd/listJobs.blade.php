@@ -8,7 +8,19 @@
                 <h3>Filter</h3>
                 <i class='bx bx-filter-alt fs-3 sub-text text-end'></i>
             </div>
-
+            <div class="mb-3">
+                <span>
+                    <p>Work Setup</p>
+                </span>
+                @foreach($setups as $setup)
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{$setup->name}}" id="flexCheckChecked{{$loop->index}}" name="setup[]" onchange="submitForm()" {{ in_array($setup->name, request()->input('education', [])) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="flexCheckChecked{{$loop->index}}">
+                        {{$setup->name}} &nbsp;<span class="count sub-text">({{ $setupCounts[$setup->id]->setup_count }})</span>
+                    </label>
+                </div>
+                @endforeach
+            </div>
         </form>
     </div>
     <div class="list">

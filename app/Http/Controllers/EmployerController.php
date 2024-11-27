@@ -6,6 +6,8 @@ use App\Models\Disability;
 use App\Models\JobListing;
 use App\Models\EducationLevel;
 use App\Models\Skill;
+use App\Models\WorkSetup;
+use App\Models\WorkType;
 use Illuminate\Http\Request;
 
 class EmployerController extends Controller
@@ -25,7 +27,9 @@ class EmployerController extends Controller
         $disabilities = Disability::all();
         $levels = EducationLevel::all();
         $skills = Skill::all();
-        return view('employer.addJob', compact('disabilities', 'levels', 'skills'));
+        $setups = WorkSetup::all();
+        $types = WorkType::all();
+        return view('employer.addJob', compact('disabilities', 'levels', 'skills', 'setups', 'types'));
     }
 
     private function convertToNumber($number)
@@ -46,6 +50,8 @@ class EmployerController extends Controller
             'skills.*' => 'exists:skills,id',
             'disabilities' => 'required|array',
             'disabilities.*' => 'exists:disabilities,id',
+            'setup' => 'exists:work_setups,id',
+            'type' => 'exists:work_types,id'
         ]);
 
         $salary = $this->convertToNumber($request->salary);
@@ -59,6 +65,8 @@ class EmployerController extends Controller
             'longitude' => $request->long,
             'location' => $request->loc,
             'end_date' => $request->end_date,
+            'worksetup_id' => $request->setup,
+            'worktype_id' => $request->type
         ]);
 
         $jobListing->skill()->attach($request->skills);

@@ -51,11 +51,35 @@
         <div class="col">
             <div class="form-floating mb-3">
                 <input type="date" class="form-control date" name="end_date" required placeholder="Choose Date">
-                <label for="floatingInput">Choose Date</label>
+                <label for="floatingInput">End Date (Hiring until)</label>
             </div>
         </div>
     </div>
-    <div class="row mb-3 border-bottom">
+    <div class="row mb-3">
+        <div class="col">
+            <div class="form-floating mb-3">
+                <select class="form-select" id="floatingSelect" name="setup" aria-label="Floating label select example">
+                    @foreach ($setups as $setup)
+                    <option value="{{ $setup->id }}">{{ $setup->name }}</option>
+                    @endforeach
+
+                </select>
+                <label for="floatingSelect">Work Setup</label>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-floating mb-3">
+                <select class="form-select" id="floatingSelect" name="type" aria-label="Floating label select example">
+                    @foreach ($types as $type)
+                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                    @endforeach
+
+                </select>
+                <label for="floatingSelect">Work Type</label>
+            </div>
+        </div>
+    </div>
+    <div class="row border-bottom">
         <div class="col">
             <h5>Select Disabilities</h5>
             <div class="req-container">
@@ -85,6 +109,7 @@
             </div>
         </div>
     </div>
+
     <div class="d-flex justify-content-evenly mt-3 prog-btn">
         <button type="reset" class="deny-btn border-0">Clear</button>
         <button type="submit" class="submit-btn border-0">Add</button>

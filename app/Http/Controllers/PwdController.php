@@ -17,6 +17,8 @@ use App\Http\Requests\StoreUserInfoRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
 use App\Models\Enrollee;
 use App\Models\PwdFeedback;
+use App\Models\WorkSetup;
+use App\Models\WorkType;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Notifications\PwdApplicationNotification;
@@ -512,6 +514,7 @@ class PwdController extends Controller
     {
         $user = auth()->user()->userInfo;
         $query = JobListing::query();
+        $setups = WorkSetup::all();
         $certified = DB::table("certification_details")->where('user_id', $user->user_id)
             ->get();
 
@@ -559,10 +562,12 @@ class PwdController extends Controller
         $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedJobs), $perPage);
         $paginatedItems->setPath($request->url());
 
+        $setupCounts = WorkSetup::withCount('job')->get()->keyBy('id');
+        $typeCounts = WorkType::withCount('job')->get()->keyBy('id');
         // $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
         Log::info('Paginated Items:', $paginatedItems->toArray());
         log::info("nakaabot ari gyuddd");
 
-        return view('pwd.listJobs', compact('paginatedItems'));
+        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts'));
     }
 }
