@@ -980,6 +980,10 @@ input[type="range"]::-webkit-slider-thumb {
     background-color: var(--primary-color);
 }
 
+.filter-container .submit-btn {
+    padding: 0.5rem 1rem;
+}
+
 .filter-container .count {
     font-weight: normal;
     color: var(--primary-color);

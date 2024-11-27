@@ -11,7 +11,7 @@
                 <h3>Filter</h3>
                 <i class='bx bx-filter-alt fs-3 sub-text text-end'></i>
             </div>
-            <div class="mb-3">
+            <div class="mb-5">
                 <span>
                     <p>Education Level</p>
                 </span>
@@ -25,6 +25,9 @@
                 </div>
                 @endif
                 @endforeach
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <button type="submit" class="submit-btn border-0">Apply Filters</button>
             </div>
         </form>
     </div>
@@ -255,6 +258,7 @@
             } else {
                 item.classList.add('notmatch-info');
                 item.classList.remove('match-info');
+                item.style.display = "none";
             }
         });
 
@@ -290,9 +294,9 @@
         });
     });
 
-    function submitForm() {
-        document.getElementById('filterForm').submit();
-    }
+    // function submitForm() {
+    //     document.getElementById('filterForm').submit();
+    // }
 
     function checkAndSubmit() {
         var searchInput = document.getElementById('searchInput');

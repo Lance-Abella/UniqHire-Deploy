@@ -37,28 +37,31 @@
                 </div>
                 @endforeach
             </div>
-            <div class="mb-3">
+            <div class="mb-5">
                 <span>
                     <p>Salary Range <span class="sub-text">(₱)</span></p>
 
                 </span>
                 <div class="input-group input-group-sm mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm">Min</span>
-                    <input type="text" class="form-control" id="minSalaryInput" value="25000" oninput="updateRangeFromInput()" readonly>
+                    <input type="number" class="form-control" name="minSalary" id="minSalaryInput" value="{{request()->minSalary}}" oninput="updateRangeFromInput()" readonly>
                 </div>
                 <div class="input-group input-group-sm mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm">Max</span>
-                    <input type="text" class="form-control" id="maxSalaryInput" value="75000" oninput="updateRangeFromInput()" readonly>
+                    <input type="number" class="form-control" name="maxSalary" id="maxSalaryInput" value="{{request()->maxSalary}}" oninput="updateRangeFromInput()" readonly>
                 </div>
                 <div class="slider">
                     <div class="progress">
                     </div>
                 </div>
                 <div class="range-input">
-                    <input type="range" name="" class="min-range" min="0" max="100000" value="25000" step="500" id="minRange" oninput="rangeInput()">
-                    <input type="range" name="" class="max-range" min="0" max="100000" value="75000" step="500" id="maxRange" oninput="rangeInput()">
+                    <input type="range" name="" class="min-range" min="0" max="100000" value="{{request()->minSalary}}" step="500" id="minRange" oninput="rangeInput()">
+                    <input type="range" name="" class="max-range" min="0" max="100000" value="{{request()->maxSalary}}" step="500" id="maxRange" oninput="rangeInput()">
 
                 </div>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <button type="submit" class="submit-btn border-0">Apply Filters</button>
             </div>
         </form>
     </div>
@@ -128,15 +131,21 @@
                                 <div class="row prog-desc mb-1">
                                     <p>{{$ranked['job']->description}}</p>
                                 </div>
-                                <div class="infos">
+                                <div class="infos" style="width:23.2rem">
                                     <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
                                     @foreach ($ranked['job']->disability as $disability)
                                     <div class="disability-item" data-disability-id="{{ $disability->id }}">
                                         {{$disability->disability_name}}
                                     </div>
                                     @endforeach
-                                    <div class="salary-info" data-salary="{{ $ranked['job']->salary }}">
+                                    <div class="salary-info" data-salary="{{ $ranked['job']->salary }}" id="salary-value">
                                         {{number_format($ranked['job']->salary, 0, '.', ',') . ' PHP'}}
+                                    </div>
+                                    <div class="worksetup-item" data-worksetup="{{ $ranked['job']->setup->id }}" id="worksetup-id">
+                                        {{ $ranked['job']->setup->name }}
+                                    </div>
+                                    <div class="worktype-item" data-worktype="{{ $ranked['job']->type->id }}" id="worktype-id">
+                                        {{ $ranked['job']->type->name }}
                                     </div>
                                 </div>
                             </div>
@@ -180,6 +189,7 @@
         progress.style.right = `${100 - maxPercent}%`;
 
         updateMatchInfo();
+        // submitForm();
     }
 
     function updateRangeFromInput() {
@@ -211,44 +221,80 @@
         updateMatchInfo();
     }
 
-    function submitForm() {
-        document.getElementById("filterForm").submit();
+    // function submitForm() {
+    //     document.getElementById("filterForm").submit();
+    // }
+
+    function updateMatchClass(elements, conditionFunc, matchClass, notMatchClass) {
+        elements.forEach(element => {
+            if (conditionFunc(element)) {
+                element.classList.add(matchClass);
+                element.classList.remove(notMatchClass);
+            } else {
+                element.classList.remove(matchClass);
+                element.classList.add(notMatchClass);
+            }
+        });
     }
 
+    // Function to update salary info based on the min and max salary
+    function updateSalaryMatchInfo(minSalary, maxSalary) {
+        const salaryElements = document.querySelectorAll(".salary-info");
+        updateMatchClass(salaryElements, (element) => {
+            const salary = parseInt(element.getAttribute("data-salary")) || 0;
+            return salary >= minSalary && salary <= maxSalary;
+        }, "match-info", "notmatch-info");
+    }
+
+
+    // Function to update disability items match-info
+    function updateDisabilityMatchInfo(userDisabilityId) {
+        const disabilityItems = document.querySelectorAll(".disability-item");
+        updateMatchClass(disabilityItems, (item) => {
+            const programDisabilityId = parseInt(item.getAttribute("data-disability-id"), 10);
+            return programDisabilityId === userDisabilityId;
+        }, "match-info", "notmatch-info");
+    }
+
+    // Function to update work setup match-info
+    function updateWorkSetupMatchInfo(selectedSetups) {
+        const workSetupItems = document.querySelectorAll(".worksetup-item");
+        updateMatchClass(workSetupItems, (item) => {
+            const jobSetup = item.textContent.trim();
+            return selectedSetups.includes(jobSetup);
+        }, "match-info", "notmatch-info");
+    }
+
+    // Function to update work type match-info
+    function updateWorkTypeMatchInfo(selectedTypes) {
+        const workTypeItems = document.querySelectorAll(".worktype-item");
+        updateMatchClass(workTypeItems, (item) => {
+            const jobType = item.textContent.trim();
+            return selectedTypes.includes(jobType);
+        }, "match-info", "notmatch-info");
+    }
+
+    // Main update function
     function updateMatchInfo() {
         const minSalary = parseInt(document.getElementById("minSalaryInput").value) || 0;
         const maxSalary = parseInt(document.getElementById("maxSalaryInput").value) || Infinity;
 
-        document.querySelectorAll(".salary-info").forEach(salaryElement => {
-            const salary = parseInt(salaryElement.getAttribute("data-salary")) || 0;
+        updateSalaryMatchInfo(minSalary, maxSalary);
 
-            if (salary >= minSalary && salary <= maxSalary) {
-                salaryElement.classList.add("match-info");
-                salaryElement.classList.remove("notmatch-info");
-            } else {
-                salaryElement.classList.remove("match-info");
-                salaryElement.classList.add("notmatch-info");
-            }
-        });
+        const userDisabilityId = parseInt(document.getElementById("user-disability").value, 10);
+        updateDisabilityMatchInfo(userDisabilityId);
+
+        const selectedSetups = Array.from(document.querySelectorAll("input[name='setup[]']:checked")).map(input => input.value);
+        updateWorkSetupMatchInfo(selectedSetups);
+
+        const selectedTypes = Array.from(document.querySelectorAll("input[name='type[]']:checked")).map(input => input.value);
+        updateWorkTypeMatchInfo(selectedTypes);
     }
 
+
     document.addEventListener("DOMContentLoaded", function() {
-        const userDisabilityId = parseInt(document.getElementById("user-disability").value, 10);
-
-        // Update disability match-info
-        document.querySelectorAll(".disability-item").forEach(item => {
-            const programDisabilityId = parseInt(item.getAttribute("data-disability-id"), 10);
-
-            if (programDisabilityId === userDisabilityId) {
-                item.classList.add("match-info");
-                item.classList.remove("notmatch-info");
-            } else {
-                item.classList.add("notmatch-info");
-                item.classList.remove("match-info");
-            }
-        });
-
         // Initialize match-info on load
+        rangeInput();
         updateMatchInfo();
 
         // Event listeners for salary inputs
@@ -256,6 +302,10 @@
         document.getElementById("maxSalaryInput").addEventListener("input", updateRangeFromInput);
         document.getElementById("minRange").addEventListener("input", rangeInput);
         document.getElementById("maxRange").addEventListener("input", rangeInput);
+
+        // Event listeners for filters
+        addChangeListeners("input[name='setup[]']", updateMatchInfo);
+        addChangeListeners("input[name='type[]']", updateMatchInfo);
     });
 </script>
 @endsection

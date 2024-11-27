@@ -556,6 +556,17 @@ class PwdController extends Controller
             });
         }
 
+        $minSalary = $request->minSalary;
+        $maxSalary = $request->maxSalary;
+
+        // if ($request->has('minSalary') && $request->has('maxSalary')) {
+        //     $query->whereBetween('salary', [$request->minSalary, $request->maxSalary]);
+        // } elseif ($request->has('minSalary')) {
+        //     $query->where('salary', '>=', $request->minSalary);
+        // } elseif ($request->has('maxSalary')) {
+        //     $query->where('salary', '<=', $request->maxSalary);
+        // }
+
 
         // if (isset($request->type) && ($request->setup != null)) {
         //     $query->whereHas('type', function ($q) use ($request) {
@@ -600,6 +611,6 @@ class PwdController extends Controller
         Log::info('Paginated Items:', $paginatedItems->toArray());
         log::info("nakaabot ari gyuddd");
 
-        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types'));
+        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types', 'minSalary', 'maxSalary'));
     }
 }
