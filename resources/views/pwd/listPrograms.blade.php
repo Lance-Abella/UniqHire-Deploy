@@ -73,48 +73,62 @@
                                                 <input type="hidden" id="lng-{{ $ranked['program']->id }}" value="{{ $ranked['program']->longitude }}">
                                             </div>
                                             <div class="text-end date-posted">
-                                                <p class="text-end">{{ $ranked['program']->created_at->diffForHumans() }}</p>
+                                                @php
+                                                $diff = $ranked['program']->created_at->diffInSeconds(now());
+                                                @endphp
+                                                <p class="text-end">
+                                                    @if ($diff < 60)
+                                                        {{ $diff }}s
+                                                        @elseif ($diff < 3600)
+                                                        {{ floor($diff / 60) }}m
+                                                        @elseif ($diff < 86400)
+                                                        {{ floor($diff / 3600) }}h
+                                                        @else
+                                                        {{ $ranked['job']->created_at->diffForHumans() }}
+                                                        @endif
+                                                        </p>
                                             </div>
                                         </div>
-
                                     </div>
-                                    <div class="row prog-desc mb-1">
-                                        <p>{{$ranked['program']->description}}</p>
-                                    </div>
-                                    <div class="infos">
-                                        <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
-                                        @foreach ($ranked['program']->disability as $disability)
-                                        <div class="disability-item" data-disability-id="{{ $disability->id }}">
-                                            {{$disability->disability_name}}
-                                        </div>
-                                        @endforeach
 
-                                        <div class="match-info @if (Auth::user()->userInfo->education->id != $ranked['program']->education->id) notmatch-info @endif">
-                                            {{$ranked['program']->education->education_name}}
-                                        </div>
-                                        <div class="match-info @if (Auth::user()->userInfo->age < $ranked['program']->start_age || Auth::user()->userInfo->age > $ranked['program']->end_age) notmatch-info @endif">
-                                            {{$ranked['program']->start_age . ' - ' . $ranked['program']->end_age}}
-                                        </div>
+                                </div>
+                                <div class="row prog-desc mb-1">
+                                    <p>{{$ranked['program']->description}}</p>
+                                </div>
+                                <div class="infos">
+                                    <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
+                                    @foreach ($ranked['program']->disability as $disability)
+                                    <div class="disability-item" data-disability-id="{{ $disability->id }}">
+                                        {{$disability->disability_name}}
+                                    </div>
+                                    @endforeach
+
+                                    <div class="match-info @if (Auth::user()->userInfo->education->id != $ranked['program']->education->id) notmatch-info @endif">
+                                        {{$ranked['program']->education->education_name}}
+                                    </div>
+                                    <div class="match-info @if (Auth::user()->userInfo->age < $ranked['program']->start_age || Auth::user()->userInfo->age > $ranked['program']->end_age) notmatch-info @endif">
+                                        {{$ranked['program']->start_age . ' - ' . $ranked['program']->end_age}}
                                     </div>
                                 </div>
-                                <!-- <div class="fs-3 d-flex flex-column align-items-center justify-content-center">
+                        </div>
+                        <!-- <div class="fs-3 d-flex flex-column align-items-center justify-content-center">
                                 >
                             </div> -->
-                            </a>
-                        </div>
+                        </a>
                     </div>
-                    @endforeach
                 </div>
-                @endif
+                @endforeach
             </div>
-            <div class="pagination-container">
-                <div class="pagination">
-                    {{ $paginatedItems->links() }}
-                </div>
+            @endif
+        </div>
+        <div class="pagination-container">
+            <div class="pagination">
+                {{ $paginatedItems->links() }}
             </div>
         </div>
     </div>
-    <!-- <div class="filter-container">
+</div>
+<!-- <div class="filter-container">
         <form action="{{ route('pwd-list-program') }}" method="GET" id="filterForm">
             <div class="d-flex justify-content-between mb-3">
                 <h3>Filter</h3>

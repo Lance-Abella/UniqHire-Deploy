@@ -17,6 +17,8 @@ use App\Http\Requests\StoreUserInfoRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
 use App\Models\Enrollee;
 use App\Models\PwdFeedback;
+use App\Models\WorkSetup;
+use App\Models\WorkType;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Notifications\PwdApplicationNotification;
@@ -531,6 +533,8 @@ class PwdController extends Controller
     {
         $user = auth()->user()->userInfo;
         $query = JobListing::query();
+        $setups = WorkSetup::all();
+        $types = WorkType::all();
         $certified = DB::table("certification_details")->where('user_id', $user->user_id)
             ->get();
 
@@ -540,10 +544,22 @@ class PwdController extends Controller
             ->pluck('job_id')
             ->toArray();
 
-        // Filtering the programs based on education [multiple selection]
-        // if (isset($request->education) && ($request->education != null)) {
-        //     $query->whereHas('education', function ($q) use ($request) {
-        //         $q->whereIn('education_name', $request->education);
+        if ($request->has('setup') && is_array($request->setup)) {
+            $query->whereHas('setup', function ($q) use ($request) {
+                $q->whereIn('name', $request->setup);
+            });
+        }
+
+        if ($request->has('type') && is_array($request->type)) {
+            $query->whereHas('type', function ($q) use ($request) {
+                $q->whereIn('name', $request->type);
+            });
+        }
+
+
+        // if (isset($request->type) && ($request->setup != null)) {
+        //     $query->whereHas('type', function ($q) use ($request) {
+        //         $q->whereIn('name', $request->type);
         //     });
         // }
 
@@ -578,10 +594,12 @@ class PwdController extends Controller
         $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedJobs), $perPage);
         $paginatedItems->setPath($request->url());
 
+        $setupCounts = WorkSetup::withCount('job')->get()->keyBy('id');
+        $typeCounts = WorkType::withCount('job')->get()->keyBy('id');
         // $disabilityCounts = Disability::withCount('program')->get()->keyBy('id');
         Log::info('Paginated Items:', $paginatedItems->toArray());
         log::info("nakaabot ari gyuddd");
 
-        return view('pwd.listJobs', compact('paginatedItems'));
+        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types'));
     }
 }

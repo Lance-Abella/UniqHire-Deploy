@@ -17,8 +17,8 @@ class JobListing extends Model
         'latitude',
         'longitude',
         'location',
-        'start_age',
-        'end_age'
+        'worksetup_id',
+        'worktype_id'
     ];
 
     public function employer()
@@ -39,5 +39,15 @@ class JobListing extends Model
     public function education()
     {
         return $this->belongsTo(EducationLevel::class, 'education_id');
+    }
+
+    public function setup()
+    {
+        return $this->belongsTo(WorkSetup::class, 'worksetup_id');
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(WorkType::class, 'worktype_id');
     }
 }
