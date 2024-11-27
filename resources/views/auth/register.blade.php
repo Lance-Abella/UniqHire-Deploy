@@ -189,8 +189,8 @@
 @endsection
 
 @push('map-scripts')
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places&loading=async&callback=initMap"></script>
-    <script src="{{ asset('js/initMap.js') }}"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places&loading=async&callback=initMap"></script>
+<script src="{{ asset('js/initMap.js') }}"></script>
 @endpush
 
 <script>
@@ -220,7 +220,7 @@
             educationSelect.value = '1';
         }
 
-        if (roleSelect.value === '3') {
+        if (roleSelect.value === '3' || roleSelect.value === '4') {
             agencySection.style.display = 'block';
         } else {
             agencySection.style.display = 'none';

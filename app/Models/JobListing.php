@@ -16,6 +16,7 @@ class JobListing extends Model
         'end_date',
         'latitude',
         'longitude',
+        'location'
     ];
 
     public function employer()

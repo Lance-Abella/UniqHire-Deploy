@@ -68,7 +68,7 @@
                                             <div class="header">
                                                 <h4 class="text-cap">{{$ranked['program']->title}}</h4>
                                                 <p class="sub-text text-cap">{{$ranked['program']->agency->userInfo->name}}</p>
-                                                <p class="sub-text text-cap location" id="location-{{ $ranked['program']->id }}"><i class='bx bx-map sub-text'></i>{{$ranked['program']->agency->userInfo->location}}</p>
+                                                <p class="sub-text text-cap location" id="location-{{ $ranked['program']->id }}"><i class='bx bx-map sub-text'></i>{{$ranked['program']->location}}</p>
                                                 <input type="hidden" id="lat-{{ $ranked['program']->id }}" value="{{ $ranked['program']->latitude }}">
                                                 <input type="hidden" id="lng-{{ $ranked['program']->id }}" value="{{ $ranked['program']->longitude }}">
                                             </div>

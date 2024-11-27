@@ -16,7 +16,7 @@
             <div class="mb-3 titles">
                 <h3 class="text-cap">{{ $program->title }}</h3>
                 <p class="sub-text text-cap">{{ $program->agency->userInfo->name }}</p>
-                <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $program->location }}</p>
                 <input type="hidden" id="lat" value="{{ $program->latitude }}">
                 <input type="hidden" id="lng" value="{{ $program->longitude }}">
             </div>
