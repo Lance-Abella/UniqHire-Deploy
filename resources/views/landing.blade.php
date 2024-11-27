@@ -14,7 +14,7 @@
     .nav-item .submit-btn {
         padding: 0.5rem;
         width: 7rem;
-        margin-right: 4rem;
+        /* margin-right: 4rem; */
     }
 </style>
 <div class=" mb-2">

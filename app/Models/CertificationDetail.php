@@ -33,5 +33,4 @@ class CertificationDetail extends Model
             'skill_id'                   // Foreign key on pivot table (related to `Skill`)
         )->withTimestamps();           // Optionally include timestamps if needed
     }
-
 }

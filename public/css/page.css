@@ -767,6 +767,7 @@ span.badge {
     grid-template-columns: 15rem 1fr;
     grid-template-areas: "filter list";
     min-height: 100vh;
+    /* overflow-y: hidden; */
 }
 
 .pwd-browse-prog .list {
@@ -1171,6 +1172,15 @@ span.badge {
     border-radius: 100%;
     margin-right: 1rem;
     border: 3px solid var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.agency-show-prog .request-grid .request-container .request-pic span {
+    font-size: 2rem;
+    font-weight: var(--header-extrabold);
+    color: var(--primary-color);
 }
 
 .agency-show-prog .request-grid .btn-container {
