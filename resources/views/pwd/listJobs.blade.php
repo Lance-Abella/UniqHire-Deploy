@@ -36,7 +36,8 @@
             </div>
             <div class="mb-3">
                 <span>
-                    <p>Salary Range</p>
+                    <p>Salary Range <span class="sub-text">(₱)</span></p>
+
                 </span>
                 <div class="input-group input-group-sm mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm">Min</span>
@@ -107,7 +108,8 @@
                                             @php
                                             $diff = $ranked['job']->created_at->diffInSeconds(now());
                                             @endphp
-                                            <p class="text-end">@if ($diff < 60)
+                                            <p class="text-end">
+                                                @if ($diff < 60)
                                                     {{ $diff }}s
                                                     @elseif ($diff < 3600)
                                                     {{ floor($diff / 60) }}m
