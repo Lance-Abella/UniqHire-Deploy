@@ -75,16 +75,18 @@ Route::middleware('auth')->group(function () {
 
 
     // PWD Middleware
+    // Route::post('/pwd/action', [PwdController::class, 'action'])->middleware('role:PWD')->name('pwd-action');
     Route::get('/browse/training-programs', [PwdController::class, 'showPrograms'])->middleware('role:PWD')->name('pwd-list-program');
     Route::get('/training-details/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('training-details');
     Route::post('/training-details/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('training-details');
     Route::get('/pwd/calendar', [PwdController::class, 'showCalendar'])->middleware('role:PWD')->name('pwd-calendar');
-    // Route::post('/pwd/action', [PwdController::class, 'action'])->middleware('role:PWD')->name('pwd-action');
     Route::post('/training-program/apply', [PwdController::class, 'application'])->middleware('role:PWD')->name('pwd-application');
     Route::get('/training-programs', [PwdController::class, 'showTrainings'])->middleware('role:PWD')->name('trainings');
     Route::get('/training-program/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('show-details');
     Route::post('/training-program/rate', [PwdController::class, 'rateProgram'])->middleware('role:PWD')->name('rate-program');
     Route::get('/browse/job-postings', [PwdController::class, 'showJobs'])->middleware('role:PWD')->name('pwd-list-job');
+    Route::get('/job-details/{id}', [PwdController::class, 'showListingDetails'])->middleware('role:PWD')->name('job-details');
+    Route::post('/job-details/{id}', [PwdController::class, 'showListingDetails'])->middleware('role:PWD')->name('job-details');
 
 
     //SPONSOR Middleware
