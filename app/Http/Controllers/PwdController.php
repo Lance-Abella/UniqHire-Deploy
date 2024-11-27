@@ -525,16 +525,24 @@ class PwdController extends Controller
             ->pluck('job_id')
             ->toArray();
 
-        // Filtering the programs based on education [multiple selection]
-        // if (isset($request->education) && ($request->education != null)) {
-        //     $query->whereHas('education', function ($q) use ($request) {
-        //         $q->whereIn('education_name', $request->education);
+        if ($request->has('setup') && is_array($request->setup)) {
+            $query->whereHas('setup', function ($q) use ($request) {
+                $q->whereIn('name', $request->setup);
+            });
+        }
+
+        if ($request->has('type') && is_array($request->type)) {
+            $query->whereHas('type', function ($q) use ($request) {
+                $q->whereIn('name', $request->type);
+            });
+        }
+
+
+        // if (isset($request->type) && ($request->setup != null)) {
+        //     $query->whereHas('type', function ($q) use ($request) {
+        //         $q->whereIn('name', $request->type);
         //     });
         // }
-
-        if ($request->filled('min_salary') && $request->filled('max_salary')) {
-            $query->whereBetween('salary', [$request->min_salary, $request->max_salary]);
-        }
 
         $query->whereNotIn('id', $approvedJobIds);
 
