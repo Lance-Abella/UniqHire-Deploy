@@ -105,6 +105,8 @@
                             <p></p>
                             @endif
                             @endforeach
+                            <p>{{ \Carbon\Carbon::parse($program->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($program->end_time)->format('h:i A') }}
+                                </p>
                             </p>
                         </div>
                         <div class="more-info">

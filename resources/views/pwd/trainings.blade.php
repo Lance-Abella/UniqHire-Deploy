@@ -21,6 +21,7 @@
                             <td class="table-head">Title</td>
                             <td class="table-head">Agency</td>
                             <td class="table-head">Schedule</td>
+                            <td class="table-head">Time</td>
                             <td class="table-head">Status</td>
                             <td class="table-head"></td>
                         </tr>
@@ -37,7 +38,11 @@
                                     @if(!$loop->last)
                                 <p></p>
                                 @endif
-                                @endforeach
+                                @endforeach                                
+                                </p>
+                            </td>
+                            <td>
+                                <p>{{ \Carbon\Carbon::parse($application->program->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($application->program->end_time)->format('h:i A') }}
                                 </p>
                             </td>
                             <td class="status-cell">
@@ -78,8 +83,8 @@
                         <tr>
                             <td class="table-head">Title</td>
                             <td class="table-head">Agency</td>
-                            <td class="table-head">Start</td>
-                            <td class="table-head">End</td>
+                            <td class="table-head">Schedule</td>
+                            <td class="table-head">Time</td>
                             <td class="table-head">Status</td>
                             <td class="table-head"></td>
                         </tr>
@@ -97,8 +102,11 @@
                                 <p></p>
                                 @endif
                                 @endforeach
+                                
                                 </p>
                             </td>
+                           <td><p>{{ \Carbon\Carbon::parse($training->program->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($training->program->end_time)->format('h:i A') }}
+                                </p></td>
                             <td class="status-cell">
                                 <p class="match-info @if ($training->completion_status == 'Ongoing')
                                 pending

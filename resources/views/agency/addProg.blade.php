@@ -38,7 +38,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col">
             <div class="row">
                 <div class="col">
@@ -67,6 +67,30 @@
                 <label for="floatingInput">Choose Date</label>
             </div>
         </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="time" class="form-control" id="startTime" name="start_time" value="{{old('start_time')}}" required placeholder="Input Start Time">
+                        <label for="floatingInput">Time Start</label>
+                        @error('time')
+                        <span class="error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="time" class="form-control" id="endTime" name="end_time" value="{{old('end_time')}}" required placeholder="Input Start Time">
+                        <label for="floatingInput">Time End</label>
+                        @error('time')
+                        <span class="error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+        </div>        
     </div>
     <div class="row mb-3">
         <div class="col">

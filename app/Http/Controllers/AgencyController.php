@@ -109,6 +109,8 @@ class AgencyController extends Controller
             'schedule' => 'required|string',
             'start_age' => 'integer|min:1|max:99',
             'end_age' => 'integer|min:1|max:99',
+            'start_time' => 'required|date_format:H:i|before:end_time',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'participants' => 'required|max:255',
             'skills' => 'required|array',
             'skills.*' => 'exists:skills,id',
@@ -136,6 +138,8 @@ class AgencyController extends Controller
             'skills' => $request->skills,
             'start_age' => $request->start_age,
             'end_age' => $request->end_age,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
             'participants' => $participants,
         ]);
 
