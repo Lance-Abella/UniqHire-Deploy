@@ -27,6 +27,9 @@ return new class extends Migration
 
             $table->integer('start_age')->default(0);
             $table->integer('end_age')->default(0);
+            $table->time('start_time')->default('00:00:00');
+            $table->time('end_time')->default('00:00:00');
+
             // $table->foreignId('worktype_id')->constrained('work_types')->onDelete('cascade');
             // $table->foreignId('worksetup_id')->constrained('work_setups')->onDelete('cascade');
             $table->timestamps();
