@@ -220,16 +220,20 @@ class PwdController extends Controller
 
         $rating = $userReview ? $userReview->rating : 0;
 
-        // Collect all dates from the schedules of applied programs excluding completed programs
-        $appliedDates = $application->map(function ($app) use ($completedPrograms) {
+       // Collect all schedules (dates and times) from applied programs excluding completed programs
+        $appliedSchedules = $application->map(function ($app) use ($completedPrograms) {
             if (!in_array($app->training_program_id, $completedPrograms)) {
-                // Split the schedule string into individual dates
-                return explode(',', $app->program->schedule);
+                return [
+                    'date' => $app->program->schedule,
+                    'start_time' => $app->program->start_time,
+                    'end_time' => $app->program->end_time,
+                ];
             }
-            return [];
-        })->flatten()->toArray(); // Flatten the array to have all dates in one array
+            return null; // Skip completed programs
+        })->filter()->toArray();
 
-        Log::info('Applied Dates:', $appliedDates);
+
+        Log::info('Applied Dates:', $appliedSchedules);
 
 
 
@@ -239,13 +243,23 @@ class PwdController extends Controller
         })->get();
 
         // Filter programs with non-conflicting dates
-        $nonConflictingPrograms = $allPrograms->filter(function ($program) use ($appliedDates) {
-            $scheduleDates = explode(',', $program->schedule);
+        $nonConflictingPrograms = $allPrograms->filter(function ($program) use ($appliedSchedules) {
+            // Retrieve the program's date, start time, and end time
+            $programDate = $program->schedule;
+            $programStartTime = $program->start_time;
+            $programEndTime = $program->end_time;
 
-            // Check if any date in the schedule conflicts with applied dates
-            foreach ($scheduleDates as $scheduleDate) {
-                if (in_array($scheduleDate, $appliedDates)) {
-                    return false; // Conflict found, exclude this program
+            foreach ($appliedSchedules as $appliedSchedule) {
+                // Check if the program date matches any applied schedule date
+                if ($programDate === $appliedSchedule['date']) {
+                    // Check for time overlap
+                    if (
+                        ($programStartTime < $appliedSchedule['end_time'] && $programStartTime >= $appliedSchedule['start_time']) || 
+                        ($programEndTime > $appliedSchedule['start_time'] && $programEndTime <= $appliedSchedule['end_time']) || 
+                        ($programStartTime <= $appliedSchedule['start_time'] && $programEndTime >= $appliedSchedule['end_time'])
+                    ) {
+                        return false; // Conflict found, exclude this program
+                    }
                 }
             }
             return true; // No conflicts, include this program

@@ -21,6 +21,8 @@ class TrainingProgram extends Model
         'education_id',
         'start_age',
         'end_age',
+        'start_time',
+        'end_time',
     ];
 
     public function agency()

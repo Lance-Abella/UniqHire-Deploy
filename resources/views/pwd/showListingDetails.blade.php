@@ -149,38 +149,38 @@
             });
         }
 
-        function initMap() {
-            var lat = parseFloat(document.getElementById('lat').value);
-            var lng = parseFloat(document.getElementById('lng').value);
-            var latlng = {
-                lat: lat,
-                lng: lng
-            };
-            var geocoder = new google.maps.Geocoder();
+        // function initMap() {
+        //     var lat = parseFloat(document.getElementById('lat').value);
+        //     var lng = parseFloat(document.getElementById('lng').value);
+        //     var latlng = {
+        //         lat: lat,
+        //         lng: lng
+        //     };
+        //     var geocoder = new google.maps.Geocoder();
 
-            // Reverse geocode to get the address
-            geocoder.geocode({
-                location: latlng
-            }, function(results, status) {
-                var locationElement = document.getElementById('location');
-                if (status === 'OK') {
-                    if (results[0]) {
-                        var addressParts = results[0].formatted_address.split(',');
-                        // Extract the city and country (assuming the city is at index 1 and the country at index 3)
-                        var city = addressParts[1].trim(); // City (e.g., "Cebu City")
-                        var country = addressParts[addressParts.length - 1].trim();
-                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + city + ", " + country;
-                    } else {
-                        locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
-                    }
-                } else {
-                    locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
-                }
-            });
-        }
+        //     // Reverse geocode to get the address
+        //     geocoder.geocode({
+        //         location: latlng
+        //     }, function(results, status) {
+        //         var locationElement = document.getElementById('location');
+        //         if (status === 'OK') {
+        //             if (results[0]) {
+        //                 var addressParts = results[0].formatted_address.split(',');
+        //                 // Extract the city and country (assuming the city is at index 1 and the country at index 3)
+        //                 var city = addressParts[1].trim(); // City (e.g., "Cebu City")
+        //                 var country = addressParts[addressParts.length - 1].trim();
+        //                 locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + city + ", " + country;
+        //             } else {
+        //                 locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
+        //             }
+        //         } else {
+        //             locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
+        //         }
+        //     });
+        // }
 
-        // Initialize the map and geocoding
-        window.onload = initMap;
+        // // Initialize the map and geocoding
+        // window.onload = initMap;
     </script>
 
     @endsection
