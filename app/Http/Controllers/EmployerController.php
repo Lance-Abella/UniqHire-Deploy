@@ -8,11 +8,13 @@ use App\Models\JobApplication;
 use App\Models\EducationLevel;
 use App\Models\PwdFeedback;
 use App\Models\Enrollee;
+use App\Models\Employee;
 use App\Models\Skill;
 use App\Models\WorkSetup;
 use App\Models\WorkType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EmployerController extends Controller
 {
@@ -83,35 +85,75 @@ class EmployerController extends Controller
     {
         $listing = JobListing::findOrFail($id);
         $userId = auth()->id();
-        $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
+        // $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
         $applications = JobApplication::where('job_id', $listing->id)->get();
         $requests = JobApplication::where('job_id', $listing->id)->where('application_status', 'Pending')->get();
-        $enrollees = Enrollee::where('program_id', $listing->id)->get();
+        $employees = Employee::where('job_id', $listing->id)->where('hiring_status', 'Accepted')->get();
 
         $pendingsCount = $applications->where('application_status', 'Pending')->count();
-        $ongoingCount = $enrollees->where('completion_status', 'Ongoing')->count();
-        $completedCount = $enrollees->where('completion_status', 'Completed')->count();
-        $enrolleesCount = $enrollees->count();
+        // $ongoingCount = $enrollees->where('completion_status', 'Ongoing')->count();
+        $approvedCount = $applications->where('application_status', 'Approved')->count();
+        // $enrolleesCount = $applications->count();
 
-        $enrolleeCount = Enrollee::where('program_id', $listing->id)
+        $applicantCount = JobApplication::where('job_id', $listing->id)
             ->count();
 
-        $slots = $listing->participants - $enrolleeCount;
+        // $slots = $listing->participants - $enrolleeCount;
 
-        if ($listing->crowdfund) {
-            $raisedAmount = $listing->crowdfund->raised_amount ?? 0;
-            $goal = $listing->crowdfund->goal ?? 1;
-            $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
-            $listing->crowdfund->progress = $progress;
-        }
-        return view('employer.showJob', compact('listing', 'applications', 'reviews', 'enrollees', 'pendingsCount', 'ongoingCount', 'completedCount', 'enrolleesCount', 'requests', 'slots'));
+        // if ($listing->crowdfund) {
+        //     $raisedAmount = $listing->crowdfund->raised_amount ?? 0;
+        //     $goal = $listing->crowdfund->goal ?? 1;
+        //     $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
+        //     $listing->crowdfund->progress = $progress;
+        // }
+        return view('employer.showJob', compact('listing', 'applications', 'pendingsCount', 'approvedCount', 'applicantCount', 'requests', 'employees'));
+    }
+
+    public function accept(Request $request)
+    {
+        Log::info("Reached accept method");
+
+        // Validate the incoming request
+        $validatedData = $request->validate([
+            'pwd_id' => 'required|exists:users,id',
+            'job_id' => 'required|exists:training_applications,id',
+            'job_application_id' => 'required|exists:job_applications,id',
+        ]);
+
+        $pwdId = $validatedData['pwd_id'];
+        $jobId = $validatedData['job_id'];
+        $applicationId = $validatedData['job_application_id'];
+        $hiringStatus = 'Accepted';
+
+        // Find the application by job_id
+        $application = JobApplication::findOrFail($jobId);
+        $application->application_status = 'Approved';
+        $application->save();
+        
+        // $pwdUser = $application->user;
+        // $job = $application->job;
+
+        // $pwdUser->notify(new ApplicationAcceptedNotification($job));
+
+         // Create Enrollee record
+        Employee::create([
+            'pwd_id' => $pwdId,
+            'job_id' => $jobId,
+            'job_application_id' => $applicationId,
+            'hiring_status' => $hiringStatus,
+        ]);
+
+        $application->update(['application_status' => 'Approved']);
+        // return response()->json(['success' => true, 'message' => 'Application submitted successfully.']);
+        return back()->with('success', 'Application is accepted');
     }
 
     public function deleteJob($id)
     {
+        Log::info("nakasud ari");
         $listing = JobListing::findOrFail($id);
 
-        dd($listing);
+       
 
         if ($listing && $listing->employer_id == auth()->id()) {
             // Find and delete related notifications
@@ -129,6 +171,8 @@ class EmployerController extends Controller
     public function editJob($id)
     {
         $listing = JobListing::find($id);
+        $setups = WorkSetup::all();
+        $types = WorkType::all();
 
         if (!$listing || $listing->employer_id != auth()->id()) {
             return redirect()->route('manage-jobs');
@@ -144,8 +188,94 @@ class EmployerController extends Controller
         $skills = Skill::all();
 
         // Return the view with all required data
-        return view('employer.editJob', compact('listing', 'provinces', 'disabilities', 'levels', 'skills'));
+        return view('employer.editJob', compact('listing', 'provinces', 'disabilities', 'levels', 'skills', 'setups', 'types'));
 
         // return redirect()->route('programs-manage');
+    }
+
+    public function updateJob(Request $request, $id)
+    {
+        Log::info("nakaabot sa updateJob");
+        $job = JobListing::find($id);
+
+        if ($job && $job->employer_id == auth()->id()) {
+            $request->validate([
+            'position' => 'required|string|max:255',
+            'description' => 'required|string',
+            'lat' => 'required|numeric|between:-90,90',
+            'long' => 'required|numeric|between:-180,180',
+            'loc' => 'nullable|string|max:255',
+            'end_date' => 'required|date',
+            'skills' => 'required|array',
+            'skills.*' => 'exists:skills,id',
+            'disabilities' => 'required|array',
+            'disabilities.*' => 'exists:disabilities,id',
+            'setup' => 'exists:work_setups,id',
+            'type' => 'exists:work_types,id'
+            ]);
+
+            Log::info("lapas sa validation");
+
+            $salary = $this->convertToNumber($request->salary);
+
+            $job->update([
+                'position' => $request->position,
+                'description' => $request->description,
+                'salary' => $salary,
+                'latitude' => $request->lat,
+                'longitude' => $request->long,
+                'location' => $request->loc,
+                'end_date' => $request->end_date,
+                'worksetup_id' => $request->setup,
+                'worktype_id' => $request->type
+            ]);
+
+            $job->skill()->sync($request->skills);
+            $job->disability()->sync($request->disabilities);
+
+            return redirect()->route('jobs-show', $id)->with('success', 'Job details have been updated successfully!');
+        } else {
+            return back()->with('error', 'Failed to update job details. Review form.');
+        }
+    }
+
+    public function showCalendar(Request $request)
+    {
+
+        $user = auth()->user()->userInfo->user_id;
+        log::info($user);
+        log::info("nakaabot sa employer calendar");
+        if ($request->expectsJson()) {
+            Log::info("awww");
+            $jobListings = JobListing::where('employer_id', $user)
+                ->get(['employer_id', 'position', 'end_date']);
+            Log::info("Job listings fetched:", ['jobs' => $jobListings->toArray()]);
+            
+            $events = [];
+
+            foreach ($jobListings as $job) {
+                // $scheduleDates = explode(',', $job->end_date);
+
+                    // Convert MM/DD/YYYY to YYYY-MM-DD
+                    $dateParts = explode('-', $job->end_date);
+                    if (count($dateParts) == 3) {
+                        Log::info("kaabot sa if");
+                        $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
+                        Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
+                        $events[] = [
+                            'id' => $job->employer_id,
+                            'title' => $job->position,
+                            'start' => $formattedDate, // FullCalendar expects start for all-day events
+                            'allDay' => true
+                        ];
+                    }
+                
+            }
+            Log::info('Events Array:', ['events' => $events]);
+            return response()->json($events);
+            
+        }
+
+        return view('employer.calendar');
     }
 }

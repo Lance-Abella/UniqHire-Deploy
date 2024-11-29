@@ -46,7 +46,7 @@
         </div>
     </div>
 </div>
-<script>
+<!-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         var geocoder = new google.maps.Geocoder();
 
@@ -79,6 +79,6 @@
             });
         });
     });
-</script>
+</script> -->
 
 @endsection

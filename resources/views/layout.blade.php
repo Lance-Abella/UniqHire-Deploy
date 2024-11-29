@@ -133,6 +133,12 @@
                                         <span class="side-title">Job Listings</span>
                                     </a>
                                 </li>
+                                <li class="side-item">
+                                    <a href="{{ route('employer-calendar') }}" class="side-item-link {{ request()->routeIs('employer-calendar') ? 'active' : '' }}">
+                                        <i class='bx bx-calendar side-icon'></i>
+                                        <span class="side-title">Calendar</span>
+                                    </a>
+                                </li>
                                 @endif
 
                                 <!-- <li><a href="#"><i class='bx bx-cog side-icon'></i><span class="side-title">Sponsor</span></a></li> -->

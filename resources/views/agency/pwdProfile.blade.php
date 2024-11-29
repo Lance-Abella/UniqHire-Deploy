@@ -21,7 +21,7 @@
             <div class="details row">
                 <div class="col">
                     <p class="text-cap profile-name">{{ $user->userInfo->name }}</p>
-                    <p class="text-cap" id="location"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                    <p class="text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $user->userInfo->location }}</p>
                     <input type="hidden" id="lat" value="{{ $user->userInfo->latitude }}">
                     <input type="hidden" id="lng" value="{{ $user->userInfo->longitude }}">
                 </div>

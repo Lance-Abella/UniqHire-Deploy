@@ -1,5 +1,5 @@
 @extends('layout')
-@section('page-title', 'Add Training Program')
+@section('page-title', 'Add Job')
 @section('page-content')
 <form action="{{ route('job-add') }}" method="POST" class="container mb-5 add-form">
     @csrf
