@@ -178,11 +178,6 @@ class AgencyController extends Controller
         }
 
         return redirect()->route('programs-manage')->with('success', 'Training program created successfully!');
-        // } catch (\Exception $e) {
-        //     return back()->with('error', 'Failed to create training program. Review form.');
-        // }
-        // Create a new training program
-
     }
 
     public function deleteProgram($id)

@@ -101,5 +101,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/manage-jobs', [EmployerController::class, 'manageJobs'])->middleware('role:Employer')->name('manage-jobs');
     Route::get('/add-job', [EmployerController::class, 'showAddForm'])->middleware('role:Employer')->name('add-job');
     Route::post('/add-job', [EmployerController::class, 'addJob'])->middleware('role:Employer')->name('job-add');
-    Route::get('/show-job/{id}', [EmployerController::class, 'showJobDetails'])->name('jobs-show');
+    Route::get('/show-job/{id}', [EmployerController::class, 'showJobDetails'])->middleware('role:Employer')->name('jobs-show');
+    Route::delete('/delete-job/{id}', [EmployerController::class, 'deleteJob'])->middleware('role: Employer')->name('jobs-delete');
+    Route::get('/edit-job/{id}', [EmployerController::class, 'editJob'])->middleware('role:Employer')->name('jobs-edit');
+    Route::put('/edit-job/{id}', [EmployerController::class, 'updateJob'])->middleware('role:Employer');
 });

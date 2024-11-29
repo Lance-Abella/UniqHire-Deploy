@@ -12,6 +12,7 @@ use App\Models\Skill;
 use App\Models\WorkSetup;
 use App\Models\WorkType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EmployerController extends Controller
 {
@@ -104,5 +105,47 @@ class EmployerController extends Controller
             $listing->crowdfund->progress = $progress;
         }
         return view('employer.showJob', compact('listing', 'applications', 'reviews', 'enrollees', 'pendingsCount', 'ongoingCount', 'completedCount', 'enrolleesCount', 'requests', 'slots'));
+    }
+
+    public function deleteJob($id)
+    {
+        $listing = JobListing::findOrFail($id);
+
+        dd($listing);
+
+        if ($listing && $listing->employer_id == auth()->id()) {
+            // Find and delete related notifications
+            DB::table('notifications')
+                ->where('data', 'like', '%"employer_id":' . $id . '%')
+                ->delete();
+
+            $listing->delete();
+            return redirect()->route('manage-jobs')->with('success', 'Job listing deleted successfully.');
+        } else {
+            return redirect()->route('manage-jobs')->with('error', 'Failed to delete Job listing.');
+        }
+    }
+
+    public function editJob($id)
+    {
+        $listing = JobListing::find($id);
+
+        if (!$listing || $listing->employer_id != auth()->id()) {
+            return redirect()->route('manage-jobs');
+        }
+
+        // Fetch provinces and cities
+        $provinceResponse = file_get_contents('https://psgc.cloud/api/provinces');
+        $provinces = json_decode($provinceResponse, true);
+
+        // Fetch disabilities and education levels
+        $disabilities = Disability::all();
+        $levels = EducationLevel::all();
+        $skills = Skill::all();
+
+        // Return the view with all required data
+        return view('employer.editJob', compact('listing', 'provinces', 'disabilities', 'levels', 'skills'));
+
+        // return redirect()->route('programs-manage');
     }
 }
