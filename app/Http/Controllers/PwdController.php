@@ -471,6 +471,8 @@ class PwdController extends Controller
     private function calculateJobSimilarity($user, $currentJob)
     {
         $similarityScore = 0;
+        $matchedExistingSkillsCount = 0;
+        $matchedCertifiedSkillsCount = 0;
 
         // Filter jobs based on user disability
         $filteredJobs = JobListing::whereHas('disability', function ($q) use ($user) {
@@ -510,8 +512,12 @@ class PwdController extends Controller
             return $a['distance'] <=> $b['distance'];
         });
 
+        Log::info('Distances after sorting (ranked): ', $distances);
+
         $numberOfDistances = count($distances);
         $difference = $numberOfDistances > 1 ? 30 / ($numberOfDistances) : 0;
+
+        Log::info('Calculated difference: ' . $difference);
 
         foreach ($distances as $index => $distanceItem) {
             if ($distanceItem['job_id'] == $currentJob->id) {
@@ -553,17 +559,45 @@ class PwdController extends Controller
         // Compare existing skills with current job skills
         foreach ($existingSkills as $existingSkillId) {
             if (in_array($existingSkillId, $currentJobSkillIds)) {
-                $similarityScore += 1; // Add 1 point for each matching skill
+                $matchedExistingSkillsCount++;
             }
+        }
+
+        // Calculate the score based on the number of matched skills
+        if ($matchedExistingSkillsCount == 1) {
+            $similarityScore += 2;
+        } else if ($matchedExistingSkillsCount == 2) {
+            $similarityScore += 4;
+        } else if ($matchedExistingSkillsCount == 3) {
+            $similarityScore += 6;
+        } else if ($matchedExistingSkillsCount == 4) {
+            $similarityScore += 8;
+        } else if ($matchedExistingSkillsCount >= 5) {
+            $similarityScore += 10;
         }
 
         // Compare certified skills with current job skills
         foreach ($certifiedSkills as $certifiedSkillId) {
-            // Check if the certified skill ID exists in the current job's skill IDs
             if (in_array($certifiedSkillId, $currentJobSkillIds)) {
-                $similarityScore += 20; // Add 20 points for each matching skill, accounting for duplicates
+                $matchedCertifiedSkillsCount++;
             }
         }
+
+        // Calculate the score based on the number of matched skills
+        if ($matchedCertifiedSkillsCount == 1) {
+            $similarityScore += 10;
+        } elseif ($matchedCertifiedSkillsCount == 2) {
+            $similarityScore += 20;
+        } elseif ($matchedCertifiedSkillsCount == 3) {
+            $similarityScore += 30;
+        } elseif ($matchedCertifiedSkillsCount == 4) {
+            $similarityScore += 40;
+        }elseif ($matchedCertifiedSkillsCount == 5) {
+            $similarityScore += 50;
+        }elseif ($matchedCertifiedSkillsCount >= 6) {
+            $similarityScore += 60;
+        }
+
         Log::info('Existing Skills:', $existingSkills);
         Log::info('Certified Skills:', $certifiedSkills);
         Log::info('Current Job Skills:', $currentJobSkillIds);
@@ -578,10 +612,19 @@ class PwdController extends Controller
         $query = JobListing::query();
         $setups = WorkSetup::all();
         $types = WorkType::all();
-        $certified = DB::table("certification_details")->where('user_id', $user->user_id)
-            ->get();
+        $isCertified = DB::table("certification_details")->where('user_id', $user->user_id)
+        ->exists();
 
-        // Get the collection of approved programs to not include in displaying
+         if (!$isCertified) {
+        $paginatedItems = new LengthAwarePaginator([], 0, 14);
+        $setupCounts = WorkSetup::withCount('job')->get()->keyBy('id');
+        $typeCounts = WorkType::withCount('job')->get()->keyBy('id');
+
+        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types'))
+            ->with('message', 'You need to complete a training program to view jobs.');
+    }
+
+        // Get the collection of approved jobs to not include in displaying
         $approvedJobIds = JobApplication::where('user_id', auth()->id())
             ->where('application_status', 'Approved')
             ->pluck('job_id')

@@ -84,7 +84,7 @@
                                                         @elseif ($diff < 86400)
                                                         {{ floor($diff / 3600) }}h
                                                         @else
-                                                        {{ $ranked['job']->created_at->diffForHumans() }}
+                                                        {{ $ranked['program']->created_at->diffForHumans() }}
                                                         @endif
                                                         </p>
                                             </div>
