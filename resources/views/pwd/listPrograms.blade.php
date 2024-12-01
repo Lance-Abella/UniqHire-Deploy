@@ -53,10 +53,10 @@
                 <div class="sub-text no-result">No results found.</div>
                 @else
                 <div class="prog-grid-list">
-                    @foreach ($paginatedItems as $ranked)
-                    <div class="prog-card" data-program-id="{{ $ranked['program']->id }}" data-lat="{{ $ranked['program']->latitude }}" data-lng="{{ $ranked['program']->longitude }}">
+                    @forelse ($paginatedItems as $ranked)
+                    <div class="row prog-card mb-2" data-program-id="{{ $ranked['program']->id }}" data-lat="{{ $ranked['program']->latitude }}" data-lng="{{ $ranked['program']->longitude }}">
                         <input type="hidden" name="" value="{{$ranked['similarity']}}" id="">
-                        <div class="">
+                        <div class="col ">
                             <a href="{{ route('training-details', $ranked['program']->id ) }}" class="d-flex prog-texts">
                                 <div class="prog-texts-container">
                                     <div class=" d-flex mb-2">
@@ -87,42 +87,43 @@
                                                         @elseif ($diff < 86400)
                                                         {{ floor($diff / 3600) }}h
                                                         @else
-                                                        {{ $ranked['job']->created_at->diffForHumans() }}
+                                                        {{ $ranked['program']->created_at->diffForHumans() }}
                                                         @endif
                                                         </p>
                                             </div>
                                         </div>
-                                    </div>
 
-                                </div>
-                                <div class="row prog-desc mb-1">
-                                    <p>{{$ranked['program']->description}}</p>
-                                </div>
-                                <div class="infos">
-                                    <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
-                                    @foreach ($ranked['program']->disability as $disability)
-                                    <div class="disability-item" data-disability-id="{{ $disability->id }}">
-                                        {{$disability->disability_name}}
                                     </div>
-                                    @endforeach
+                                    <div class="row prog-desc mb-1">
+                                        <p>{{$ranked['program']->description}}</p>
+                                    </div>
+                                    <div class="infos">
+                                        <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
+                                        @foreach ($ranked['program']->disability as $disability)
+                                        <div class="disability-item" data-disability-id="{{ $disability->id }}">
+                                            {{$disability->disability_name}}
+                                        </div>
+                                        @endforeach
 
-                                    <div class="match-info @if (Auth::user()->userInfo->education->id != $ranked['program']->education->id) notmatch-info @endif">
-                                        {{$ranked['program']->education->education_name}}
-                                    </div>
-                                    <div class="match-info @if (Auth::user()->userInfo->age < $ranked['program']->start_age || Auth::user()->userInfo->age > $ranked['program']->end_age) notmatch-info @endif">
-                                        {{$ranked['program']->start_age . ' - ' . $ranked['program']->end_age}}
+                                        <div class="match-info @if (Auth::user()->userInfo->education->id != $ranked['program']->education->id) notmatch-info @endif">
+                                            {{$ranked['program']->education->education_name}}
+                                        </div>
+                                        <div class="match-info @if (Auth::user()->userInfo->age < $ranked['program']->start_age || Auth::user()->userInfo->age > $ranked['program']->end_age) notmatch-info @endif">
+                                            {{$ranked['program']->start_age . ' - ' . $ranked['program']->end_age}}
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="fs-3 d-flex flex-column align-items-center justify-content-center">
+                                    >
+                                </div>
+                            </a>
                         </div>
-                        <!-- <div class="fs-3 d-flex flex-column align-items-center justify-content-center">
-                                >
-                            </div> -->
-                        </a>
                     </div>
+                    @endforeach
                 </div>
-                @endforeach
+                @endif
+
             </div>
-            @endif
         </div>
         <div class="pagination-container">
             <div class="pagination">

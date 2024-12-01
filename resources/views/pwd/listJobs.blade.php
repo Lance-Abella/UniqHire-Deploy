@@ -101,7 +101,7 @@
                                         @endif
                                     </div>
 
-                                    <div class="prog-head d-flex justify-content-between" style="width:16.5rem">
+                                    <div class="prog-head d-flex justify-content-between" style="width:20rem">
                                         <div class=" header" style="width:12rem">
                                             <h4 class="text-cap">{{$ranked['job']->position}}</h4>
                                             <p class="sub-text text-cap">{{$ranked['job']->employer->userInfo->name}}</p>
@@ -130,7 +130,7 @@
                                 <div class="row prog-desc mb-1">
                                     <p>{{$ranked['job']->description}}</p>
                                 </div>
-                                <div class="infos" style="width:23.2rem">
+                                <div class="infos" style="width:25.5rem">
                                     <input type="hidden" id="user-disability" value="{{Auth::user()->userInfo->disability_id}}">
                                     @foreach ($ranked['job']->disability as $disability)
                                     <div class="disability-item" data-disability-id="{{ $disability->id }}">
@@ -147,6 +147,9 @@
                                         {{ $ranked['job']->type->name }}
                                     </div>
                                 </div>
+                            </div>
+                            <div class="fs-3 d-flex flex-column align-items-center justify-content-center">
+                                >
                             </div>
                         </a>
                     </div>

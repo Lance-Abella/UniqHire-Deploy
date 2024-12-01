@@ -892,7 +892,8 @@ span.badge {
     height: 100%;
 }
 
-.pwd-browse-prog .prog-card .prog-texts-container {
+.pwd-browse-prog .prog-card .prog-texts-container,
+.pwd-browse-prog .job-card .prog-texts-container {
     width: 100%;
 }
 
@@ -2219,7 +2220,7 @@ table tbody .bx {
 
 .pwd-browse-job .job-card {
     height: 14rem;
-    width: 25rem;
+    width: 29rem;
     background-color: var(--bg-color-02);
     border-radius: var(--border-radius);
     box-shadow: var(--side-shadow-03);
