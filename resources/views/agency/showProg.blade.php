@@ -98,7 +98,7 @@
                                 <p class="match-info">{{ $program->start_age . ' - ' . $program->end_age . ' Years Old' }}</p>
                             </div>
                             <div class="more-info">
-                                <h5>Skills Acquired</h5>
+                                <h5>Skills Offered</h5>
                                 <ul>
                                     @foreach ($program->skill as $skill)
                                     <li class="match-info mb-2">{{ $skill->title }}</li>

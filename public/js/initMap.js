@@ -55,10 +55,10 @@ function initMap() {
         var lng = markerPosition.lng();
         document.getElementById("lat").value = lat;
         document.getElementById("long").value = lng;
-        document.getElementById("coordinates").innerText =
-            "Latitude: " + lat + ", Longitude: " + lng;
+        // document.getElementById("coordinates").innerText =
+        //     "Latitude: " + lat + ", Longitude: " + lng;
 
-        reverseGeocode(lat, lng);
+        // reverseGeocode(lat, lng);
     }
 
     // Call reverseGeocode with the default initial location when the map is initialized

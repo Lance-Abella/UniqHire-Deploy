@@ -100,7 +100,7 @@
                     </div>
                     <div class="d-flex justify-content-start mb-5">                       
                         <div class="more-info">
-                            <h5>Skills Acquired</h5>
+                            <h5>Skills Required</h5>
                             <ul>
                                 @foreach ($listing->skill as $skill)
                                 <li class="match-info mb-2">{{ $skill->title }}</li>
