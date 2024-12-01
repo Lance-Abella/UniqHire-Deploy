@@ -81,6 +81,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/training-details/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('training-details');
     Route::get('/pwd/calendar', [PwdController::class, 'showCalendar'])->middleware('role:PWD')->name('pwd-calendar');
     Route::post('/training-program/apply', [PwdController::class, 'application'])->middleware('role:PWD')->name('pwd-application');
+    Route::post('/job/apply', [PwdController::class, 'jobApplication'])->middleware('role:PWD')->name('pwd-jobApplication');
     Route::get('/training-programs', [PwdController::class, 'showTrainings'])->middleware('role:PWD')->name('trainings');
     Route::get('/training-program/details/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('show-details');
     Route::post('/training-program/rate', [PwdController::class, 'rateProgram'])->middleware('role:PWD')->name('rate-program');
@@ -101,5 +102,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/manage-jobs', [EmployerController::class, 'manageJobs'])->middleware('role:Employer')->name('manage-jobs');
     Route::get('/add-job', [EmployerController::class, 'showAddForm'])->middleware('role:Employer')->name('add-job');
     Route::post('/add-job', [EmployerController::class, 'addJob'])->middleware('role:Employer')->name('job-add');
-    Route::get('/show-job/{id}', [EmployerController::class, 'showJobDetails'])->name('jobs-show');
+    Route::get('/show-job/{id}', [EmployerController::class, 'showJobDetails'])->middleware('role:Employer')->name('jobs-show');
+    Route::delete('/delete-job/{id}', [EmployerController::class, 'deleteJob'])->middleware('role:Employer')->name('jobs-delete');
+    Route::get('/edit-job/{id}', [EmployerController::class, 'editJob'])->middleware('role:Employer')->name('jobs-edit');
+    Route::put('/edit-job/{id}', [EmployerController::class, 'updateJob'])->middleware('role:Employer');
+    Route::post('/employer/accept', [EmployerController::class, 'accept'])->middleware('role:Employer')->name('employer-accept');
+    Route::get('/employer/calendar', [EmployerController::class, 'showCalendar'])->middleware('role:Employer')->name('employer-calendar');
 });
