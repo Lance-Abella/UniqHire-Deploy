@@ -21,6 +21,38 @@
                 <input type="hidden" id="lng" value="{{ $listing->longitude }}">
             </div>
             <div class="prog-btn">
+                <form id="apply-form-{{ $listing->id }}" action="{{ route('pwd-jobApplication') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                    <input type="hidden" name="job_id" value="{{ $listing->id }}">
+
+                    @php
+                    // Determine the application status
+                    $applicationStatus = null;
+                    foreach ($applications as $app) {
+                    if ($app->job_id == $listing->id) {
+                    $applicationStatus = $app->application_status;
+                    break;
+                    }
+                    }
+                    @endphp
+
+                    @if ($applicationStatus == 'Pending')
+                    <button type="submit" class="submit-btn pending border-0" disabled>
+                        Pending
+                    </button>
+                    @elseif($applicationStatus == 'Approved')
+                    <button type="submit" class="submit-btn approved border-0" disabled>
+                        <i class='bx bx-check'></i>
+                    </button>
+                    @else
+                    <div class="d-flex flex-column align-items-end apply-btn-container">
+                        <button type="submit" class="submit-btn border-0" onclick="confirmApplication(event, 'apply-form-{{ $listing->id }}')">
+                                Apply
+                        </button>                       
+                    </div>
+                    @endif
+                </form>
             </div>
         </div>
         <div class="mb-5">
@@ -31,21 +63,19 @@
         <ul class="nav nav-underline" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" data-bs-toggle="tab" href="#requirements" role="tab">Requirements</a>
-            </li>
-            @if ($listing->crowdfund)
+            </li>       
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#sponsors" role="tab">Sponsors</a>
-            </li>
-            @endif
+                <a class="nav-link" data-bs-toggle="tab" href="#enrollees" role="tab">Hired PWDs</a>
+            </li>       
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="requirements" role="tabpanel">
                 <div class="requirements">
                     <div class="d-flex justify-content-start mb-5">
                         <div class="more-info">
-                            <h5>Schedule</h5>
+                            <h5>Hiring until</h5>
                             <p>
-                                @foreach(explode(',', $listing->schedule) as $date)
+                                @foreach(explode(',', $listing->end_date) as $date)
                                 {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
                                 @if(!$loop->last)
                             <p></p>
@@ -53,12 +83,22 @@
                             @endforeach
                             </p>
                         </div>
+                         <div class="more-info">
+                                <h5>Salary</h5>
+                                <p>{{ $listing->salary . ' Pesos' }}</p>
+                            </div> 
                     </div>
-                    <div class="d-flex justify-content-start mb-5">
+                    <div class="d-flex justify-content-start more-info mb-5">
                         <div class="more-info">
-                            <h5>Age</h5>
-                            <p class="match-info">{{ $listing->start_age . ' - ' . $listing->end_age . ' Years Old' }}</p>
-                        </div>
+                            <h5>Work Type</h5>
+                            <p>{{ $listing->type->name }}</p>
+                        </div> 
+                        <div class="more-info">
+                            <h5>Work Setup</h5>
+                            <p>{{ $listing->setup->name }}</p>
+                        </div> 
+                    </div>
+                    <div class="d-flex justify-content-start mb-5">                       
                         <div class="more-info">
                             <h5>Skills Acquired</h5>
                             <ul>
@@ -67,8 +107,6 @@
                                 @endforeach
                             </ul>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-start more-info">
                         <div class="more-info">
                             <h5>We Accept</h5>
                             <ul>
@@ -77,57 +115,26 @@
                                 @endforeach
                             </ul>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="tab-pane" id="competencies" role="tabpanel">
-            </div>
-
+                    </div> 
+                </div>                
+            </div> 
             <div class="tab-pane enrollees" id="enrollees" role="tabpanel">
-                <table class="table table-striped table-hover">
-                    <tbody>
-                        @forelse ($enrollees as $enrollee)
-                        <tr>
-                            <td class="name">
-                                <a href="{{ route('show-profile', $enrollee->application->user->id) }}">
-                                    {{ $enrollee->application->user->userInfo->name }}
-                                </a>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="text-center">No enrollees yet.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            @if ($listing->crowdfund)
-            <div class="tab-pane" id="sponsors" role="tabpanel">
-                <div class="crowdfund-progress mb-3">
-                    <p class="sub-text">
-                        Goal Amount: &nbsp;&nbsp;<span>{{number_format($listing->crowdfund->goal, 0, '.', ',') . ' PHP'}}</span>
-                    </p>
-                    <p class="sub-text">
-                        Crowdfunding Progress:
-                    </p>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="{{ $listing->crowdfund->progress }}" aria-valuemin="0" aria-valuemax="100">{{ $listing->crowdfund->progress }}%</div>
-                    </div>
-                </div>
-
-                <h5>Sponsors</h5>
-                <span class=""></span>
-            </div>
-            @endif
-            <div class="tab-pane" id="reviews" role="tabpanel">
-                <div class="border reviews">
-                    <div class="header border-bottom d-flex justify-content-between align-items-center">
-                        <div class="outer">
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            
+                            <tr>
+                                <td colspan="3" class="text-center">No Hired PWDs yet.</td>
+                            </tr>
+                           
+                        </tbody>
+                    </table>
+                </div>                   
         </div>
     </div>
 

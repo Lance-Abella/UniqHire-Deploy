@@ -105,6 +105,10 @@
                             <p></p>
                             @endif
                             @endforeach
+                           
+                        </div>
+                         <div class="more-info">
+                            <h5>Time</h5>
                             <p>{{ \Carbon\Carbon::parse($program->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($program->end_time)->format('h:i A') }}
                                 </p>
                             </p>
@@ -128,8 +132,6 @@
                                 @endforeach
                             </ul>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-start more-info">
                         <div class="more-info">
                             <h5>We Accept</h5>
                             <ul>
@@ -138,6 +140,9 @@
                                 @endforeach
                             </ul>
                         </div>
+                    </div>
+                    <div class="d-flex justify-content-start more-info">
+                        
                         <div class="more-info">
                             <h5>Education Level (at least)</h5>
                             <span class="match-info">{{ $program->education->education_name }}</span>
