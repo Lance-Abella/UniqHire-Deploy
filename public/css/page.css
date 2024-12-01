@@ -892,7 +892,8 @@ span.badge {
     height: 100%;
 }
 
-.pwd-browse-prog .prog-card .prog-texts-container {
+.pwd-browse-prog .prog-card .prog-texts-container,
+.pwd-browse-prog .job-card .prog-texts-container {
     width: 100%;
 }
 
@@ -978,6 +979,10 @@ input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     pointer-events: auto;
     background-color: var(--primary-color);
+}
+
+.filter-container .submit-btn {
+    padding: 0.5rem 1rem;
 }
 
 .filter-container .count {
@@ -1720,6 +1725,10 @@ input[type="range"]::-webkit-slider-thumb {
     display: flex;
     justify-content: center;
 } */
+
+.agency-prog-container .outer {
+    height: 80vh;
+}
 .agency-prog-container .prog-grid {
     position: relative;
     left: 2.5rem;
@@ -2211,7 +2220,7 @@ table tbody .bx {
 
 .pwd-browse-job .job-card {
     height: 14rem;
-    width: 25rem;
+    width: 29rem;
     background-color: var(--bg-color-02);
     border-radius: var(--border-radius);
     box-shadow: var(--side-shadow-03);

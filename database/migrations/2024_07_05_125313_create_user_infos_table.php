@@ -29,6 +29,7 @@ return new class extends Migration
             $table->text('affiliations')->nullable();
             $table->text('awards')->nullable();
             $table->string('profile_path')->nullable();
+            $table->string('paypal_account')->nullable();
             $table->timestamps();
         });
     }
