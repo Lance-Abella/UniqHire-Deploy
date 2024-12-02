@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers;
 use App\Models\Enrollee;
 use App\Models\PwdFeedback;
+use App\Models\Transaction;
 
 class SponsorController extends Controller
 {
@@ -72,8 +73,15 @@ class SponsorController extends Controller
         // Fetch all enrollees for the program
         $enrollees = Enrollee::where('program_id', $program->id)->get();
 
+        $sponsors = [];
         // Handle crowdfunding details if applicable
         if ($program->crowdfund) {
+            $crowdfundId = $program->crowdfund->id ?? null;
+            if ($crowdfundId) {
+                $sponsors = Transaction::where('crowdfund_id', $crowdfundId)
+                    ->where('status', 'Completed') // Only include successful transactions
+                    ->get(['name', 'amount']);
+            }
             $raisedAmount = $program->crowdfund->raised_amount ?? 0; // Default to 0 if raised_amount is null
             $goal = $program->crowdfund->goal ?? 1; // Default to 1 to avoid division by zero
             $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0; // Calculate progress percentage
@@ -81,13 +89,6 @@ class SponsorController extends Controller
         }
 
         // Return the view for program details
-        return view('sponsor.showTrainProgDetails', compact('program', 'reviews', 'enrollees', 'slots'));
+        return view('sponsor.showTrainProgDetails', compact('program', 'reviews', 'enrollees', 'slots', 'sponsors'));
     }
-
-    public function payment(){
-        return view('slugs.payment');
-    }
-
-    
-    
 }
