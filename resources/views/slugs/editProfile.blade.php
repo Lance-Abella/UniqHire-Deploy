@@ -100,15 +100,15 @@
                                     @enderror
                                 </div>
                             </div>
-                            @endif
+                            @endif                            
                         </div>
-                        <input type="hidden" id="lat" name="lat" value="{{ $latitude }}">
-                        <input type="hidden" id="long" name="long" value="{{ $longitude }}">
-                        <input type="hidden" id="loc" name="loc" required>
-                        <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-                        <label for="map">Select Your Location:</label>
-                        <div id="map" class="map"></div>
-                        <p id="coordinates"></p>
+                        <div class="col mb-3">
+                            <input type="text" id="lat" name="lat" value="{{ $latitude }}">
+                            <input type="text" id="long" name="long" value="{{ $longitude }}">
+                            <input type="hidden" id="loc" name="loc" required>
+                            <input id="pac-input" class="controls" type="text" placeholder="Search Box">                        
+                            <div id="map" class="map"></div>
+                        </div>                                                
                         @if($user->hasRole('PWD'))
                         <div class="form-floating mb-3">
                             <select class="form-select" id="floatingSelect" name="disability" aria-label="Floating label select example">
@@ -159,8 +159,8 @@
 </form>
 
 @push('map-scripts')
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places&loading=async&callback=editInitMap"></script>
 <script src="{{ asset('js/editInitMap.js') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places&loading=async&callback=editInitMap" asynch defer></script>
 @endpush
 
 <script>

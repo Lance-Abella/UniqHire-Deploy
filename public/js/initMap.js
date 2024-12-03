@@ -58,7 +58,7 @@ function initMap() {
         // document.getElementById("coordinates").innerText =
         //     "Latitude: " + lat + ", Longitude: " + lng;
 
-        // reverseGeocode(lat, lng);
+        reverseGeocode(lat, lng);
     }
 
     // Call reverseGeocode with the default initial location when the map is initialized
@@ -133,4 +133,4 @@ function initMap() {
 }
 
 // Initialize the map when the window loads
-document.addEventListener("DOMContentLoaded", initMap);
+// document.addEventListener("DOMContentLoaded", initMap);
