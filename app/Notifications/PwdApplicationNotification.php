@@ -13,14 +13,14 @@ class PwdApplicationNotification extends Notification
 {
     use Queueable;
 
-    protected $trainingApplication;
+    protected $trainingProgram;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(TrainingApplication $trainingApplication)
+    public function __construct(TrainingProgram $trainingProgram)
     {
-        $this->trainingApplication = $trainingApplication;
+        $this->trainingProgram = $trainingProgram;
     }
 
     /**
@@ -41,7 +41,7 @@ class PwdApplicationNotification extends Notification
     {
         return (new MailMessage)
             ->line('A PWD user has applied for your training program.')
-            ->action('View Application', url('/show-program/' . $this->trainingApplication->id))
+            ->action('View Application', url('/show-program/' . $this->trainingProgram->id))
             ->line('Thank you for using our application!');
     }
 
@@ -53,11 +53,9 @@ class PwdApplicationNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'title' => $this->trainingApplication->trainingProgram->title,
-            'training_program_id' => $this->trainingApplication->training_program_id,
-            'user_id' => $this->trainingApplication->user_id,
-            'status' => $this->trainingApplication->application_status,
-            'url' => url('/show-program/' . $this->trainingApplication->id),
+            'title' => $this->trainingProgram->title,
+            'training_program_id' => $this->trainingProgram->id,
+            'url' => url('/show-program/' . $this->trainingProgram->id),
         ];
     }
 }

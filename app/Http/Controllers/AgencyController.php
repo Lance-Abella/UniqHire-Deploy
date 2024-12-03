@@ -17,6 +17,7 @@ use App\Models\SkillUser;
 use App\Models\Experience;
 use App\Notifications\ApplicationAcceptedNotification;
 use App\Notifications\NewTrainingProgramNotification;
+use App\Notifications\TrainingCompletedNotification;
 use Illuminate\Http\Request;
 use DateTime;
 use Illuminate\Support\Facades\Log;
@@ -436,6 +437,9 @@ class AgencyController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        $pwdUser = $enrollee->pwd;
+        $pwdUser->notify(new TrainingCompletedNotification($enrollee));
 
         return back()->with('success', 'Enrollee completed the training and certification record created.');
     }

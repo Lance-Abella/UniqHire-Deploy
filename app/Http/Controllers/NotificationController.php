@@ -11,10 +11,27 @@ class NotificationController extends Controller
 {
     public function getNotifications()
     {
-        $notifications = auth()->user()->unreadNotifications;
-        // Log::info('Notifications fetched for user: ' . auth()->user()->id);
-        // Log::info($notifications);
-        return response()->json($notifications);
+        $user = auth()->user();
+        $notificationsQuery = $user->unreadNotifications;
+
+        if ($user->hasRole('PWD')) {
+            $notifications = $notificationsQuery->filter(function ($notifications) {
+                return in_array($notifications->type, [
+                    'App\\Notifications\\NewTrainingProgramNotification',
+                    'App\\Notifications\\ApplicationAcceptedNotification',
+                    'App\\Notifications\\TrainingCompletedNotification',
+                ]);
+            });
+        } else if ($user->hasRole('Training Agency')) {
+            $notifications = $notificationsQuery->filter(function ($notifications) {
+                return in_array($notifications->type, [
+                    'App\\Notifications\\PwdApplicationNotification',
+                ]);
+            });
+        }
+
+
+        return response()->json($notifications->toArray());
     }
 
     public function markAsRead(Request $request)

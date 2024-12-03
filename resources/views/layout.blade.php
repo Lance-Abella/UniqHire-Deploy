@@ -232,20 +232,18 @@
                         badge.removeClass('d-none').text(data.length);
                         data.forEach(function(notification) {
                             var notificationContent = '';
+                            var url = notification.data.url || '#';
+
                             if (notification.type === 'App\\Notifications\\NewTrainingProgramNotification') {
                                 notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.agency_name +
                                     '</span>' +
-                                    ' has posted a new training' +
+                                    ' has posted a new training!' +
                                     '<div class="notif-content sub-text">' +
                                     'Entitled ' +
                                     '<span class="sub-text text-cap">' +
                                     notification.data.title +
-                                    '</span>' +
-                                    '. Starts on ' +
-                                    '<span class="sub-text">' +
-                                    notification.data.start_date + //Change Format pero if dili makaya kay ayaw nlng sya iapil og display
                                     '</span>' +
                                     '. Click to check this out.' +
                                     '</div>' +
@@ -253,10 +251,12 @@
                             } else if (notification.type === 'App\\Notifications\\PwdApplicationNotification') {
                                 notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
                                     'A PWD user has applied for your training program: ' +
-                                    '<span class="sub-text text-cap">' +
+                                    '<span class="notif-owner text-cap">' +
                                     notification.data.title +
                                     '</span>' +
-                                    '. Click to view application.' +
+                                    '<div class="notif-content sub-text">' +
+                                    'Click to view application.' +
+                                    '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\ApplicationAcceptedNotification') {
                                 notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
@@ -270,8 +270,18 @@
                                     notification.data.agency_name +
                                     '</span>' +
                                     '. Click to view details.' +
-                                    '</div>'
-                                '</a></li>';
+                                    '</div>' +
+                                    '</a></li>';
+                            } else if (notification.type === 'App\\Notifications\\TrainingCompletedNotification') {
+                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                    'Congratulations for completing: ' +
+                                    '<span class="notif-owner text-cap">' +
+                                    notification.data.program_title +
+                                    '</span>' +
+                                    '<div class="notif-content sub-text">' +
+                                    ' You have been given a certificate, see profile. ' +
+                                    '</div>' +
+                                    '</a></li>';
                             }
                             notifDropdown.append(notificationContent);
                         });

@@ -220,7 +220,7 @@ class PwdController extends Controller
 
         $rating = $userReview ? $userReview->rating : 0;
 
-       // Collect all schedules (dates and times) from applied programs excluding completed programs
+        // Collect all schedules (dates and times) from applied programs excluding completed programs
         $appliedSchedules = $application->map(function ($app) use ($completedPrograms) {
             if (!in_array($app->training_program_id, $completedPrograms)) {
                 return [
@@ -254,8 +254,8 @@ class PwdController extends Controller
                 if ($programDate === $appliedSchedule['date']) {
                     // Check for time overlap
                     if (
-                        ($programStartTime < $appliedSchedule['end_time'] && $programStartTime >= $appliedSchedule['start_time']) || 
-                        ($programEndTime > $appliedSchedule['start_time'] && $programEndTime <= $appliedSchedule['end_time']) || 
+                        ($programStartTime < $appliedSchedule['end_time'] && $programStartTime >= $appliedSchedule['start_time']) ||
+                        ($programEndTime > $appliedSchedule['start_time'] && $programEndTime <= $appliedSchedule['end_time']) ||
                         ($programStartTime <= $appliedSchedule['start_time'] && $programEndTime >= $appliedSchedule['end_time'])
                     ) {
                         return false; // Conflict found, exclude this program
@@ -284,7 +284,7 @@ class PwdController extends Controller
         return view('pwd.show', compact('program', 'reviews', 'application', 'nonConflictingPrograms', 'enrollees', 'status', 'isCompletedProgram', 'slots', 'userHasReviewed', 'rating', 'userReview'));
     }
 
-    
+
 
     public function showListingDetails($id)
     {
@@ -426,11 +426,11 @@ class PwdController extends Controller
         $trainerUser = User::whereHas('userInfo', function ($query) use ($trainingProgram) {
             $query->where('user_id', $trainingProgram->agency_id);
         })->whereHas('role', function ($query) {
-            $query->where('role_name', 'Trainer');
+            $query->where('role_name', 'Training Agency');
         })->first();
 
         if ($trainerUser) {
-            $trainerUser->notify(new PwdApplicationNotification($trainingApplication));
+            $trainerUser->notify(new PwdApplicationNotification($trainingProgram));
         } else {
             Log::error('No agency user found for training program', ['trainingProgram' => $trainingProgram->id]);
         }
@@ -592,9 +592,9 @@ class PwdController extends Controller
             $similarityScore += 30;
         } elseif ($matchedCertifiedSkillsCount == 4) {
             $similarityScore += 40;
-        }elseif ($matchedCertifiedSkillsCount == 5) {
+        } elseif ($matchedCertifiedSkillsCount == 5) {
             $similarityScore += 50;
-        }elseif ($matchedCertifiedSkillsCount >= 6) {
+        } elseif ($matchedCertifiedSkillsCount >= 6) {
             $similarityScore += 60;
         }
 
@@ -613,16 +613,16 @@ class PwdController extends Controller
         $setups = WorkSetup::all();
         $types = WorkType::all();
         $isCertified = DB::table("certification_details")->where('user_id', $user->user_id)
-        ->exists();
+            ->exists();
 
-         if (!$isCertified) {
-        $paginatedItems = new LengthAwarePaginator([], 0, 14);
-        $setupCounts = WorkSetup::withCount('job')->get()->keyBy('id');
-        $typeCounts = WorkType::withCount('job')->get()->keyBy('id');
+        if (!$isCertified) {
+            $paginatedItems = new LengthAwarePaginator([], 0, 14);
+            $setupCounts = WorkSetup::withCount('job')->get()->keyBy('id');
+            $typeCounts = WorkType::withCount('job')->get()->keyBy('id');
 
-        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types'))
-            ->with('message', 'You need to complete a training program to view jobs.');
-    }
+            return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types'))
+                ->with('message', 'You need to complete a training program to view jobs.');
+        }
 
         // Get the collection of approved jobs to not include in displaying
         $approvedJobIds = JobApplication::where('user_id', auth()->id())
