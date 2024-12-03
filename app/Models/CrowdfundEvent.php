@@ -14,7 +14,13 @@ class CrowdfundEvent extends Model
         'goal'
     ];
 
-    public function program() {
-        return $this->belongsTo(TrainingProgram::class);
+    public function program()
+    {
+        return $this->belongsTo(TrainingProgram::class, 'program_id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'crowdfund_id');
     }
 }

@@ -19,14 +19,15 @@
                 <input type="hidden" id="lng" value="{{ $program->longitude }}">
             </div>
             <div class="prog-btn">
-                <form id="doante-form-{{ $program->id }}" action="https://www.sandbox.paypal.com/ncp/payment/ALJE4JSRH2YJW" method="POST">
+                @include('slugs.payment')
+                <!-- <form id="donate-form-{{ $program->id }}" action="" method="POST">
                     @csrf
                     <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                     <input type="hidden" name="training_program_id" value="{{ $program->id }}">
                     <button type="submit" class="submit-btn border-0">
                         Donate
                     </button>
-                </form>
+                </form> -->
             </div>
         </div>
         <div class="mb-5">
@@ -140,8 +141,11 @@
             @if ($program->crowdfund)
             <div class="tab-pane" id="sponsors" role="tabpanel">
                 <div class="crowdfund-progress mb-3">
-                    <p class="sub-text">
+                    <!-- <p class="sub-text">
                         Goal Amount: &nbsp;&nbsp;<span>{{number_format($program->crowdfund->goal, 0, '.', ',') . ' PHP'}}</span>
+                    </p> -->
+                    <p class="sub-text">
+                        Current Funding: &nbsp;&nbsp;<span>{{number_format($program->crowdfund->raised_amount, 0, '.', ',') . ' PHP' . ' of ' . number_format($program->crowdfund->goal, 0, '.', ',') . ' PHP'}}</span>
                     </p>
                     <p class="sub-text">
                         Crowdfunding Progress:
@@ -152,7 +156,11 @@
                 </div>
 
                 <h5>Sponsors</h5>
-                <span class=""></span>
+                @forelse ($sponsors as $sponsor)
+                <p class="sub-text">{{$sponsor->name}} &nbsp;&nbsp;<em>({{number_format($sponsor->amount, 0, '.', ',') . ' PHP'}}) </em></p>
+                @empty
+                <div>No sponsors yet</div>
+                @endforelse
             </div>
             @endif
             <div class="tab-pane" id="reviews" role="tabpanel">

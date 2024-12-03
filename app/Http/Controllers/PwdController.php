@@ -19,6 +19,7 @@ use App\Models\Enrollee;
 use App\Models\PwdFeedback;
 use App\Models\WorkSetup;
 use App\Models\WorkType;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Notifications\PwdApplicationNotification;
@@ -220,7 +221,7 @@ class PwdController extends Controller
 
         $rating = $userReview ? $userReview->rating : 0;
 
-       // Collect all schedules (dates and times) from applied programs excluding completed programs
+        // Collect all schedules (dates and times) from applied programs excluding completed programs
         $appliedSchedules = $application->map(function ($app) use ($completedPrograms) {
             if (!in_array($app->training_program_id, $completedPrograms)) {
                 return [
@@ -254,8 +255,8 @@ class PwdController extends Controller
                 if ($programDate === $appliedSchedule['date']) {
                     // Check for time overlap
                     if (
-                        ($programStartTime < $appliedSchedule['end_time'] && $programStartTime >= $appliedSchedule['start_time']) || 
-                        ($programEndTime > $appliedSchedule['start_time'] && $programEndTime <= $appliedSchedule['end_time']) || 
+                        ($programStartTime < $appliedSchedule['end_time'] && $programStartTime >= $appliedSchedule['start_time']) ||
+                        ($programEndTime > $appliedSchedule['start_time'] && $programEndTime <= $appliedSchedule['end_time']) ||
                         ($programStartTime <= $appliedSchedule['start_time'] && $programEndTime >= $appliedSchedule['end_time'])
                     ) {
                         return false; // Conflict found, exclude this program
@@ -275,16 +276,23 @@ class PwdController extends Controller
 
         $enrollees = Enrollee::where('program_id', $program->id)->get();
 
+        $sponsors = [];
         if ($program->crowdfund) {
+            $crowdfundId = $program->crowdfund->id ?? null;
+            if ($crowdfundId) {
+                $sponsors = Transaction::where('crowdfund_id', $crowdfundId)
+                    ->where('status', 'Completed') // Only include successful transactions
+                    ->get(['name', 'amount']);
+            }
             $raisedAmount = $program->crowdfund->raised_amount ?? 0; // Default to 0 if raised_amount is null
             $goal = $program->crowdfund->goal ?? 1; // Default to 1 to avoid division by zero
             $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0; // Calculate progress percentage
             $program->crowdfund->progress = $progress;
         }
-        return view('pwd.show', compact('program', 'reviews', 'application', 'nonConflictingPrograms', 'enrollees', 'status', 'isCompletedProgram', 'slots', 'userHasReviewed', 'rating', 'userReview'));
+        return view('pwd.show', compact('program', 'reviews', 'application', 'nonConflictingPrograms', 'enrollees', 'status', 'isCompletedProgram', 'slots', 'userHasReviewed', 'rating', 'userReview', 'sponsors'));
     }
 
-    
+
 
     public function showListingDetails($id)
     {
@@ -592,9 +600,9 @@ class PwdController extends Controller
             $similarityScore += 30;
         } elseif ($matchedCertifiedSkillsCount == 4) {
             $similarityScore += 40;
-        }elseif ($matchedCertifiedSkillsCount == 5) {
+        } elseif ($matchedCertifiedSkillsCount == 5) {
             $similarityScore += 50;
-        }elseif ($matchedCertifiedSkillsCount >= 6) {
+        } elseif ($matchedCertifiedSkillsCount >= 6) {
             $similarityScore += 60;
         }
 
@@ -613,16 +621,16 @@ class PwdController extends Controller
         $setups = WorkSetup::all();
         $types = WorkType::all();
         $isCertified = DB::table("certification_details")->where('user_id', $user->user_id)
-        ->exists();
+            ->exists();
 
-         if (!$isCertified) {
-        $paginatedItems = new LengthAwarePaginator([], 0, 14);
-        $setupCounts = WorkSetup::withCount('job')->get()->keyBy('id');
-        $typeCounts = WorkType::withCount('job')->get()->keyBy('id');
+        if (!$isCertified) {
+            $paginatedItems = new LengthAwarePaginator([], 0, 14);
+            $setupCounts = WorkSetup::withCount('job')->get()->keyBy('id');
+            $typeCounts = WorkType::withCount('job')->get()->keyBy('id');
 
-        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types'))
-            ->with('message', 'You need to complete a training program to view jobs.');
-    }
+            return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types'))
+                ->with('message', 'You need to complete a training program to view jobs.');
+        }
 
         // Get the collection of approved jobs to not include in displaying
         $approvedJobIds = JobApplication::where('user_id', auth()->id())
