@@ -53,6 +53,7 @@ class TrainingCompletedNotification extends Notification
         return [
             'program_title' => $this->enrollee->program->title,
             'completed_at' => now(),
+            'url' => url('/training-programs/details/' . $this->enrollee->program->id),
         ];
     }
 }

@@ -18,6 +18,7 @@ use App\Models\Experience;
 use App\Models\Transaction;
 use App\Notifications\ApplicationAcceptedNotification;
 use App\Notifications\NewTrainingProgramNotification;
+use App\Notifications\TrainingCompletedNotification;
 use Illuminate\Http\Request;
 use DateTime;
 use Illuminate\Support\Facades\Log;
@@ -170,7 +171,7 @@ class AgencyController extends Controller
         }
 
 
-        //NOTIFY PWD USERS!!!
+        //NOTIFY PWD USERS!!! TRAINING PROGRAM
         $pwdUsers = User::whereHas('role', function ($query) {
             $query->where('role_name', 'PWD');
         })->get();
@@ -446,6 +447,9 @@ class AgencyController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        $pwdUser = $enrollee->pwd;
+        $pwdUser->notify(new TrainingCompletedNotification($enrollee));
 
         return back()->with('success', 'Enrollee completed the training and certification record created.');
     }

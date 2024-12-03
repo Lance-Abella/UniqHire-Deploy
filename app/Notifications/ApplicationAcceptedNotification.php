@@ -53,7 +53,7 @@ class ApplicationAcceptedNotification extends Notification
     {
         return [
             'program_title' => $this->trainingProgram->title,
-            'url' => url('/training-program/' . $this->trainingProgram->id),
+            'url' => url('/training-details/' . $this->trainingProgram->id),
             'agency_name' => $this->trainingProgram->agency->userInfo->name,
         ];
     }
