@@ -30,7 +30,7 @@
                     @foreach ($paginatedItems as $program)
                     <div class="prog-card" data-program-id="{{ $program->id }}" data-lat="{{ $program->latitude }}" data-lng="{{ $program->longitude }}">
                         <div class="">
-                            <a href="{{ route('training-details', $program->id ) }}" class="d-flex prog-texts">
+                            <a href="{{ route('trainingprog-details', $program->id ) }}" class="d-flex prog-texts">
                                 <div class="prog-texts-container">
                                     <div class=" d-flex mb-2">
                                         <div class="prog-img" @if (!empty($program->agency->userInfo->profile_path)) style=" background-image: url({{ asset($program->agency->userInfo->profile_path) }}); background-repeat: no-repeat; background-size: cover; " @endif>
@@ -44,18 +44,37 @@
                                             <div class="header">
                                                 <h4 class="text-cap">{{$program->title}}</h4>
                                                 <p class="sub-text text-cap">{{$program->agency->userInfo->name}}</p>
-                                                <p class="sub-text text-cap location" id="location-{{ $program->id }}"><i class='bx bx-map sub-text'></i>Loading address...</p>
+                                                <p class="sub-text text-cap location" id="location-{{ $program->id }}"><i class='bx bx-map sub-text'></i>{{$program->location}}</p>
                                                 <input type="hidden" id="lat-{{ $program->id }}" value="{{ $program->latitude }}">
                                                 <input type="hidden" id="lng-{{ $program->id }}" value="{{ $program->longitude }}">
                                             </div>
                                             <div class="text-end date-posted">
-                                                <p class="text-end">{{ $program->created_at->diffForHumans() }}</p>
+                                                @php
+                                                $diff = $program->created_at->diffInSeconds(now());
+                                                @endphp
+                                                <p class="text-end">
+                                                    @if ($diff < 60)
+                                                        {{ $diff }}s
+                                                        @elseif ($diff < 3600)
+                                                        {{ floor($diff / 60) }}m
+                                                        @elseif ($diff < 86400)
+                                                        {{ floor($diff / 3600) }}h
+                                                        @else
+                                                        {{ $program->created_at->diffForHumans() }}
+                                                        @endif
+                                                        </p>
                                             </div>
                                         </div>
 
                                     </div>
                                     <div class="row prog-desc mb-1">
                                         <p>{{$program->description}}</p>
+                                    </div>
+                                    <div class="infos d-flex align-items-center" style="width:23.2rem">
+                                        <span><strong>Goal Amount:</strong> &nbsp;</span>
+                                        <div class="match-info">
+                                            {{number_format($program->crowdfund->goal, 0, '.', ',') . ' PHP'}}
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- <div class="fs-3 d-flex flex-column align-items-center justify-content-center">

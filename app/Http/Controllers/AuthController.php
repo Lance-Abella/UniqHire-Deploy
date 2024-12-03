@@ -56,6 +56,7 @@ class AuthController extends Controller
             'about' => 'nullable|string',
             'awards' => 'nullable|string',
             'affiliations' => 'nullable|string',
+            'paypal' => 'nullable|string',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -82,6 +83,7 @@ class AuthController extends Controller
                 'year_established' => $request->year_established,
                 'awards' => $request->awards ?? '',
                 'affiliations' => $request->affiliations ?? '',
+                'paypal_account' => $request->paypal ?? '',
             ]);
         } else {
             $user->userInfo->update([
@@ -93,7 +95,8 @@ class AuthController extends Controller
                 'location' => $request->loc,
                 'about' => $request->about,
                 'disability_id' => $request->disability,
-                'educational_id' => $request->education
+                'educational_id' => $request->education,
+                'paypal_account' => $request->paypal ?? '',
             ]);
         }
         return back()->with('success', 'Your profile has been changed successfully!');

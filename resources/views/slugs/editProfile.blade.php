@@ -91,6 +91,15 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="paypal" name="paypal" value="{{ $user->userInfo->paypal }}" min="1000" max="">
+                                    <label for="paypal">PayPal Account</label>
+                                    @error('paypal')
+                                    <span class=" error-msg">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
                             @endif
                         </div>
                         <input type="hidden" id="lat" name="lat" value="{{ $latitude }}">

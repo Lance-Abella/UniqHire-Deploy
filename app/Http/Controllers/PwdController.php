@@ -19,6 +19,7 @@ use App\Models\Enrollee;
 use App\Models\PwdFeedback;
 use App\Models\WorkSetup;
 use App\Models\WorkType;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Notifications\PwdApplicationNotification;
@@ -275,13 +276,20 @@ class PwdController extends Controller
 
         $enrollees = Enrollee::where('program_id', $program->id)->get();
 
+        $sponsors = [];
         if ($program->crowdfund) {
+            $crowdfundId = $program->crowdfund->id ?? null;
+            if ($crowdfundId) {
+                $sponsors = Transaction::where('crowdfund_id', $crowdfundId)
+                    ->where('status', 'Completed') // Only include successful transactions
+                    ->get(['name', 'amount']);
+            }
             $raisedAmount = $program->crowdfund->raised_amount ?? 0; // Default to 0 if raised_amount is null
             $goal = $program->crowdfund->goal ?? 1; // Default to 1 to avoid division by zero
             $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0; // Calculate progress percentage
             $program->crowdfund->progress = $progress;
         }
-        return view('pwd.show', compact('program', 'reviews', 'application', 'nonConflictingPrograms', 'enrollees', 'status', 'isCompletedProgram', 'slots', 'userHasReviewed', 'rating', 'userReview'));
+        return view('pwd.show', compact('program', 'reviews', 'application', 'nonConflictingPrograms', 'enrollees', 'status', 'isCompletedProgram', 'slots', 'userHasReviewed', 'rating', 'userReview', 'sponsors'));
     }
 
 
@@ -642,6 +650,17 @@ class PwdController extends Controller
             });
         }
 
+        $minSalary = $request->minSalary;
+        $maxSalary = $request->maxSalary;
+
+        // if ($request->has('minSalary') && $request->has('maxSalary')) {
+        //     $query->whereBetween('salary', [$request->minSalary, $request->maxSalary]);
+        // } elseif ($request->has('minSalary')) {
+        //     $query->where('salary', '>=', $request->minSalary);
+        // } elseif ($request->has('maxSalary')) {
+        //     $query->where('salary', '<=', $request->maxSalary);
+        // }
+
 
         // if (isset($request->type) && ($request->setup != null)) {
         //     $query->whereHas('type', function ($q) use ($request) {
@@ -686,6 +705,6 @@ class PwdController extends Controller
         Log::info('Paginated Items:', $paginatedItems->toArray());
         log::info("nakaabot ari gyuddd");
 
-        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types'));
+        return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types', 'minSalary', 'maxSalary'));
     }
 }

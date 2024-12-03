@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\PwdController;
 use App\Http\Controllers\SponsorController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserInfoController;
 use App\Http\Controllers\NotificationController;
 use App\Models\UserInfo;
@@ -96,6 +97,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('trainingprog-details');
     Route::get('/training-program/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('show-progdetails');
     Route::post('/training-program/payment', [SponsorController::class, 'payment'])->middleware('role:Sponsor')->name('payment');
+    Route::post('/payment', [PaymentController::class, 'payment'])->middleware('role:Sponsor')->name('payment');
+    Route::get('/payment/success', [PaymentController::class, 'success'])->middleware('role:Sponsor')->name('payment-success');
+    Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->middleware('role:Sponsor')->name('payment-cancel');
+
 
 
     // Employer Middleware

@@ -15,6 +15,7 @@ use App\Models\Competency;
 use App\Models\Skill;
 use App\Models\SkillUser;
 use App\Models\Experience;
+use App\Models\Transaction;
 use App\Notifications\ApplicationAcceptedNotification;
 use App\Notifications\NewTrainingProgramNotification;
 use App\Notifications\TrainingCompletedNotification;
@@ -70,8 +71,9 @@ class AgencyController extends Controller
         $applications = TrainingApplication::where('training_program_id', $program->id)->get();
         $requests = TrainingApplication::where('training_program_id', $program->id)->where('application_status', 'Pending')->get();
         $enrollees = Enrollee::where('program_id', $program->id)->get();
+        $sponsors =
 
-        $pendingsCount = $applications->where('application_status', 'Pending')->count();
+            $pendingsCount = $applications->where('application_status', 'Pending')->count();
         $ongoingCount = $enrollees->where('completion_status', 'Ongoing')->count();
         $completedCount = $enrollees->where('completion_status', 'Completed')->count();
         $enrolleesCount = $enrollees->count();
@@ -81,13 +83,21 @@ class AgencyController extends Controller
 
         $slots = $program->participants - $enrolleeCount;
 
+        $sponsors = [];
         if ($program->crowdfund) {
+            $crowdfundId = $program->crowdfund->id ?? null;
+            if ($crowdfundId) {
+                $sponsors = Transaction::where('crowdfund_id', $crowdfundId)
+                    ->where('status', 'Completed') // Only include successful transactions
+                    ->get(['name', 'amount']);
+            }
+            // dd($sponsors);
             $raisedAmount = $program->crowdfund->raised_amount ?? 0;
             $goal = $program->crowdfund->goal ?? 1;
             $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
             $program->crowdfund->progress = $progress;
         }
-        return view('agency.showProg', compact('program', 'applications', 'reviews', 'enrollees', 'pendingsCount', 'ongoingCount', 'completedCount', 'enrolleesCount', 'requests', 'slots'));
+        return view('agency.showProg', compact('program', 'applications', 'reviews', 'enrollees', 'pendingsCount', 'ongoingCount', 'completedCount', 'enrolleesCount', 'requests', 'slots', 'sponsors'));
     }
 
     public function showAddForm()
