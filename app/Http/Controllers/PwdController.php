@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\JobApplicationAcceptedNotification;
 use Illuminate\Http\Request;
 use App\Models\UserInfo;
 use App\Models\TrainingProgram;
@@ -23,6 +24,7 @@ use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Notifications\PwdApplicationNotification;
+use App\Notifications\PwdJobApplicationNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -458,17 +460,11 @@ class PwdController extends Controller
 
         $job = JobListing::findOrFail($validatedData['job_id']);
 
-        // $trainerUser = User::whereHas('userInfo', function ($query) use ($trainingProgram) {
-        //     $query->where('user_id', $trainingProgram->agency_id);
-        // })->whereHas('role', function ($query) {
-        //     $query->where('role_name', 'Trainer');
-        // })->first();
+        $employer = User::find($job->employer_id);
 
-        // if ($trainerUser) {
-        //     $trainerUser->notify(new PwdApplicationNotification($trainingApplication));
-        // } else {
-        //     Log::error('No agency user found for training program', ['trainingProgram' => $trainingProgram->id]);
-        // }
+        if ($employer) {
+            $employer->notify(new PwdJobApplicationNotification($job));
+        }
 
         return back()->with('success', 'Application sent successfully!');
     }

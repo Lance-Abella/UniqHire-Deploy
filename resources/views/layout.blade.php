@@ -233,6 +233,7 @@
                         data.forEach(function(notification) {
                             var notificationContent = '';
                             var url = notification.data.url || '#';
+                            var notificationId = notification.id;
 
                             if (notification.type === 'App\\Notifications\\NewTrainingProgramNotification') {
                                 notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
@@ -282,6 +283,47 @@
                                     ' You have been given a certificate, see profile. ' +
                                     '</div>' +
                                     '</a></li>';
+                            } else if (notification.type === 'App\\Notifications\\NewJobListingNotification') {
+                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                    'New Job Listing: ' +
+                                    '<span class="notif-owner text-cap">' +
+                                    notification.data.position +
+                                    '</span>' +
+                                    '<div class="notif-content sub-text">' +
+                                    ' Click to view details. ' +
+                                    '</div>' +
+                                    '</a></li>';
+                            } else if (notification.type === 'App\\Notifications\\JobApplicationAcceptedNotification') {
+                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                    'Accepted by Employer: ' +
+                                    '<span class="notif-owner text-cap">' +
+                                    notification.data.employer +
+                                    '</span>' +
+                                    '<div class="notif-content sub-text">' +
+                                    ' You have ' +
+                                    '</div>' +
+                                    '</a></li>';
+                            } else if (notification.type === 'App\\Notifications\\PwdJobApplicationNotification') {
+                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                    'New applicant for: ' +
+                                    '<span class="notif-owner text-cap">' +
+                                    notification.data.position +
+                                    '</span>' +
+                                    '<div class="notif-content sub-text">' +
+                                    ' Review it now. ' +
+                                    '</div>' +
+                                    '</a></li>';
+                            } else if (notification.type === 'App\\Notifications\\SponsorDonationNotification') {
+                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                    'A sponsor has contributed: ' +
+                                    '<span class="notif-owner text-cap">' +
+                                    notification.data.amount +
+                                    '</span>' +
+                                    '<div class="notif-content sub-text">' +
+                                    ' to your program: ' +
+                                    notification.data.program_title +
+                                    '</div>' +
+                                    '</a></li>';
                             }
                             notifDropdown.append(notificationContent);
                         });
@@ -293,6 +335,38 @@
                     console.error('Failed to fetch notifications');
                 });
             }
+
+            // Handle clicking on a notification to mark it as read
+            $(document).on('click', '.dropdown-item', function() {
+                var notificationId = $(this).data('id'); // Get notification ID from the data-id attribute
+
+                // Mark as read via AJAX
+                $.ajax({
+                    url: "{{ route('notifications.markAsRead') }}", // Your route for marking notifications as read
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        notification_id: notificationId
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            // Update the badge count dynamically
+                            $('#notification-badge').text(response.unread_count);
+                            if (response.unread_count === 0) {
+                                $('#notification-badge').addClass('d-none');
+                            }
+
+                            // You can also update the UI to indicate the notification was read
+                            // You could either remove it from the list or mark it differently
+                            // For example:
+                            $('a[data-id="' + notificationId + '"]').css('color', 'gray');
+                        }
+                    },
+                    error: function() {
+                        console.error('Error marking notification as read');
+                    }
+                });
+            });
 
             // Fetch notifications on page load
             fetchNotifications();

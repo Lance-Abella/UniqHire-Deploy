@@ -171,7 +171,7 @@ class AgencyController extends Controller
         }
 
 
-        //NOTIFY PWD USERS!!!
+        //NOTIFY PWD USERS!!! TRAINING PROGRAM
         $pwdUsers = User::whereHas('role', function ($query) {
             $query->where('role_name', 'PWD');
         })->get();
