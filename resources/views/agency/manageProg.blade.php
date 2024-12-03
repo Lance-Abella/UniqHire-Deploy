@@ -36,12 +36,8 @@
                         <p class="sub-text">
                             Crowdfunding Progress:
                         </p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ $program->crowdfund->progress }}" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" @if ($program->crowdfund->progress > 0)
-                                style="width: {{$program->crowdfund->progress}}%;"
-                                else
-                                style="width: 10%;"
-                                @endif >{{ $program->crowdfund->progress }}%</div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="{{ $program->crowdfund->progress }}" aria-valuemin="0" aria-valuemax="100">{{ $program->crowdfund->progress }}%</div>
                         </div>
                     </div>
                     @endif

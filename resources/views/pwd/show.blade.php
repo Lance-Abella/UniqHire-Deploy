@@ -105,12 +105,12 @@
                             <p></p>
                             @endif
                             @endforeach
-                           
+
                         </div>
-                         <div class="more-info">
+                        <div class="more-info">
                             <h5>Time</h5>
                             <p>{{ \Carbon\Carbon::parse($program->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($program->end_time)->format('h:i A') }}
-                                </p>
+                            </p>
                             </p>
                         </div>
                         <div class="more-info">
@@ -142,7 +142,7 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-start more-info">
-                        
+
                         <div class="more-info">
                             <h5>Education Level (at least)</h5>
                             <span class="match-info">{{ $program->education->education_name }}</span>
@@ -185,8 +185,11 @@
             @if ($program->crowdfund)
             <div class="tab-pane" id="sponsors" role="tabpanel">
                 <div class="crowdfund-progress mb-3">
-                    <p class="sub-text">
+                    <!-- <p class="sub-text">
                         Goal Amount: &nbsp;&nbsp;<span>{{number_format($program->crowdfund->goal, 0, '.', ',') . ' PHP'}}</span>
+                    </p> -->
+                    <p class="sub-text">
+                        Current Funding: &nbsp;&nbsp;<span>{{number_format($program->crowdfund->raised_amount, 0, '.', ',') . ' PHP' . ' of ' . number_format($program->crowdfund->goal, 0, '.', ',') . ' PHP'}}</span>
                     </p>
                     <p class="sub-text">
                         Crowdfunding Progress:
@@ -197,7 +200,11 @@
                 </div>
 
                 <h5>Sponsors</h5>
-                <span class=""></span>
+                @forelse ($sponsors as $sponsor)
+                <p class="sub-text">{{$sponsor->name}} &nbsp;&nbsp;<em>({{number_format($sponsor->amount, 0, '.', ',') . ' PHP'}}) </em></p>
+                @empty
+                <div>No sponsors yet</div>
+                @endforelse
             </div>
             @endif
             <div class="tab-pane" id="reviews" role="tabpanel">

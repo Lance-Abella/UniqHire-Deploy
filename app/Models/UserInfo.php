@@ -24,7 +24,8 @@ class UserInfo extends Model
         'founder',
         'year_established',
         'affiliations',
-        'awards'
+        'awards',
+        'paypal_account'
     ];
 
     public function user()
@@ -55,5 +56,10 @@ class UserInfo extends Model
     public function certificates()
     {
         return $this->hasMany(CertificationDetail::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'sponsor_id');
     }
 }
