@@ -110,16 +110,32 @@
                 </div>
                 <div class="tab-pane enrollees" id="employees" role="tabpanel">
                    <table class="table table-striped table-hover">
+                        <thead>
+                            <td class="table-head">Name</td>
+                            <td class="table-head">Interview Date</td>
+                            <td class="table-head">Interview Time</td>
+                            <td class="table-head">--</td>
+                            <td class="table-head">Status</td>
+                        </thead>
                         <tbody>
                             @forelse ($employees as $employee)
                                 <tr>
-                                    <td class="check"><input class="form-check-input" type="checkbox"></td>
                                     <td class="name">
                                         <a href="{{ route('show-profile', $employee->application->user->id) }}">
                                             {{ $employee->application->user->userInfo->name }}
                                         </a>
                                     </td>
-
+                                    <td>
+                                         {{ \Carbon\Carbon::parse(trim($employee->schedule))->format('F d, Y') }}
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse(trim($employee->start_time))->format('h:i A') }} - {{ \Carbon\Carbon::parse(trim($employee->end_time))->format('h:i A') }}</td>
+                                    <td>
+                                        <form action="{{route('set-schedule', $employee->id)}}" method="GET">
+                                            @csrf
+                                            <button class="submit-btn border-0">Set schedule</button>
+                                        </form>
+                                        
+                                    </td>
                                     <td class="d-flex justify-content-end btn-container">
                                         <form action="{{ route('mark-hired') }}" method="POST">
                                             @csrf
@@ -167,9 +183,13 @@
             <div class="counts">
                 <h3>{{$pendingsCount}}</h3>
                 <p>Pending Applicants</p>
-            </div>                
+            </div>
             <div class="counts">
-                <h3>{{$applicantCount}}</h3>
+                <h3>{{$intervieweeCount}}</h3>
+                <p>Total Interviewees</p>
+            </div>               
+            <div class="counts">
+                <h3>{{$totalHired}}</h3>
                 <p>Total Hired PWDs</p>
             </div>
         </div>

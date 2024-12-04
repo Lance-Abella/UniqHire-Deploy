@@ -116,5 +116,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/employer/accept', [EmployerController::class, 'accept'])->middleware('role:Employer')->name('employer-accept');
     Route::get('/employer/calendar', [EmployerController::class, 'showCalendar'])->middleware('role:Employer')->name('employer-calendar');
     Route::post('/employer/mark-complete', [EmployerController::class, 'markHired'])->middleware('role:Employer')->name('mark-hired');
-    Route::get('/post-events', [EmployerController::class, 'showEvents'])->middleware('role:Employer')->name('post-events');
+    Route::get('/post-events', [EmployerController::class, 'showEvents'])->middleware('role:Employer')->name('show-post-events');
+    Route::post('/post-events', [EmployerController::class, 'postEvent'])->middleware('role:Employer')->name('post-events');
+    Route::get('/employer/set-schedule/{id}', [EmployerController::class, 'setScheduleForm'])->middleware('role:Employer')->name('set-schedule');
+    Route::post('/employer/set-schedule/{id}', [EmployerController::class, 'setSchedule'])->middleware('role:Employer')->name('set-schedule');
 });
