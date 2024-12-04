@@ -12,6 +12,9 @@ use App\Models\Employee;
 use App\Models\Skill;
 use App\Models\WorkSetup;
 use App\Models\WorkType;
+use App\Models\User;
+use App\Notifications\JobApplicationAcceptedNotification;
+use App\Notifications\NewJobListingNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -78,6 +81,15 @@ class EmployerController extends Controller
         $jobListing->skill()->attach($request->skills);
         $jobListing->disability()->attach($request->disabilities);
 
+        //NOTIFY PWD USERS!!! JOB
+        $pwdUsers = User::whereHas('role', function ($query) {
+            $query->where('role_name', 'PWD');
+        })->get();
+
+        foreach ($pwdUsers as $user) {
+            $user->notify(new NewJobListingNotification($jobListing));
+        }
+
         return redirect()->route('manage-jobs')->with('success', 'Job listing created successfully!');
     }
 
@@ -129,13 +141,13 @@ class EmployerController extends Controller
         $application = JobApplication::findOrFail($jobId);
         $application->application_status = 'Approved';
         $application->save();
-        
-        // $pwdUser = $application->user;
-        // $job = $application->job;
 
-        // $pwdUser->notify(new ApplicationAcceptedNotification($job));
+        $pwdUser = $application->user;
+        $jobListing = $application->job;
 
-         // Create Enrollee record
+        $pwdUser->notify(new JobApplicationAcceptedNotification($jobListing));
+
+        // Create Enrollee record
         Employee::create([
             'pwd_id' => $pwdId,
             'job_id' => $jobId,
@@ -153,7 +165,7 @@ class EmployerController extends Controller
         Log::info("nakasud ari");
         $listing = JobListing::findOrFail($id);
 
-       
+
 
         if ($listing && $listing->employer_id == auth()->id()) {
             // Find and delete related notifications
@@ -200,18 +212,18 @@ class EmployerController extends Controller
 
         if ($job && $job->employer_id == auth()->id()) {
             $request->validate([
-            'position' => 'required|string|max:255',
-            'description' => 'required|string',
-            'lat' => 'required|numeric|between:-90,90',
-            'long' => 'required|numeric|between:-180,180',
-            'loc' => 'nullable|string|max:255',
-            'end_date' => 'required|date',
-            'skills' => 'required|array',
-            'skills.*' => 'exists:skills,id',
-            'disabilities' => 'required|array',
-            'disabilities.*' => 'exists:disabilities,id',
-            'setup' => 'exists:work_setups,id',
-            'type' => 'exists:work_types,id'
+                'position' => 'required|string|max:255',
+                'description' => 'required|string',
+                'lat' => 'required|numeric|between:-90,90',
+                'long' => 'required|numeric|between:-180,180',
+                'loc' => 'nullable|string|max:255',
+                'end_date' => 'required|date',
+                'skills' => 'required|array',
+                'skills.*' => 'exists:skills,id',
+                'disabilities' => 'required|array',
+                'disabilities.*' => 'exists:disabilities,id',
+                'setup' => 'exists:work_setups,id',
+                'type' => 'exists:work_types,id'
             ]);
 
             Log::info("lapas sa validation");
@@ -250,30 +262,28 @@ class EmployerController extends Controller
             $jobListings = JobListing::where('employer_id', $user)
                 ->get(['employer_id', 'position', 'end_date']);
             Log::info("Job listings fetched:", ['jobs' => $jobListings->toArray()]);
-            
+
             $events = [];
 
             foreach ($jobListings as $job) {
                 // $scheduleDates = explode(',', $job->end_date);
 
-                    // Convert MM/DD/YYYY to YYYY-MM-DD
-                    $dateParts = explode('-', $job->end_date);
-                    if (count($dateParts) == 3) {
-                        Log::info("kaabot sa if");
-                        $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
-                        Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
-                        $events[] = [
-                            'id' => $job->employer_id,
-                            'title' => $job->position,
-                            'start' => $formattedDate, // FullCalendar expects start for all-day events
-                            'allDay' => true
-                        ];
-                    }
-                
+                // Convert MM/DD/YYYY to YYYY-MM-DD
+                $dateParts = explode('-', $job->end_date);
+                if (count($dateParts) == 3) {
+                    Log::info("kaabot sa if");
+                    $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
+                    Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
+                    $events[] = [
+                        'id' => $job->employer_id,
+                        'title' => $job->position,
+                        'start' => $formattedDate, // FullCalendar expects start for all-day events
+                        'allDay' => true
+                    ];
+                }
             }
             Log::info('Events Array:', ['events' => $events]);
             return response()->json($events);
-            
         }
 
         return view('employer.calendar');

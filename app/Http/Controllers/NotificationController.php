@@ -11,10 +11,36 @@ class NotificationController extends Controller
 {
     public function getNotifications()
     {
-        $notifications = auth()->user()->unreadNotifications;
-        // Log::info('Notifications fetched for user: ' . auth()->user()->id);
-        // Log::info($notifications);
-        return response()->json($notifications);
+        $user = auth()->user();
+        $notificationsQuery = $user->unreadNotifications;
+
+        if ($user->hasRole('PWD')) {
+            $notifications = $notificationsQuery->filter(function ($notifications) {
+                return in_array($notifications->type, [
+                    'App\\Notifications\\NewTrainingProgramNotification',
+                    'App\\Notifications\\ApplicationAcceptedNotification',
+                    'App\\Notifications\\TrainingCompletedNotification',
+                    'App\\Notifications\\NewJobListingNotification',
+                    'App\\Notifications\\JobApplicationAcceptedNotification',
+                ]);
+            });
+        } else if ($user->hasRole('Training Agency')) {
+            $notifications = $notificationsQuery->filter(function ($notifications) {
+                return in_array($notifications->type, [
+                    'App\\Notifications\\PwdApplicationNotification',
+                    'App\\Notifications\\SponsorDonationNotification',
+                ]);
+            });
+        } else if ($user->hasRole('Employer')) {
+            $notifications = $notificationsQuery->filter(function ($notifications) {
+                return in_array($notifications->type, [
+                    'App\\Notifications\\PwdJobApplicationNotification',
+                ]);
+            });
+        }
+
+
+        return response()->json($notifications->toArray());
     }
 
     public function markAsRead(Request $request)
@@ -24,7 +50,8 @@ class NotificationController extends Controller
 
         if ($notification) {
             $notification->markAsRead();
-            return response()->json(['status' => 'success']);
+            $unreadCount = Auth::user()->unreadNotifications->count();
+            return response()->json(['status' => 'success', 'unread_count' => $unreadCount]);
         }
 
         return response()->json(['status' => 'error'], 404);

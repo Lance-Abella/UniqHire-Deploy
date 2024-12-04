@@ -6,21 +6,20 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\TrainingApplication;
-use App\Models\TrainingProgram;
+use App\Models\Transaction;
 
-class PwdApplicationNotification extends Notification
+class SponsorDonationNotification extends Notification
 {
     use Queueable;
 
-    protected $trainingProgram;
+    protected $Transaction;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(TrainingProgram $trainingProgram)
+    public function __construct(Transaction $transaction)
     {
-        $this->trainingProgram = $trainingProgram;
+        $this->Transaction = $transaction;
     }
 
     /**
@@ -28,9 +27,8 @@ class PwdApplicationNotification extends Notification
      *
      * @return array<int, string>
      */
-    public function via(object $notifiable)
+    public function via(object $notifiable): array
     {
-
         return ['database', 'mail'];
     }
 
@@ -40,8 +38,8 @@ class PwdApplicationNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line('A PWD user has applied for your training program.')
-            ->action('View Application', url('/show-program/' . $this->trainingProgram->id))
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
             ->line('Thank you for using our application!');
     }
 
@@ -50,12 +48,13 @@ class PwdApplicationNotification extends Notification
      *
      * @return array<string, mixed>
      */
-    public function toArray($notifiable)
+    public function toArray(object $notifiable): array
     {
         return [
-            'title' => $this->trainingProgram->title,
-            'training_program_id' => $this->trainingProgram->id,
-            'url' => url('/show-program/' . $this->trainingProgram->id),
+            'program_title' => $this->Transaction->crowdfundEvent->program->title,
+            'amount' => $this->Transaction->amount,
+            'donor' => $this->Transaction->sponsor->name,
+            'donate_date' => now(),
         ];
     }
 }

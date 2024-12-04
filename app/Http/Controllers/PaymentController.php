@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\SponsorDonationNotification;
 use Illuminate\Http\Request;
 use Srmklive\PayPal\Facades\PayPal;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
@@ -117,6 +118,12 @@ class PaymentController extends Controller
             $crowdfundEvent = CrowdfundEvent::findOrFail($request->query('crowdfund_id'));
             $crowdfundEvent->raised_amount += $transaction->amount;
             $crowdfundEvent->save();
+
+            $agencyUser = $crowdfundEvent->program->agency->userInfo;
+
+            if ($agencyUser) {
+                $agencyUser->user->notify(new SponsorDonationNotification($transaction));
+            }
 
 
 
