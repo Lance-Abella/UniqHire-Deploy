@@ -288,4 +288,9 @@ class EmployerController extends Controller
 
         return view('employer.calendar');
     }
+
+    public function showEvents()
+    {
+        return view('employer.events');
+    }
 }

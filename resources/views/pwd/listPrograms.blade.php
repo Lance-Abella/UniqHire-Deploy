@@ -83,9 +83,9 @@
                                                     @if ($diff < 60)
                                                         {{ $diff }}s
                                                         @elseif ($diff < 3600)
-                                                        {{ floor($diff / 60) }}m
+                                                        {{ intdiv($diff , 60) }}m
                                                         @elseif ($diff < 86400)
-                                                        {{ floor($diff / 3600) }}h
+                                                        {{ intdiv($diff , 3600) }}h
                                                         @else
                                                         {{ $ranked['program']->created_at->diffForHumans() }}
                                                         @endif

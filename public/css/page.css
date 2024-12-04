@@ -840,7 +840,8 @@ span.badge {
 }
 
 .pwd-browse-prog .prog-card .prog-img,
-.pwd-browse-prog .job-card .prog-img {
+.pwd-browse-prog .job-card .prog-img,
+.events-container .event-card .prog-img {
     min-width: 5rem;
     min-height: 5rem;
     background-color: var(--primary-color-light);
@@ -853,7 +854,8 @@ span.badge {
 }
 
 .pwd-browse-prog .prog-card .prog-img span,
-.pwd-browse-prog .job-card .prog-img span {
+.pwd-browse-prog .job-card .prog-img span,
+.events-container .event-card .prog-img span {
     font-size: 2rem;
     font-weight: var(--header-extrabold);
     color: var(--primary-color);
@@ -2281,6 +2283,71 @@ table tbody .bx {
 
 .users-container .deny-btn:hover {
     background-color: var(--bg-color-02);
+}
+
+/* EVENTS */
+.events-container {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.events-container .outer {
+    /* background-color: var(--bg-color-02); */
+    width: 60rem;
+    /* border-radius: var(--border-radius); */
+}
+
+.events-container .post-form,
+.events-container .event-card {
+    background-color: var(--bg-color-02);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+}
+
+.events-container .post-form .btn-container {
+    display: flex;
+    justify-content: end;
+}
+
+.events-container .post-form .btn-container .submit-btn {
+    padding: 0.7rem 1rem;
+    width: 10rem;
+}
+
+.events-container .event-card .prog-img {
+    background-color: var(--primary-color-light);
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color);
+}
+
+.events-container .event-card .prog-head {
+    width: 90%;
+}
+
+.events-container .event-card .prog-head .header {
+    width: 35rem;
+}
+
+.events-container .event-card .prog-head .header p {
+    margin: 0;
+}
+
+.events-container .event-card .prog-desc p {
+    padding: 1rem 2rem;
+}
+
+.events-container .event-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 1rem;
+}
+
+.events-container .event-card .infos {
+    padding: 0 0.6rem;
 }
 
 /* MOBILE RESPONSIVE */
