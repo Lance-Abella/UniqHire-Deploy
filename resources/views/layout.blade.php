@@ -116,7 +116,7 @@
                                 <li class="side-item">
                                     <a href="{{route('programs-manage')}}" class="side-item-link {{ request()->routeIs('programs-manage', 'programs-add', 'programs-edit', 'programs-show') ? 'active' : '' }}">
                                         <i class='bx bxs-school side-icon'></i>
-                                        <span class="side-title">Training Programs</span>
+                                        <span class="side-title">Programs</span>
                                     </a>
                                 </li>
                                 <li class="side-item">
@@ -132,6 +132,12 @@
                                     <a href="{{route('manage-jobs')}}" class="side-item-link {{ request()->routeIs('manage-jobs') ? 'active' : '' }}">
                                         <i class='bx bx-briefcase side-icon'></i>
                                         <span class="side-title">Job Listings</span>
+                                    </a>
+                                </li>
+                                <li class="side-item">
+                                    <a href="{{route('programs-manage')}}" class="side-item-link {{ request()->routeIs('programs-manage', 'programs-add', 'programs-edit', 'programs-show') ? 'active' : '' }}">
+                                        <i class='bx bxs-school side-icon'></i>
+                                        <span class="side-title">Programs</span>
                                     </a>
                                 </li>
                                 <li class="side-item">

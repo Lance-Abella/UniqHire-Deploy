@@ -70,10 +70,8 @@ class AgencyController extends Controller
         $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
         $applications = TrainingApplication::where('training_program_id', $program->id)->get();
         $requests = TrainingApplication::where('training_program_id', $program->id)->where('application_status', 'Pending')->get();
-        $enrollees = Enrollee::where('program_id', $program->id)->get();
-        $sponsors =
-
-            $pendingsCount = $applications->where('application_status', 'Pending')->count();
+        $enrollees = Enrollee::where('program_id', $program->id)->get();        
+        $pendingsCount = $applications->where('application_status', 'Pending')->count();
         $ongoingCount = $enrollees->where('completion_status', 'Ongoing')->count();
         $completedCount = $enrollees->where('completion_status', 'Completed')->count();
         $enrolleesCount = $enrollees->count();

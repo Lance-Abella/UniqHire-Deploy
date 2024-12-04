@@ -65,7 +65,7 @@
                 <a class="nav-link active" data-bs-toggle="tab" href="#requirements" role="tab">Requirements</a>
             </li>       
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#enrollees" role="tab">Hired PWDs</a>
+                <a class="nav-link" data-bs-toggle="tab" href="#employees" role="tab">Hired PWDs</a>
             </li>       
         </ul>
         <div class="tab-content">
@@ -100,7 +100,7 @@
                     </div>
                     <div class="d-flex justify-content-start mb-5">                       
                         <div class="more-info">
-                            <h5>Skills Acquired</h5>
+                            <h5>Skills Required</h5>
                             <ul>
                                 @foreach ($listing->skill as $skill)
                                 <li class="match-info mb-2">{{ $skill->title }}</li>
@@ -118,20 +118,22 @@
                     </div> 
                 </div>                
             </div> 
-            <div class="tab-pane enrollees" id="enrollees" role="tabpanel">
+            <div class="tab-pane enrollees" id="employees" role="tabpanel">
                     <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                            
-                            <tr>
-                                <td colspan="3" class="text-center">No Hired PWDs yet.</td>
-                            </tr>
-                           
+                         <tbody>
+                            @forelse ($hiredPWDs as $hired)
+                                <tr>                                    
+                                    <td class="name">
+                                        <a href="{{ route('show-profile', $hired->application->user->id) }}">
+                                            {{ $hired->application->user->userInfo->name }}
+                                        </a>
+                                    </td>                                    
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">No hired PWDs yet.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>                   

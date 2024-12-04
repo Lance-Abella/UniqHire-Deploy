@@ -62,17 +62,17 @@ Route::middleware('auth')->group(function () {
 
 
     //Trainer Middleware
-    Route::get('/manage-program', [AgencyController::class, 'showPrograms'])->middleware('role:Training Agency')->name('programs-manage');
-    Route::get('/add-program', [AgencyController::class, 'showAddForm'])->middleware('role:Training Agency')->name('programs-add');
-    Route::post('/add-program', [AgencyController::class, 'addProgram'])->middleware('role:Training Agency');
-    Route::get('/show-program/{id}', [AgencyController::class, 'showProgramDetails'])->middleware('role:Training Agency')->name('programs-show');
-    Route::delete('/delete-program/{id}', [AgencyController::class, 'deleteProgram'])->middleware('role:Training Agency')->name('programs-delete');
-    Route::get('/edit-program/{id}', [AgencyController::class, 'editProgram'])->middleware('role:Training Agency')->name('programs-edit');
-    Route::put('/edit-program/{id}', [AgencyController::class, 'updateProgram'])->middleware('role:Training Agency');
-    Route::get('/agency/calendar', [AgencyController::class, 'showCalendar'])->middleware('role:Training Agency')->name('agency-calendar');
+    Route::get('/manage-program', [AgencyController::class, 'showPrograms'])->middleware('role:Training Agency,Employer')->name('programs-manage');
+    Route::get('/add-program', [AgencyController::class, 'showAddForm'])->middleware('role:Training Agency,Employer')->name('programs-add');
+    Route::post('/add-program', [AgencyController::class, 'addProgram'])->middleware('role:Training Agency,Employer');
+    Route::get('/show-program/{id}', [AgencyController::class, 'showProgramDetails'])->middleware('role:Training Agency,Employer')->name('programs-show');
+    Route::delete('/delete-program/{id}', [AgencyController::class, 'deleteProgram'])->middleware('role:Training Agency,Employer')->name('programs-delete');
+    Route::get('/edit-program/{id}', [AgencyController::class, 'editProgram'])->middleware('role:Training Agency,Employer')->name('programs-edit');
+    Route::put('/edit-program/{id}', [AgencyController::class, 'updateProgram'])->middleware('role:Training Agency,Employer');
+    Route::get('/agency/calendar', [AgencyController::class, 'showCalendar'])->middleware('role:Training Agency,Employer')->name('agency-calendar');
     // Route::post('/agency/action', [AgencyController::class, 'action'])->middleware('role:Training Agency')->name('agency-action');
-    Route::post('/agency/accept', [AgencyController::class, 'accept'])->middleware('role:Training Agency')->name('agency-accept');
-    Route::post('/agency/mark-complete', [AgencyController::class, 'markComplete'])->middleware('role:Training Agency')->name('mark-complete');
+    Route::post('/agency/accept', [AgencyController::class, 'accept'])->middleware('role:Training Agency,Employer')->name('agency-accept');
+    Route::post('/agency/mark-complete', [AgencyController::class, 'markComplete'])->middleware('role:Training Agency,Employer')->name('mark-complete');
 
 
     // PWD Middleware
@@ -115,5 +115,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/edit-job/{id}', [EmployerController::class, 'updateJob'])->middleware('role:Employer');
     Route::post('/employer/accept', [EmployerController::class, 'accept'])->middleware('role:Employer')->name('employer-accept');
     Route::get('/employer/calendar', [EmployerController::class, 'showCalendar'])->middleware('role:Employer')->name('employer-calendar');
+    Route::post('/employer/mark-complete', [EmployerController::class, 'markHired'])->middleware('role:Employer')->name('mark-hired');
     Route::get('/post-events', [EmployerController::class, 'showEvents'])->middleware('role:Employer')->name('post-events');
 });

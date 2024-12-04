@@ -89,13 +89,15 @@
                         </div>
                     </div>
                 </div>
-                <input type="hidden" id="lat" name="lat" required>
-                <input type="hidden" id="long" name="long" required>
-                <input type="hidden" id="loc" name="loc" required>
-                <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-                <label for="map">Select Your Location:</label>
-                <div id="map" class="map"></div>
-                <p id="coordinates"></p>
+                <div class="row">
+                    <div class="col">
+                        <input type="hidden" id="lat" name="lat" required>
+                        <input type="hidden" id="long" name="long" required>
+                        <input type="hidden" id="loc" name="loc" required>
+                        <input id="pac-input" class="controls" type="text" placeholder="Search Box">                        
+                        <div id="map" class="map"></div>
+                    </div>
+                </div>                
                 <hr>
                 <div id="pwd-section">
                     <div class="row">

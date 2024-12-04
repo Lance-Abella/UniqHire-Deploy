@@ -15,14 +15,17 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
+        // Ensure the user is authenticated
         if (!$request->user()) {
-            return redirect()->to(route('home'));
+            return redirect()->route('home'); // Redirect to a default route for unauthenticated users
         }
-        foreach($roles as $role) {
-            if($request->user()->hasRole($role)) {
-                return $next($request);
-            }
+
+        // Check if the user has at least one of the required roles
+        if (collect($roles)->contains(fn($role) => $request->user()->hasRole($role))) {
+            return $next($request); // Allow the request to proceed
         }
-        return redirect()->route('home');
+
+        // Deny access if no matching role is found
+        return redirect()->route('home')->with('error', 'You are not authorized to access this page.');
     }
 }
