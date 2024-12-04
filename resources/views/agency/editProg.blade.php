@@ -240,7 +240,7 @@
         }
         if (participantsInput) {
             formatNumber(participantsInput);
-        }     
+        }
 
         let competencyCount = document.querySelectorAll('#competencyList .input-group').length;
         const addCompetencyBtn = document.getElementById('addCompetencyBtn');
@@ -425,8 +425,4 @@
 
     //  // Initialize the map and geocoding
     // window.onload = initMap;
-
-    
-
-    
 </script>

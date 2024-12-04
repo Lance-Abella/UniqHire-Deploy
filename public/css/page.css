@@ -1561,7 +1561,8 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .add-form .add-comp,
-.edit-form .add-comp {
+.edit-form .add-comp,
+#socialListContainer .submit-btn {
     padding-top: 0.6rem;
     padding-bottom: 0.6rem;
     background-color: var(--bg-color-02);
@@ -1570,7 +1571,8 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .add-form .add-comp:hover,
-.edit-form .add-comp:hover {
+.edit-form .add-comp:hover,
+#socialListContainer .submit-btn:hover {
     background-color: var(--primary-color-light);
 }
 
@@ -2043,7 +2045,8 @@ table tbody .bx {
 }
 
 .profile-container .more-details .bio .bio-item .about,
-.profile-container .details .age .sub-text {
+.profile-container .details .age .sub-text,
+.profile-container .contact-container p.sub-text {
     font-style: italic;
     font-weight: normal;
 }

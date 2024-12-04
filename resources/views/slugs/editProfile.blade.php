@@ -93,7 +93,7 @@
                             </div>
                             <div class="col">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="paypal" name="paypal" value="{{ $user->userInfo->paypal }}" min="1000" max="">
+                                    <input type="text" class="form-control" id="paypal" name="paypal" value="{{ $user->userInfo->paypal }}">
                                     <label for="paypal">PayPal Account</label>
                                     @error('paypal')
                                     <span class=" error-msg">{{ $message }}</span>
@@ -147,6 +147,32 @@
                             @enderror
                         </div>
                         @endif
+                        <hr>
+                        <div class="form-floating mb-3">
+                            <div id="socialListContainer">
+                                <label for="socialList">Socials</label>
+                                <div id="socialList">
+                                    @foreach ($userSocials as $userSocial)
+                                    <div class="input-group mb-3 social-item">
+                                        <select class="form-select" name="socials[]">
+                                            <option value="">Select Social</option>
+                                            @foreach ($socials as $social)
+                                            <option value="{{ $social->id }}"
+                                                {{ $userSocial->social_id == $social->id ? 'selected' : '' }}>
+                                                {{ $social->name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        <input type="text" class="form-control" name="social_links[]" value="{{ $userSocial->link }}" placeholder="Social Link" style="width:13rem;">
+                                        <button type=" button" class="btn btn-outline-danger remove-social" data-index="{{ $loop->index }}">Remove</button>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                <button type="button" id="addSocialBtn" class="submit-btn border-0 add-social">
+                                    <i class="bx bx-plus"></i> Add Social
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="reset" class="deny-btn border-0">Clear</button>
@@ -168,6 +194,50 @@
         var input = document.getElementById(id);
         input.value = '';
     }
+
+    let socialCount = 0;
+    const maxSocials = 4; // Max number of socials a user can add
+
+    const socialList = document.getElementById('socialList');
+    const addSocialBtn = document.getElementById('addSocialBtn');
+
+    addSocialBtn.addEventListener('click', function() {
+        if (socialCount < maxSocials) {
+            socialCount++;
+            const socialItem = document.createElement('div');
+            socialItem.className = 'input-group mb-3';
+            socialItem.innerHTML = `
+            <div class="input-group">
+                <select class="form-select" name="socials[]" required >
+                    <option value="" disabled selected>Select a social</option>
+                    @foreach ($socials as $social)
+                    <option value="{{ $social->id }}">{{ $social->name }}</option>
+                    @endforeach
+                </select>
+                <input type="url" class="form-control" name="social_links[]" placeholder="Enter profile link" required style="width:13rem;">
+                <button class="btn btn-outline-secondary remove-btn" type="button">Remove</button>
+            </div>
+        `;
+
+            socialList.appendChild(socialItem);
+
+            // Add event listener to the remove button
+            const removeBtn = socialItem.querySelector('.remove-social');
+            removeBtn.addEventListener('click', function() {
+                socialList.removeChild(socialItem);
+                socialCount--;
+                toggleAddButton();
+            });
+
+            toggleAddButton();
+        }
+    });
+
+    function toggleAddButton() {
+        addSocialBtn.disabled = socialCount >= maxSocials;
+    }
+
+
 
     // function initMap() {
     //     var lat = parseFloat(document.getElementById('lat').value);

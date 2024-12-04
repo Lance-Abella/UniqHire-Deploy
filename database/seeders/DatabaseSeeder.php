@@ -10,6 +10,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Role;
+use App\Models\Socials;
 use App\Models\UserInfo;
 use App\Models\TrainingProgram;
 use App\Models\WorkSetup;
@@ -40,25 +41,35 @@ class DatabaseSeeder extends Seeder
         $speech = Disability::create(['disability_name' => 'Speech Impairment']);
         $visual = Disability::create(['disability_name' => 'Visually Impaired']);
 
+        // EDUCATION LEVELS
         $not_applicable = EducationLevel::create(['education_name' => 'Not Applicable']);
         $hsgrad = EducationLevel::create(['education_name' => 'High School Graduate']);
         $somecoll = EducationLevel::create(['education_name' => 'Some College']);
         $vocational = EducationLevel::create(['education_name' => 'Vocational']);
         $bachdegree = EducationLevel::create(['education_name' => "Bachelor's Degree"]);
 
-
+        // SKILLS
         $programming = Skill::create(['title' => 'Programming']);
         $communication = Skill::create(['title' => 'Communication']);
         $graphic = Skill::create(['title' => 'Graphic Design']);
         $data_analysis = Skill::create(['title' => 'Data Analysis']);
         $carpentry = Skill::create(['title' => 'Carpentry']);
 
+        // WORK SETUPS
         $onsite = WorkSetup::create(['name' => 'Onsite']);
         $remote = WorkSetup::create(['name' => 'Remote']);
         $hybrid = WorkSetup::create(['name' => 'Hybrid']);
 
+        // WORK TYPE
         $fulltime = WorkType::create(['name' => 'Full-time']);
         $parttime = WorkType::create(['name' => 'Part-time']);
+
+        // SOCIALS
+        $fb = Socials::create(['name' => 'Facebook']);
+        $ig = Socials::create(['name' => 'Instagram']);
+        $git = Socials::create(['name' => 'Github']);
+        $web = Socials::create(['name' => 'Website']);
+        // $fb = Socials::create(['name' => 'Facebook']);
 
 
         $adminuser = User::create([
