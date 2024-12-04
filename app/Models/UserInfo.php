@@ -62,4 +62,9 @@ class UserInfo extends Model
     {
         return $this->hasMany(Transaction::class, 'sponsor_id');
     }
+
+    public function socials()
+    {
+        return $this->belongsToMany(Socials::class, 'user_socials', 'user_id', 'social_id');
+    }
 }

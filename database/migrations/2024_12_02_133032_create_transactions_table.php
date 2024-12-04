@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('sponsor_id')->constrained('user_infos')->onDelete('cascade');
             $table->decimal('amount', 10, 2)->default(0); // Example: up to 10 digits, 2 decimal places
             $table->string('transaction_id')->unique()->nullable();
+            $table->string('receiver');
             $table->enum('status', ['Completed', 'Failed', 'Unknown'])->default('Unknown');
             $table->timestamps();
         });

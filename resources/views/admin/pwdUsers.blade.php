@@ -28,7 +28,7 @@
                 <td>{{ $user->userInfo->name }}</td>
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->userInfo->contactnumber }}</td>
-                <td>{{ $user->userInfo->state. ' ' .$user->userInfo->city }}</td>
+                <td>{{ $user->userInfo->location }}</td>
                 <td>{{ $user->userInfo->disability->disability_name }}</td>
                 <td colspan="2">
                     <form id="delete-user-{{ $user->id }}" action="{{ route('user-delete', $user->id) }}" method="POST" style="display:inline;">
@@ -47,6 +47,11 @@
             @endforelse
         </tbody>
     </table>
+    <div class="pagination-container">
+        <div class="pagination">
+            {{ $users->links() }}
+        </div>
+    </div>
 </div>
 <script>
     function confirmDelete(event, formId) {

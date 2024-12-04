@@ -100,6 +100,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/payment', [PaymentController::class, 'payment'])->middleware('role:Sponsor')->name('payment');
     Route::get('/payment/success', [PaymentController::class, 'success'])->middleware('role:Sponsor')->name('payment-success');
     Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->middleware('role:Sponsor')->name('payment-cancel');
+    Route::get('/payment-history', [SponsorController::class, 'showTransactions'])->middleware('role:Sponsor')->name('payment-history');
 
 
 
