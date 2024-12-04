@@ -8,6 +8,7 @@ use App\Models\JobApplication;
 use App\Models\EducationLevel;
 use App\Models\PwdFeedback;
 use App\Models\Enrollee;
+use App\Models\TrainingProgram;
 use App\Models\Employee;
 use App\Models\Skill;
 use App\Models\WorkSetup;
@@ -255,15 +256,18 @@ class EmployerController extends Controller
     {
 
         $user = auth()->user()->userInfo->user_id;
-        log::info($user);
-        log::info("nakaabot sa employer calendar");
+        
         if ($request->expectsJson()) {
-            Log::info("awww");
+            
             $jobListings = JobListing::where('employer_id', $user)
                 ->get(['employer_id', 'position', 'end_date']);
-            Log::info("Job listings fetched:", ['jobs' => $jobListings->toArray()]);
+            $trainingPrograms = TrainingProgram::where('agency_id', $user)
+            ->get(['agency_id', 'title', 'schedule']);
+            
 
             $events = [];
+
+            
 
             foreach ($jobListings as $job) {
                 // $scheduleDates = explode(',', $job->end_date);
@@ -282,10 +286,31 @@ class EmployerController extends Controller
                     ];
                 }
             }
-            Log::info('Events Array:', ['events' => $events]);
-            return response()->json($events);
-        }
+            
 
+            foreach ($trainingPrograms as $program) {
+                $scheduleDates = explode(',', $program->schedule);
+
+                foreach ($scheduleDates as $date) {
+                    // Convert MM/DD/YYYY to YYYY-MM-DD
+                    $dateParts = explode('/', $date);
+                    if (count($dateParts) == 3) {
+                        $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
+                        $events[] = [
+                            'id' => $program->id,
+                            'title' => $program->title,
+                            'start' => $formattedDate, // FullCalendar expects start for all-day events
+                            'allDay' => true
+                        ];
+                    }
+                }
+            }
+                    
+            return response()->json($events);
+            
+        }
+        
         return view('employer.calendar');
     }
+    
 }
