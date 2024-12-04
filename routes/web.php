@@ -114,4 +114,5 @@ Route::middleware('auth')->group(function () {
     Route::put('/edit-job/{id}', [EmployerController::class, 'updateJob'])->middleware('role:Employer');
     Route::post('/employer/accept', [EmployerController::class, 'accept'])->middleware('role:Employer')->name('employer-accept');
     Route::get('/employer/calendar', [EmployerController::class, 'showCalendar'])->middleware('role:Employer')->name('employer-calendar');
+    Route::post('/employer/mark-complete', [EmployerController::class, 'markHired'])->middleware('role:Employer')->name('mark-hired');
 });

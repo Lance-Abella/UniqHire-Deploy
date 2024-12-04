@@ -48,7 +48,10 @@
                     <a class="nav-link active" data-bs-toggle="tab" href="#requirements" role="tab">Requirements</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#enrollees" role="tab">Hired PWDs</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#employees" role="tab">Interviewees</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#hired" role="tab">Hired PWDs</a>
                 </li>
                 
                
@@ -105,24 +108,58 @@
                         
                     </div>
                 </div>
-                <div class="tab-pane enrollees" id="enrollees" role="tabpanel">
+                <div class="tab-pane enrollees" id="employees" role="tabpanel">
                    <table class="table table-striped table-hover">
-                    <tbody>
-                        @forelse ($employees as $employee)
-                        <tr>
-                            <td class="name">
-                                <a href="{{ route('show-profile', $employee->application->user->id) }}">
-                                    {{ $employee->application->user->userInfo->name }}
-                                </a>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="text-center">No Employees yet.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        <tbody>
+                            @forelse ($employees as $employee)
+                                <tr>
+                                    <td class="check"><input class="form-check-input" type="checkbox"></td>
+                                    <td class="name">
+                                        <a href="{{ route('show-profile', $employee->application->user->id) }}">
+                                            {{ $employee->application->user->userInfo->name }}
+                                        </a>
+                                    </td>
+
+                                    <td class="d-flex justify-content-end btn-container">
+                                        <form action="{{ route('mark-hired') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" value="{{$employee->id}}" name="employeeId">
+                                            <input type="hidden" value="{{$employee->pwd_id}}" name="userId">
+                                            <input type="hidden" value="{{$listing->id}}" name="jobId">
+                                            @if ($employee->hiring_status == 'Pending')
+                                            <button class="submit-btn border-0">Hired?</button>
+                                            @else
+                                            <button class="submit-btn completed border-0" disabled><i class='bx bx-check'></i></button>
+                                            @endif
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">No interviewees yet.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane enrollees" id="hired" role="tabpanel">
+                   <table class="table table-striped table-hover">
+                        <tbody>
+                            @forelse ($hiredPWDs as $hired)
+                                <tr>                                    
+                                    <td class="name">
+                                        <a href="{{ route('show-profile', $employee->application->user->id) }}">
+                                            {{ $hired->application->user->userInfo->name }}
+                                        </a>
+                                    </td>                                    
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">No hired PWDs yet.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

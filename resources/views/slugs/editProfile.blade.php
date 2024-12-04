@@ -103,8 +103,8 @@
                             @endif                            
                         </div>
                         <div class="col mb-3">
-                            <input type="text" id="lat" name="lat" value="{{ $latitude }}">
-                            <input type="text" id="long" name="long" value="{{ $longitude }}">
+                            <input type="hidden" id="lat" name="lat" value="{{ $latitude }}">
+                            <input type="hidden" id="long" name="long" value="{{ $longitude }}">
                             <input type="hidden" id="loc" name="loc" required>
                             <input id="pac-input" class="controls" type="text" placeholder="Search Box">                        
                             <div id="map" class="map"></div>

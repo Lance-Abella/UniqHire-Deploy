@@ -17,6 +17,7 @@ use App\Models\CertificationDetail;
 use App\Http\Requests\StoreUserInfoRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
 use App\Models\Enrollee;
+use App\Models\Employee;
 use App\Models\PwdFeedback;
 use App\Models\WorkSetup;
 use App\Models\WorkType;
@@ -303,6 +304,7 @@ class PwdController extends Controller
         $applications = JobApplication::where('user_id', $userId)->get();
         $status = JobApplication::where('job_id', $userId)->get();
         $disabilityId = auth()->user()->userInfo->disability_id;
+        $hiredPWDs = Employee::where('job_id', $listing->id)->where('hiring_status', 'Accepted')->get();
 
         // $enrollees = JobApplication::where('job_id', $listing->id)->get();
 
@@ -312,7 +314,7 @@ class PwdController extends Controller
             $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0; // Calculate progress percentage
             $listing->crowdfund->progress = $progress;
         }
-        return view('pwd.showListingDetails', compact('listing', 'status', 'applications'));
+        return view('pwd.showListingDetails', compact('listing', 'status', 'applications', 'hiredPWDs'));
     }
 
     public function showCalendar(Request $request)
@@ -614,6 +616,7 @@ class PwdController extends Controller
     {
         $user = auth()->user()->userInfo;
         $query = JobListing::query();
+        $currentDate = now()->toDateString();
         $setups = WorkSetup::all();
         $types = WorkType::all();
         $isCertified = DB::table("certification_details")->where('user_id', $user->user_id)
@@ -663,7 +666,7 @@ class PwdController extends Controller
         //         $q->whereIn('name', $request->type);
         //     });
         // }
-
+        $query->whereDate('end_date', '>=', $currentDate);
         $query->whereNotIn('id', $approvedJobIds);
 
         // Filtering the jobs based on the user's disability

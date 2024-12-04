@@ -101,7 +101,8 @@ class EmployerController extends Controller
         // $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
         $applications = JobApplication::where('job_id', $listing->id)->get();
         $requests = JobApplication::where('job_id', $listing->id)->where('application_status', 'Pending')->get();
-        $employees = Employee::where('job_id', $listing->id)->where('hiring_status', 'Accepted')->get();
+        $employees = Employee::where('job_id', $listing->id)->get();
+        $hiredPWDs = Employee::where('job_id', $listing->id)->where('hiring_status', 'Accepted')->get();
 
         $pendingsCount = $applications->where('application_status', 'Pending')->count();
         // $ongoingCount = $enrollees->where('completion_status', 'Ongoing')->count();
@@ -119,7 +120,7 @@ class EmployerController extends Controller
         //     $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
         //     $listing->crowdfund->progress = $progress;
         // }
-        return view('employer.showJob', compact('listing', 'applications', 'pendingsCount', 'approvedCount', 'applicantCount', 'requests', 'employees'));
+        return view('employer.showJob', compact('listing', 'applications', 'pendingsCount', 'approvedCount', 'applicantCount', 'requests', 'employees', 'hiredPWDs'));
     }
 
     public function accept(Request $request)
@@ -136,11 +137,11 @@ class EmployerController extends Controller
         $pwdId = $validatedData['pwd_id'];
         $jobId = $validatedData['job_id'];
         $applicationId = $validatedData['job_application_id'];
-        $hiringStatus = 'Accepted';
+        $hiringStatus = 'Pending';
 
         // Find the application by job_id
         $application = JobApplication::findOrFail($jobId);
-        $application->application_status = 'Approved';
+        $application->application_status = 'Pending';
         $application->save();
 
         $pwdUser = $application->user;
@@ -158,7 +159,7 @@ class EmployerController extends Controller
 
         $application->update(['application_status' => 'Approved']);
         // return response()->json(['success' => true, 'message' => 'Application submitted successfully.']);
-        return back()->with('success', 'Application is accepted');
+        return back()->with('success', 'Application proceeds to interview process.');
     }
 
     public function deleteJob($id)
@@ -312,5 +313,29 @@ class EmployerController extends Controller
         
         return view('employer.calendar');
     }
+
+    public function markHired(Request $request)
+    {
+        $validatedData = $request->validate([
+            'employeeId' => 'required|exists:employees,id',
+            'userId' => 'required|exists:users,id',
+            'jobId' => 'required|exists:job_listings,id'
+        ]);
+
+        $jobId = $validatedData['jobId'];
+        $userId = $validatedData['userId'];        
+        $employeeId = $validatedData['employeeId'];
+        $hiringStatus = 'Accepted';
+
+        // Find the enrollee and update completion status
+        $employee = Employee::findOrFail($employeeId);
+        $employee->update(['hiring_status' => $hiringStatus]);       
+
+        // $pwdUser = $enrollee->pwd;
+        // $pwdUser->notify(new TrainingCompletedNotification($enrollee));
+
+        return back()->with('success', 'Employee is hired.');
+    }
+
     
 }
