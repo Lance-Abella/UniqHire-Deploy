@@ -694,7 +694,8 @@ span.badge {
     font-weight: var(--header-extrabold);
 }
 
-.homepage .about {
+.homepage .about,
+.home-container .about {
     grid-area: about;
     display: grid;
     grid-template-columns: auto 1fr;

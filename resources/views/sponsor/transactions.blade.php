@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('page-title', 'History of Transactions')
+@section('page-title', 'Payment History')
 @section('page-content')
 <div class="users-container">
     <div class="row mt-4 mb-2">

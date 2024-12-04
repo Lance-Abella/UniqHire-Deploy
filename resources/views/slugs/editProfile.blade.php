@@ -93,7 +93,7 @@
                             </div>
                             <div class="col">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="paypal" name="paypal" value="{{ $user->userInfo->paypal }}">
+                                    <input type="text" class="form-control" id="paypal" name="paypal" value="{{ $user->userInfo->paypal_account }}">
                                     <label for="paypal">PayPal Account</label>
                                     @error('paypal')
                                     <span class=" error-msg">{{ $message }}</span>
