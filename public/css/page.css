@@ -2312,7 +2312,8 @@ table tbody .bx {
 }
 
 .events-container .post-form .btn-container .submit-btn {
-    width: 7rem;
+    padding: 0.7rem 1rem;
+    width: 10rem;
 }
 
 .events-container .event-card .prog-img {
@@ -2343,6 +2344,10 @@ table tbody .bx {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     grid-gap: 1rem;
+}
+
+.events-container .event-card .infos {
+    padding: 0 0.6rem;
 }
 
 /* MOBILE RESPONSIVE */
