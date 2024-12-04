@@ -142,6 +142,15 @@
                                 </li>
                                 @endif
 
+                                @if (Auth::user()->hasRole('Sponsor'))
+                                <li class="side-item">
+                                    <a href="{{route('payment-history')}}" class="side-item-link {{ request()->routeIs('payment-history') ? 'active' : '' }}">
+                                        <i class='bx bx-history side-icon'></i>
+                                        <span class="side-title">Transactions</span>
+                                    </a>
+                                </li>
+                                @endif
+
                                 <!-- <li><a href="#"><i class='bx bx-cog side-icon'></i><span class="side-title">Sponsor</span></a></li> -->
                             </ul>
                             <div class="sidebar-bottom">
