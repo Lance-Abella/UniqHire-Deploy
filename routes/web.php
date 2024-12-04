@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/browse/job-postings', [PwdController::class, 'showJobs'])->middleware('role:PWD')->name('pwd-list-job');
     Route::get('/job-details/{id}', [PwdController::class, 'showListingDetails'])->middleware('role:PWD')->name('job-details');
     Route::post('/job-details/{id}', [PwdController::class, 'showListingDetails'])->middleware('role:PWD')->name('job-details');
+    Route::get('/events', [PwdController::class, 'showEvents'])->middleware('role:PWD')->name('events');
 
 
     //SPONSOR Middleware
@@ -114,4 +115,5 @@ Route::middleware('auth')->group(function () {
     Route::put('/edit-job/{id}', [EmployerController::class, 'updateJob'])->middleware('role:Employer');
     Route::post('/employer/accept', [EmployerController::class, 'accept'])->middleware('role:Employer')->name('employer-accept');
     Route::get('/employer/calendar', [EmployerController::class, 'showCalendar'])->middleware('role:Employer')->name('employer-calendar');
+    Route::get('/post-events', [EmployerController::class, 'showEvents'])->middleware('role:Employer')->name('post-events');
 });
