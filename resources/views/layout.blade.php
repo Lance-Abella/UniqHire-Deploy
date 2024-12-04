@@ -229,7 +229,13 @@
                     notifDropdown.empty(); // Clear existing notifications
 
                     if (data.length > 0) {
-                        badge.removeClass('d-none').text(data.length);
+                        const unreadCount = data.filter(notification => !notification.read).length;
+                        if (unreadCount > 0) {
+                            badge.removeClass('d-none').text(unreadCount);
+                        } else {
+                            badge.addClass('d-none');
+                        }
+
                         data.forEach(function(notification) {
                             var notificationContent = '';
                             var url = notification.data.url || '#';
@@ -336,37 +342,87 @@
                 });
             }
 
-            // Handle clicking on a notification to mark it as read
-            $(document).on('click', '.dropdown-item', function() {
-                var notificationId = $(this).data('id'); // Get notification ID from the data-id attribute
+            //BADGE NOTIFICATION
+            function updateNotificationBadge() {
+                $.get("{{ route('notifications.getNotifications') }}", function(data) {
+                    const unreadCount = data.filter(notification => !notification.read).length;
 
-                // Mark as read via AJAX
-                $.ajax({
-                    url: "{{ route('notifications.markAsRead') }}", // Your route for marking notifications as read
-                    method: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        notification_id: notificationId
-                    },
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            // Update the badge count dynamically
-                            $('#notification-badge').text(response.unread_count);
-                            if (response.unread_count === 0) {
-                                $('#notification-badge').addClass('d-none');
+                    const badge = document.getElementById('notification-badge');
+                    if (unreadCount > 0) {
+                        badge.textContent = unreadCount;
+                        badge.classList.remove('d-none');
+                    } else {
+                        badge.classList.add('d-none');
+                    }
+                }).fail(function() {
+                    console.error('Failed to fetch notifications');
+                });
+            }
+
+            function markNotificationAsRead(notificationId) {
+                fetch('/notifications/mark-as-read', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        },
+                        body: JSON.stringify({
+                            notification_id: notificationId
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const badge = document.getElementById('notification-badge');
+
+                            // Immediately update the badge count
+                            if (data.unread_count > 0) {
+                                badge.textContent = data.unread_count;
+                                badge.classList.remove('d-none');
+                            } else {
+                                badge.classList.add('d-none');
                             }
 
-                            // You can also update the UI to indicate the notification was read
-                            // You could either remove it from the list or mark it differently
-                            // For example:
-                            $('a[data-id="' + notificationId + '"]').css('color', 'gray');
+                            // Optionally remove the read notification from the dropdown
+                            $(`[data-notification-id="${notificationId}"]`).parent().remove();
+
+                            // If no more notifications, show "No notifications" message
+                            const notifDropdown = $('#notificationDropdown').next('.dropdown-menu');
+                            if (notifDropdown.children().length === 0) {
+                                notifDropdown.append('<li><span class="dropdown-item">No notifications</span></li>');
+                            }
+                        } else {
+                            console.error('Error marking notification as read:', data.message);
                         }
-                    },
-                    error: function() {
-                        console.error('Error marking notification as read');
-                    }
-                });
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+            $(document).on('click', '.notification', function() {
+                var notificationId = $(this).data('id'); // Get the notification ID
+
+                if (notificationId) {
+                    $.ajax({
+                        url: '/notifications/mark-as-read',
+                        type: 'POST',
+                        data: {
+                            id: notificationId, // Send the 'id' of the notification
+                            _token: '{{ csrf_token() }}', // CSRF token for security
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                // Update the UI or badge count accordingly
+                                $(this).find('.notification-badge').remove(); // Example: Remove badge
+                                $(this).addClass('read'); // Optional: Add a class to indicate read status
+                            }
+                        },
+                        error: function(error) {
+                            console.error(error); // Handle any error
+                        }
+                    });
+                }
             });
+
 
             // Fetch notifications on page load
             fetchNotifications();
@@ -375,6 +431,16 @@
             $('#notificationDropdown').on('show.bs.dropdown', function() {
                 fetchNotifications();
             });
+
+            $('#notificationDropdown').next('.dropdown-menu').on('click', 'a', function(e) {
+                const notificationId = $(this).data('notification-id');
+                e.preventDefault(); // Prevent immediate page reload
+                markNotificationAsRead(notificationId);
+                setTimeout(() => {
+                    window.location.href = $(this).attr('href'); // Navigate after marking
+                }, 500); // Delay by 500ms or suitable time
+            });
+
         });
 
         function toggleSubmenu() {
