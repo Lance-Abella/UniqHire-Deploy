@@ -55,8 +55,8 @@ function initMap() {
         var lng = markerPosition.lng();
         document.getElementById("lat").value = lat;
         document.getElementById("long").value = lng;
-        document.getElementById("coordinates").innerText =
-            "Latitude: " + lat + ", Longitude: " + lng;
+        // document.getElementById("coordinates").innerText =
+        //     "Latitude: " + lat + ", Longitude: " + lng;
 
         reverseGeocode(lat, lng);
     }
@@ -133,4 +133,4 @@ function initMap() {
 }
 
 // Initialize the map when the window loads
-document.addEventListener("DOMContentLoaded", initMap);
+// document.addEventListener("DOMContentLoaded", initMap);

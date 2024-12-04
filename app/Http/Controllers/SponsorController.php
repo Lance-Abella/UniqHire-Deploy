@@ -11,6 +11,7 @@ use App\Http\Controllers;
 use App\Models\Enrollee;
 use App\Models\PwdFeedback;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Auth;
 
 class SponsorController extends Controller
 {
@@ -90,5 +91,14 @@ class SponsorController extends Controller
 
         // Return the view for program details
         return view('sponsor.showTrainProgDetails', compact('program', 'reviews', 'enrollees', 'slots', 'sponsors'));
+    }
+
+    public function showTransactions()
+    {
+        $user = Auth::user()->id;
+        $transactions = Transaction::where('sponsor_id', $user)->paginate(18);
+        $totalAmount = Transaction::where('sponsor_id', $user)->sum('amount');
+
+        return view('sponsor.transactions', compact('transactions', 'totalAmount'));
     }
 }

@@ -99,6 +99,8 @@ class PaymentController extends Controller
         Log::info('PayPal Capture Payment Response', ['response' => $response]);
 
         $paymentDetails = $response['purchase_units'][0]['payments']['captures'][0] ?? null;
+        $crowdfundEvent = CrowdfundEvent::findOrFail($request->query('crowdfund_id'));
+        $payeeEmail = $crowdfundEvent->program->agency->userInfo->paypal_account;
 
         if ($paymentDetails && isset($paymentDetails['amount']['value'])) {
             $amount = $paymentDetails['amount']['value'];
@@ -112,6 +114,7 @@ class PaymentController extends Controller
                 'amount' => $this->convertToNumber($amount),
                 'status' => 'Completed',
                 'transaction_id' => $response['id'],
+                'receiver' => $payeeEmail
             ]);
 
             // Update raised amount

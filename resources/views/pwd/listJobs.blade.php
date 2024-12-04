@@ -90,7 +90,7 @@
                     @foreach ($paginatedItems as $ranked)
 
                     <div class="job-card mb-2" data-program-id="{{ $ranked['job']->id }}" data-lat="{{ $ranked['job']->latitude }}" data-lng="{{ $ranked['job']->longitude }}">
-                        <input type="text" name="" value="{{$ranked['similarity']}}" id="">
+                        <input type="hidden" name="" value="{{$ranked['similarity']}}" id="">
 
                         <a href="{{ route('job-details', $ranked['job']->id) }}" class="d-flex prog-texts">
                             <div class="prog-texts-container">
@@ -117,9 +117,9 @@
                                                 @if ($diff < 60)
                                                     {{ $diff }}s
                                                     @elseif ($diff < 3600)
-                                                    {{ floor($diff / 60) }}m
+                                                    {{ intdiv($diff , 60) }}m
                                                     @elseif ($diff < 86400)
-                                                    {{ floor($diff / 3600) }}h
+                                                    {{ intdiv($diff , 3600) }}h
                                                     @else
                                                     {{ $ranked['job']->created_at->diffForHumans() }}
                                                     @endif

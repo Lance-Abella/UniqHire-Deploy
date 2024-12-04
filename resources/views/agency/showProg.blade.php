@@ -98,7 +98,7 @@
                                 <p class="match-info">{{ $program->start_age . ' - ' . $program->end_age . ' Years Old' }}</p>
                             </div>
                             <div class="more-info">
-                                <h5>Skills Acquired</h5>
+                                <h5>Skills Offered</h5>
                                 <ul>
                                     @foreach ($program->skill as $skill)
                                     <li class="match-info mb-2">{{ $skill->title }}</li>
@@ -137,14 +137,7 @@
                 </div>
 
                 <div class="tab-pane enrollees" id="enrollees" role="tabpanel">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <td class="check"><input class="form-check-input" type="checkbox"></td>
-                                <td class="name"></td>
-                                <td class="d-flex justify-content-end btn-container"><button class="submit-btn border-0">Mark as Complete</button></td>
-                            </tr>
-                        </thead>
+                    <table class="table table-striped table-hover">                
                         <tbody>
                             @forelse ($enrollees as $enrollee)
                             <tr>
@@ -190,7 +183,12 @@
                             Crowdfunding Progress:
                         </p>
                         <div class="progress">
-                            <div class="progress-bar" role="progressbar" aria-valuenow="{{ $program->crowdfund->progress }}" aria-valuemin="0" aria-valuemax="100">{{ $program->crowdfund->progress }}%</div>
+                            <div class="progress-bar progress-bar-striped progress-bar-animated text-end" role="progressbar" aria-valuenow="{{ $program->crowdfund->progress }}" aria-valuemin="0" aria-valuemax="100"
+                                @if ($program->crowdfund->progress !== null && $program->crowdfund->progress >= 20)
+                                style="width: {{ $program->crowdfund->progress }}%;"
+                                @else
+                                style="width: 4%;"
+                                @endif>{{ $program->crowdfund->progress }}%</div>
                         </div>
                     </div>
 
@@ -275,40 +273,7 @@
                 document.getElementById(formId).submit();
             }
         });
-    }
-
-    // function initMap() {
-    //     var lat = parseFloat(document.getElementById('lat').value);
-    //     var lng = parseFloat(document.getElementById('lng').value);
-    //     var latlng = {
-    //         lat: lat,
-    //         lng: lng
-    //     };
-    //     var geocoder = new google.maps.Geocoder();
-
-    //     // Reverse geocode to get the address
-    //     geocoder.geocode({
-    //         location: latlng
-    //     }, function(results, status) {
-    //         var locationElement = document.getElementById('location');
-    //         if (status === 'OK') {
-    //             if (results[0]) {
-    //                 var addressParts = results[0].formatted_address.split(',');
-    //                 // Extract the city and country (assuming the city is at index 1 and the country at index 3)
-    //                 var city = addressParts[1].trim(); // City (e.g., "Cebu City")
-    //                 var country = addressParts[addressParts.length - 1].trim();
-    //                 locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> " + city + ", " + country;
-    //             } else {
-    //                 locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> No address found";
-    //             }
-    //         } else {
-    //             locationElement.innerHTML = "<i class='bx bx-map sub-text'></i> Geocoder failed: " + status;
-    //         }
-    //     });
-    // }
-
-    // // Initialize the map and geocoding
-    // window.onload = initMap;
+    }   
 </script>
 
 @endsection

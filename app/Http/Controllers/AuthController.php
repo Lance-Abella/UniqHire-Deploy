@@ -16,6 +16,8 @@ use App\Models\Experience;
 use App\Models\Skill;
 use App\Models\UserInfo;
 use App\Models\SkillUser;
+use App\Models\Socials;
+use App\Models\UserSocials;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -29,6 +31,8 @@ class AuthController extends Controller
         $disabilities = Disability::all();
         $addedSkillIds = SkillUser::where('user_id', $id)->pluck('skill_id')->toArray();
         $skills = Skill::whereNotIn('id', $addedSkillIds)->get();
+        $socials = Socials::all();
+        $userSocials = UserSocials::where('user_id', $id)->get();
         // $skills = Skill::all();
         $skilluser = SkillUser::where('user_id', $id)->get();
         $experiences = Experience::where('user_id', $id)->get();
@@ -36,7 +40,7 @@ class AuthController extends Controller
         $latitude = $user->userInfo->latitude;
         $longitude = $user->userInfo->longitude;
 
-        return view('auth.profile', compact('levels', 'disabilities', 'user', 'certifications', 'skills', 'skilluser', 'experiences', 'latitude', 'longitude'));
+        return view('auth.profile', compact('levels', 'disabilities', 'user', 'certifications', 'skills', 'skilluser', 'experiences', 'latitude', 'longitude', 'socials', 'userSocials'));
     }
 
     public function editProfile(Request $request)
@@ -58,6 +62,11 @@ class AuthController extends Controller
             'affiliations' => 'nullable|string',
             'paypal' => 'nullable|string',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+
+            'socials' => 'nullable|array',
+            'socials.*' => 'integer|exists:socials,id',
+            'social_links' => 'nullable|array',
+            'social_links.*' => 'string|url|max:255',
         ]);
 
         if ($request->hasFile('profile_picture')) {
@@ -99,6 +108,24 @@ class AuthController extends Controller
                 'paypal_account' => $request->paypal ?? '',
             ]);
         }
+
+        if ($request->has('socials') && $request->has('social_links')) {
+            // Get the new socials and links from the request
+            $socialLinks = $request->input('social_links', []);
+            $socials = $request->input('socials', []);
+
+            $userSocials = [];
+            foreach ($socials as $index => $socialId) {
+                $userSocials[] = [
+                    'social_id' => $socialId,
+                    'link' => $socialLinks[$index] ?? '',
+                    'user_id' => $user->id,
+                ];
+            }
+            UserSocials::where('user_id', $user->id)->delete();
+            UserSocials::insert($userSocials);
+        }
+
         return back()->with('success', 'Your profile has been changed successfully!');
     }
 

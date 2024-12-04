@@ -1,7 +1,7 @@
 <form id="donate-form-{{ $program->id }}" action="{{ route('payment') }}" method="POST">
     @csrf
     <div>
-        <button type="button" class="submit-btn border-0" data-bs-toggle="modal" data-bs-target="#donateModal">Donate with Paypal</button>
+        <button type="button" class="submit-btn border-0" data-bs-toggle="modal" data-bs-target="#donateModal">Donate</button>
         <div class="modal fade" id="donateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
 

@@ -16,7 +16,8 @@ class Transaction extends Model
         'sponsor_id',
         'amount',
         'status',
-        'transaction_id'
+        'transaction_id',
+        'receiver'
     ];
 
     public function crowdfundEvent()

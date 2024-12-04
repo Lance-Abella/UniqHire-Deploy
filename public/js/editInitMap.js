@@ -6,11 +6,15 @@ function editInitMap() {
         lng: lng,
     };
 
+    console.log("LatLng object:", latlng);
+
     // Create the map, centered at the initial location
     var map = new google.maps.Map(document.getElementById("map"), {
         zoom: 8,
-        center: latlng,
     });
+
+    map.setCenter(latlng);
+    console.log("google.maps.Map:", google.maps.Map);
 
     // Add a draggable marker to the map
     var marker = new google.maps.Marker({
@@ -19,6 +23,9 @@ function editInitMap() {
         draggable: true,
         title: "Drag me to your location!",
     });
+
+    console.log("Map object:", map);
+    console.log("Marker position:", marker.getPosition());
 
     // // Set the hidden input fields to the default location when the map is loaded
     // document.getElementById('lat').value = lat;
@@ -64,8 +71,8 @@ function editInitMap() {
         var lng = markerPosition.lng();
         document.getElementById("lat").value = lat;
         document.getElementById("long").value = lng;
-        document.getElementById("coordinates").innerText =
-            "Latitude: " + lat + ", Longitude: " + lng;
+        // document.getElementById("coordinates").innerText =
+        //     "Latitude: " + lat + ", Longitude: " + lng;
 
         reverseGeocode(lat, lng);
     }
@@ -142,4 +149,4 @@ function editInitMap() {
 }
 
 // Initialize the map when the window loads
-document.addEventListener("DOMContentLoaded", editInitMap);
+// document.addEventListener("DOMContentLoaded", editInitMap);
