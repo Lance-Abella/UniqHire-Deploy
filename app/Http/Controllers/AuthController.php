@@ -111,28 +111,19 @@ class AuthController extends Controller
 
         if ($request->has('socials') && $request->has('social_links')) {
             // Get the new socials and links from the request
-            $socials = $request->input('socials');
-            $socialLinks = $request->input('social_links');
+            $socialLinks = $request->input('social_links', []);
+            $socials = $request->input('socials', []);
 
-            // Loop through the socials and their corresponding links
-            foreach ($socials as $key => $socialId) {
-                // Only add the social if the link is not empty
-                if (!empty($socialLinks[$key])) {
-                    // Check if the social link already exists for this user, if not create a new entry
-                    $existingSocial = UserSocials::where('user_id', $userInfo->id)
-                        ->where('social_id', $socialId)
-                        ->first();
-
-                    if (!$existingSocial) {
-                        // Create a new social link if it doesn't already exist
-                        UserSocials::create([
-                            'user_id' => $userInfo->id,
-                            'social_id' => $socialId,
-                            'link' => $socialLinks[$key],
-                        ]);
-                    }
-                }
+            $userSocials = [];
+            foreach ($socials as $index => $socialId) {
+                $userSocials[] = [
+                    'social_id' => $socialId,
+                    'link' => $socialLinks[$index] ?? '',
+                    'user_id' => $user->id,
+                ];
             }
+            UserSocials::where('user_id', $user->id)->delete();
+            UserSocials::insert($userSocials);
         }
 
         return back()->with('success', 'Your profile has been changed successfully!');

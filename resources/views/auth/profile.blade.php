@@ -64,7 +64,7 @@
             <div class="contact-container">
                 <div class="contact-item ">
                     <span class="d-flex align-items-center sub-text"><i class='bx bx-envelope side-icon'></i> Email</span>
-                    <p><a href="">{{ $user->email }}</a></p>
+                    <p>{{ $user->email }}</p>
                 </div>
                 <div class="contact-item ">
                     <span class="d-flex align-items-center sub-text"><i class='bx bxl-paypal side-icon'></i> Paypal</span>
@@ -76,7 +76,7 @@
                 </div>
                 <div class="contact-item">
                     <span class="d-flex align-items-center sub-text"><i class='bx bx-envelope side-icon'></i> Contact no</span>
-                    <p><a href="">{{ $user->userInfo->contactnumber }}</a></p>
+                    <p>{{ $user->userInfo->contactnumber }}</p>
                 </div>
 
                 @foreach ($userSocials as $userSocial)
