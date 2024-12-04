@@ -190,7 +190,12 @@
                             Crowdfunding Progress:
                         </p>
                         <div class="progress">
-                            <div class="progress-bar" role="progressbar" aria-valuenow="{{ $program->crowdfund->progress }}" aria-valuemin="0" aria-valuemax="100">{{ $program->crowdfund->progress }}%</div>
+                            <div class="progress-bar progress-bar-striped progress-bar-animated text-end" role="progressbar" aria-valuenow="{{ $program->crowdfund->progress }}" aria-valuemin="0" aria-valuemax="100"
+                                @if ($program->crowdfund->progress !== null && $program->crowdfund->progress >= 20)
+                                style="width: {{ $program->crowdfund->progress }}%;"
+                                @else
+                                style="width: 4%;"
+                                @endif>{{ $program->crowdfund->progress }}%</div>
                         </div>
                     </div>
 

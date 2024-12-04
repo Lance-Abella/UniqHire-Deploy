@@ -64,24 +64,35 @@
             <div class="contact-container">
                 <div class="contact-item ">
                     <span class="d-flex align-items-center sub-text"><i class='bx bx-envelope side-icon'></i> Email</span>
-                    <p><a href="">{{ $user->email }}</a></p>
+                    <p>{{ $user->email }}</p>
+                </div>
+                <div class="contact-item ">
+                    <span class="d-flex align-items-center sub-text"><i class='bx bxl-paypal side-icon'></i> Paypal</span>
+                    @if ($user->userInfo->paypal_account != '' || $user->userInfo->paypal_account != null)
+                    <p>{{ $user->userInfo->paypal_account }}</p>
+                    @else
+                    <p class="sub-text">No paypal account</p>
+                    @endif
                 </div>
                 <div class="contact-item">
                     <span class="d-flex align-items-center sub-text"><i class='bx bx-envelope side-icon'></i> Contact no</span>
-                    <p><a href="">{{ $user->userInfo->contactnumber }}</a></p>
+                    <p>{{ $user->userInfo->contactnumber }}</p>
                 </div>
+
+                @foreach ($userSocials as $userSocial)
+                @php
+                $socialName = strtolower($userSocial->social->name);
+                $iconClass = ($socialName == 'website') ? 'bx bx-globe' : "bx bxl-$socialName";
+                @endphp
                 <div class="contact-item">
-                    <span class="d-flex align-items-center sub-text"><i class='bx bxl-facebook  side-icon'></i> Facebook</span>
-                    <p><a href="">{{ 'facebook.com/' . strtolower(substr($user->userInfo->name, 0, 5)) }}</a></p>
+                    <span class="d-flex align-items-center sub-text">
+                        <i class="{{ $iconClass }} side-icon"></i>
+                        {{ $userSocial->social->name }}
+                    </span>
+                    <p><a href="{{ $userSocial->link }}" target="_blank">{{ $userSocial->link }}</a></p>
                 </div>
-                <div class="contact-item">
-                    <span class="d-flex align-items-center sub-text"><i class='bx bxl-instagram side-icon'></i> Instagram</span>
-                    <p><a href="">{{ 'instagram.com/' . strtolower(substr($user->userInfo->name, 0, 5)) }}</a></p>
-                </div>
-                <div class="contact-item ">
-                    <span class="d-flex align-items-center sub-text"><i class='bx bx-globe side-icon'></i> Website</span>
-                    <p><a href="">{{ 'website.com/' . strtolower(substr($user->userInfo->name, 0, 5)) }}</a></p>
-                </div>
+                @endforeach
+
             </div>
         </div>
         <div class="bio">

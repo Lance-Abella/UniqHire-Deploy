@@ -21,7 +21,7 @@ class AdminController extends Controller
     {
         $users = User::whereHas('userInfo', function ($query) {
             $query->whereNotNull('disability_id')->where('disability_id', '!=', 1);
-        })->get();
+        })->paginate(18);
 
         return view('admin.pwdUsers', compact('users'));
     }
@@ -31,7 +31,7 @@ class AdminController extends Controller
         $trainingID = Role::where('role_name', 'Training Agency')->value('id');
         $users = User::whereHas('role', function ($query) use ($trainingID) {
             $query->where('role_id', $trainingID);
-        })->get();
+        })->paginate(18);
 
         return view('admin.trainingAgencies', compact('users'));
     }
@@ -42,7 +42,7 @@ class AdminController extends Controller
 
         $users = User::whereHas('role', function ($query) use ($employeeID) {
             $query->where('role_id', $employeeID);
-        })->get();
+        })->paginate(18);
 
         return view('admin.employeeUsers', compact('users'));
     }
@@ -53,7 +53,7 @@ class AdminController extends Controller
 
         $users = User::whereHas('role', function ($query) use ($sponsorID) {
             $query->where('role_id', $sponsorID);
-        })->get();
+        })->paginate(18);
 
         return view('admin.sponsorUsers', compact('users'));
     }
@@ -62,7 +62,7 @@ class AdminController extends Controller
 
     public function showSkills()
     {
-        $skills = Skill::all();
+        $skills = Skill::all()->paginate(18);
 
         return view('admin.skillManage', compact('skills'));
     }
@@ -106,7 +106,7 @@ class AdminController extends Controller
         return back()->with('success', 'Skill deleted successfully!');
     }
 
-    public function deleteUser(User $id) 
+    public function deleteUser(User $id)
     {
         $id->delete();
         return back()->with('success', 'User account deleted successfully!');

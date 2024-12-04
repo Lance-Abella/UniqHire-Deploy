@@ -8,7 +8,7 @@
             Job Listings.
         </div>
     </div>
-    <div class="manage-outer">
+    <div class="outer">
         <div class="mt-2 prog-grid mb-2">
             <div class="add-prog-card d-flex justify-content-center align-items-center ">
                 <a href="{{route('add-job')}}" class="">+</a>

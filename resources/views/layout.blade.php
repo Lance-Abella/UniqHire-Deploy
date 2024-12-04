@@ -52,13 +52,14 @@
                         </header>
                         <div class="sidebar-menu">
                             <ul class="">
+                                @if (!(Auth::user()->hasRole('Admin')))
                                 <li class="side-item">
                                     <a href="{{ route('profile')}}" class="side-item-link {{ request()->routeIs('profile') ? 'active' : '' }}">
                                         <i class='bx bx-user-circle side-icon'></i>
                                         <span class="side-title">Profile</span>
                                     </a>
                                 </li>
-
+                                @endif
                                 <!-- PWD ROLE ACCESS -->
                                 @if (Auth::user()->hasRole('PWD'))
                                 <li class="side-item">
@@ -147,6 +148,15 @@
                                 </li>
                                 @endif
 
+                                @if (Auth::user()->hasRole('Sponsor'))
+                                <li class="side-item">
+                                    <a href="{{route('payment-history')}}" class="side-item-link {{ request()->routeIs('payment-history') ? 'active' : '' }}">
+                                        <i class='bx bx-history side-icon'></i>
+                                        <span class="side-title">Transactions</span>
+                                    </a>
+                                </li>
+                                @endif
+
                                 <!-- <li><a href="#"><i class='bx bx-cog side-icon'></i><span class="side-title">Sponsor</span></a></li> -->
                             </ul>
                             <div class="sidebar-bottom">
@@ -167,6 +177,7 @@
                                     @if (Auth::user()->hasRole('PWD'))
                                     <li class="nav-item "><a href="{{route('pwd-list-program')}}" class="{{ request()->routeIs('pwd-list-program', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
                                     <li class="nav-item "><a href="{{route('pwd-list-job')}}" class="{{ request()->routeIs('pwd-list-job') ? 'active' : '' }}">Find Work</a></li>
+                                    <li class="nav-item "><a href="" class="">Events</a></li>
                                     @endif
                                     @if (Auth::user()->hasRole('Sponsor'))
                                     <li class="nav-item "><a href="{{route('list-of-tp')}}" class="{{ request()->routeIs('list-of-tp', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
@@ -202,7 +213,7 @@
                         <button type="button" class="border-0" data-bs-dismiss="alert" aria-label="Close"><i class='bx bx-minus'></i></button>
                     </div>
                     <div class="">
-                        Add skill/s to your profile to get better recommendations. <a href="{{route('profile')}}">Check and Edit Profile.</a>
+                        Add skill/s to your profile to get better recommendations or Enroll to a training program. <a href="{{route('profile')}}">Check and Edit Profile.</a>
                     </div>
                 </div>
                 @endif

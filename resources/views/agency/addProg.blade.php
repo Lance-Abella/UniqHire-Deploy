@@ -82,7 +82,7 @@
                     <div class="form-floating mb-3">
                         <input type="time" class="form-control" id="startTime" name="start_time" value="{{old('start_time')}}" required placeholder="Input Start Time">
                         <label for="floatingInput">Time Start</label>
-                        @error('time')
+                        @error('start_time')
                         <span class="error-msg">{{ $message }}</span>
                         @enderror
                     </div>
@@ -91,13 +91,13 @@
                     <div class="form-floating mb-3">
                         <input type="time" class="form-control" id="endTime" name="end_time" value="{{old('end_time')}}" required placeholder="Input Start Time">
                         <label for="floatingInput">Time End</label>
-                        @error('time')
+                        @error('end_time')
                         <span class="error-msg">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
     <div class="row mb-3">
         <div class="col">
@@ -154,9 +154,15 @@
         </div>
     </div>
     <hr>
+    @if (Auth::user()->userInfo->paypal_account == '' || Auth::user()->userInfo->paypal_account == null)
+    <div class="mb-2"><span class="error-msg">** Need to have paypal email in profile</span></div>
+    @endif
+
     <div>
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="host-crowdfund" onchange="toggleCrowdfund()">
+            <input class="form-check-input" type="checkbox" value="" id="host-crowdfund" onchange="toggleCrowdfund()" @if (Auth::user()->userInfo->paypal_account == '' || Auth::user()->userInfo->paypal_account == null)
+            disabled
+            @endif>
             <label class="form-check-label" for="flexCheckDefault">
                 Host a crowdfunding for this?
             </label>
@@ -195,8 +201,8 @@
 @endsection
 
 @push('map-scripts')
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places&loading=async&callback=initMap"></script>
-    <script src="{{ asset('js/initMap.js') }}"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4IdhyGOY2rDNFymY1kGR3qaS6K4RlWEY&libraries=places&loading=async&callback=initMap"></script>
+<script src="{{ asset('js/initMap.js') }}"></script>
 @endpush
 
 <script>
@@ -290,6 +296,4 @@
 
         toggleButtons(); // Initialize the button states
     });
-
-    
 </script>

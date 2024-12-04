@@ -449,6 +449,7 @@ footer .btn button {
 /* CONTENT CONTAINER */
 .page-content {
     padding: 0 0 0 1.5rem;
+    /* height: 90vh; */
 }
 
 /* DATE PICKER */
@@ -693,7 +694,8 @@ span.badge {
     font-weight: var(--header-extrabold);
 }
 
-.about {
+.homepage .about,
+.home-container .about {
     grid-area: about;
     display: grid;
     grid-template-columns: auto 1fr;
@@ -1561,7 +1563,9 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .add-form .add-comp,
-.edit-form .add-comp {
+.edit-form .add-comp,
+#socialListContainer .submit-btn,
+.users-container table .submit-btn {
     padding-top: 0.6rem;
     padding-bottom: 0.6rem;
     background-color: var(--bg-color-02);
@@ -1570,7 +1574,9 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .add-form .add-comp:hover,
-.edit-form .add-comp:hover {
+.edit-form .add-comp:hover,
+#socialListContainer .submit-btn:hover,
+.users-container table .submit-btn:hover {
     background-color: var(--primary-color-light);
 }
 
@@ -1827,7 +1833,8 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* TABLES */
-table thead .table-head {
+table thead .table-head,
+table tbody .table-head {
     background-color: var(--primary-color);
     color: var(--bg-color-01);
     text-align: center;
@@ -2043,7 +2050,8 @@ table tbody .bx {
 }
 
 .profile-container .more-details .bio .bio-item .about,
-.profile-container .details .age .sub-text {
+.profile-container .details .age .sub-text,
+.profile-container .contact-container p.sub-text {
     font-style: italic;
     font-weight: normal;
 }
@@ -2260,6 +2268,19 @@ table tbody .bx {
 .scroll-top .bx {
     font-size: 50px;
     color: var(--bg-color-01);
+}
+
+/* ADMIN USERS MANAGEMENT */
+.users-container {
+    height: 90vh;
+}
+.users-container .deny-btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+}
+
+.users-container .deny-btn:hover {
+    background-color: var(--bg-color-02);
 }
 
 /* MOBILE RESPONSIVE */
