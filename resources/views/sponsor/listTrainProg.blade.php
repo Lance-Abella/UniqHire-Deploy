@@ -32,7 +32,7 @@
                         <div class="">
                             <a href="{{ route('trainingprog-details', $program->id ) }}" class="d-flex prog-texts">
                                 <div class="prog-texts-container">
-                                    <div class=" d-flex mb-2">
+                                    <div class="d-flex mb-2">
                                         <div class="prog-img" @if (!empty($program->agency->userInfo->profile_path)) style=" background-image: url({{ asset($program->agency->userInfo->profile_path) }}); background-repeat: no-repeat; background-size: cover; " @endif>
 
                                             @if (empty($program->agency->userInfo->profile_path))
@@ -56,9 +56,9 @@
                                                     @if ($diff < 60)
                                                         {{ $diff }}s
                                                         @elseif ($diff < 3600)
-                                                        {{ floor($diff / 60) }}m
+                                                        {{ intdiv($diff , 60) }}m
                                                         @elseif ($diff < 86400)
-                                                        {{ floor($diff / 3600) }}h
+                                                        {{ intdiv($diff , 3600) }}h
                                                         @else
                                                         {{ $program->created_at->diffForHumans() }}
                                                         @endif

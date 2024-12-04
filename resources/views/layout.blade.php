@@ -177,7 +177,10 @@
                                     @if (Auth::user()->hasRole('PWD'))
                                     <li class="nav-item "><a href="{{route('pwd-list-program')}}" class="{{ request()->routeIs('pwd-list-program', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
                                     <li class="nav-item "><a href="{{route('pwd-list-job')}}" class="{{ request()->routeIs('pwd-list-job') ? 'active' : '' }}">Find Work</a></li>
-                                    <li class="nav-item "><a href="" class="">Events</a></li>
+                                    <li class="nav-item "><a href="{{route('events')}}" class="{{ request()->routeIs('events') ? 'active' : '' }}">Events</a></li>
+                                    @endif
+                                    @if (Auth::user()->hasRole('Employer'))
+                                    <li class="nav-item "><a href="{{route('post-events')}}" class="{{ request()->routeIs('post-events') ? 'active' : '' }}">Events</a></li>
                                     @endif
                                     @if (Auth::user()->hasRole('Sponsor'))
                                     <li class="nav-item "><a href="{{route('list-of-tp')}}" class="{{ request()->routeIs('list-of-tp', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>

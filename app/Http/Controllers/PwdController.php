@@ -706,4 +706,10 @@ class PwdController extends Controller
 
         return view('pwd.listJobs', compact('paginatedItems', 'setups', 'setupCounts', 'typeCounts', 'types', 'minSalary', 'maxSalary'));
     }
+
+    public function showEvents()
+    {
+
+        return view('pwd.events');
+    }
 }

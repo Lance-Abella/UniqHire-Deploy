@@ -338,4 +338,9 @@ class EmployerController extends Controller
     }
 
     
+
+    public function showEvents()
+    {
+        return view('employer.events');
+    }
 }
