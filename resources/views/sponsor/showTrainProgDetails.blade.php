@@ -120,23 +120,23 @@
             </div>
 
             <div class="tab-pane enrollees" id="enrollees" role="tabpanel">
-                <table class="table table-striped table-hover">
-                    <tbody>
-                        @forelse ($enrollees as $enrollee)
-                        <tr>
-                            <td class="name">
-                                <a href="{{ route('show-profile', $enrollee->application->user->id) }}">
-                                    {{ $enrollee->application->user->userInfo->name }}
-                                </a>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="text-center">No enrollees yet.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                <h5>Enrollees</h5>
+                @forelse ($enrollees as $enrollee)
+                <div class="user-card d-flex justify-content-between align-items-center py-3 px-3">
+                    <div class="name">
+                        <a href="{{ route('show-profile', $enrollee->application->user->id) }}">
+                            {{ $enrollee->application->user->userInfo->name }}
+                        </a>
+                    </div>
+                    <div class="status">
+                        {{$enrollee->completion_status}}
+                    </div>
+                </div>
+                @empty
+                <div class="user-card text-center py-3 px-3">
+                    No enrollees yet.
+                </div>
+                @endforelse
             </div>
             @if ($program->crowdfund)
             <div class="tab-pane" id="sponsors" role="tabpanel">

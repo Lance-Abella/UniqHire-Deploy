@@ -137,7 +137,37 @@
                 </div>
 
                 <div class="tab-pane enrollees" id="enrollees" role="tabpanel">
-                    <table class="table table-striped table-hover">                
+                    <h5>Enrollees</h5>
+                    @forelse ($enrollees as $enrollee)
+                    <div class="user-card d-flex justify-content-between align-items-center py-3 px-3">
+                        <div class="name">
+                            <a href="{{ route('show-profile', $enrollee->application->user->id) }}">
+                                {{ $enrollee->application->user->userInfo->name }}
+                            </a>
+                        </div>
+                        <div class="status">
+                            {{$enrollee->completion_status}}
+                        </div>
+                        <div class="btn-container">
+                            <form action="{{ route('mark-complete') }}" method="POST">
+                                @csrf
+                                <input type="hidden" value="{{$enrollee->id}}" name="enrolleeId">
+                                <input type="hidden" value="{{$enrollee->pwd_id}}" name="userId">
+                                <input type="hidden" value="{{$program->id}}" name="programId">
+                                @if ($enrollee->completion_status == 'Ongoing')
+                                <button class="submit-btn border-0">Mark Complete</button>
+                                @else
+                                <button class="submit-btn completed border-0" disabled><i class='bx bx-check'></i></button>
+                                @endif
+                            </form>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="user-card text-center py-3 px-3">
+                        No enrollees yet.
+                    </div>
+                    @endforelse
+                    <!-- <table class="table table-striped table-hover">                
                         <tbody>
                             @forelse ($enrollees as $enrollee)
                             <tr>
@@ -167,7 +197,7 @@
                             </tr>
                             @endforelse
                         </tbody>
-                    </table>
+                    </table> -->
                 </div>
                 @if ($program->crowdfund)
                 <div class="tab-pane" id="sponsors" role="tabpanel">
@@ -272,7 +302,7 @@
                 document.getElementById(formId).submit();
             }
         });
-    }   
+    }
 </script>
 
 @endsection

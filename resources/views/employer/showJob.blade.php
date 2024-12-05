@@ -12,7 +12,7 @@
     <div class="detailed-prog">
         <div class="prog-details">
             <div class="d-flex header">
-                <div class="mb-3 titles">                   
+                <div class="mb-3 titles">
                     <h3 class="text-cap">{{ $listing->position }}</h3>
                     <p class="sub-text text-cap">{{ $listing->employer->userInfo->name }}</p>
                     <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $listing->location }}</p>
@@ -34,7 +34,7 @@
                                 <button type="submit" class="deny-btn border-0" onclick="confirmDeleteJob(event, 'delete-form-{{ $listing->id }}')">Delete</button>
                             </form>
                         </div>
-      
+
                     </div>
                 </div>
             </div>
@@ -53,8 +53,8 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="tab" href="#hired" role="tab">Hired PWDs</a>
                 </li>
-                
-               
+
+
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="requirements" role="tabpanel">
@@ -65,7 +65,7 @@
                                 <!-- <div style="height:5rem;overflow-y:scroll"> -->
                                 <p>
                                     @foreach(explode(',', $listing->schedule) as $date)
-                                     {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
+                                    {{ \Carbon\Carbon::parse(trim($date))->format('F d, Y') }}
                                     @if(!$loop->last)
                                 <p></p>
                                 @endif
@@ -75,17 +75,17 @@
                             <div class="more-info">
                                 <h5>Salary</h5>
                                 <p>{{ $listing->salary . ' Pesos' }}</p>
-                            </div>                            
+                            </div>
                         </div>
                         <div class="d-flex justify-content-start more-info mb-5">
                             <div class="more-info">
                                 <h5>Work Type</h5>
                                 <p>{{ $listing->type->name }}</p>
-                            </div> 
+                            </div>
                             <div class="more-info">
                                 <h5>Work Setup</h5>
                                 <p>{{ $listing->setup->name }}</p>
-                            </div> 
+                            </div>
                         </div>
                         <div class="d-flex justify-content-start">
                             <div class="more-info">
@@ -105,11 +105,52 @@
                                 </ul>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
                 <div class="tab-pane enrollees" id="employees" role="tabpanel">
-                   <table class="table table-striped table-hover">
+                    <h5>Interviewees</h5>
+                    @forelse ($interviewees as $interviewee)
+                    <div class="user-card d-flex justify-content-between align-items-center py-3 px-3">
+                        <div class="name">
+                            <a href="{{ route('show-profile', $interviewee->application->user->id) }}">
+                                {{ $interviewee->application->user->userInfo->name }}
+                            </a>
+                        </div>
+                        <div class="status">
+                            @if($interviewee->schedule != null)
+                            {{ \Carbon\Carbon::parse(trim($interviewee->schedule))->format('F d, Y') }}
+                            @else
+                            No schedule
+                            @endif
+                        </div>
+                        <div class="status">
+                            @if($interviewee->schedule != null)
+                            {{ \Carbon\Carbon::parse(trim($interviewee->schedule))->format('F d, Y') }}
+                            @else
+                            No schedule
+                            @endif
+                        </div>
+                        <div class="btn-container">
+                            <form action="{{ route('mark-hired') }}" method="POST">
+                                @csrf
+                                <input type="hidden" value="{{$interviewee->id}}" name="employeeId">
+                                <input type="hidden" value="{{$interviewee->pwd_id}}" name="userId">
+                                <input type="hidden" value="{{$interviewee->id}}" name="jobId">
+                                @if ($interviewee->hiring_status == 'Pending')
+                                <button class="submit-btn border-0">Hire</button>
+                                @else
+                                <button class="submit-btn completed border-0" disabled><i class='bx bx-check'></i></button>
+                                @endif
+                            </form>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="user-card text-center py-3 px-3">
+                        No Interviewees yet.
+                    </div>
+                    @endforelse
+                    <!-- <table class="table table-striped table-hover">
                         <thead>
                             <td class="table-head">Name</td>
                             <td class="table-head">Interview Date</td>
@@ -167,23 +208,23 @@
                                 </tr>
                             @endforelse
                         </tbody>
-                    </table>
+                    </table> -->
                 </div>
                 <div class="tab-pane enrollees" id="hired" role="tabpanel">
-                   <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover">
                         <tbody>
                             @forelse ($hiredPWDs as $hired)
-                                <tr>                                    
-                                    <td class="name">
-                                        <a href="{{ route('show-profile', $hired->application->user->id) }}">
-                                            {{ $hired->application->user->userInfo->name }}
-                                        </a>
-                                    </td>                                    
-                                </tr>
+                            <tr>
+                                <td class="name">
+                                    <a href="{{ route('show-profile', $hired->application->user->id) }}">
+                                        {{ $hired->application->user->userInfo->name }}
+                                    </a>
+                                </td>
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="3" class="text-center">No hired PWDs yet.</td>
-                                </tr>
+                            <tr>
+                                <td colspan="3" class="text-center">No hired PWDs yet.</td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -198,7 +239,7 @@
             <div class="counts">
                 <h3>{{$intervieweeCount}}</h3>
                 <p>Total Interviewees</p>
-            </div>               
+            </div>
             <div class="counts">
                 <h3>{{$totalHired}}</h3>
                 <p>Total Hired PWDs</p>
@@ -226,4 +267,3 @@
         });
     }
 </script>
-

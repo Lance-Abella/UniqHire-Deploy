@@ -48,8 +48,8 @@
                     @else
                     <div class="d-flex flex-column align-items-end apply-btn-container">
                         <button type="submit" class="submit-btn border-0" onclick="confirmApplication(event, 'apply-form-{{ $listing->id }}')">
-                                Apply
-                        </button>                       
+                            Apply
+                        </button>
                     </div>
                     @endif
                 </form>
@@ -63,10 +63,10 @@
         <ul class="nav nav-underline" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" data-bs-toggle="tab" href="#requirements" role="tab">Requirements</a>
-            </li>       
+            </li>
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#employees" role="tab">Hired PWDs</a>
-            </li>       
+            </li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="requirements" role="tabpanel">
@@ -83,22 +83,22 @@
                             @endforeach
                             </p>
                         </div>
-                         <div class="more-info">
-                                <h5>Salary</h5>
-                                <p>{{ $listing->salary . ' Pesos' }}</p>
-                            </div> 
+                        <div class="more-info">
+                            <h5>Salary</h5>
+                            <p>{{ $listing->salary . ' Pesos' }}</p>
+                        </div>
                     </div>
                     <div class="d-flex justify-content-start more-info mb-5">
                         <div class="more-info">
                             <h5>Work Type</h5>
                             <p>{{ $listing->type->name }}</p>
-                        </div> 
+                        </div>
                         <div class="more-info">
                             <h5>Work Setup</h5>
                             <p>{{ $listing->setup->name }}</p>
-                        </div> 
+                        </div>
                     </div>
-                    <div class="d-flex justify-content-start mb-5">                       
+                    <div class="d-flex justify-content-start mb-5">
                         <div class="more-info">
                             <h5>Skills Required</h5>
                             <ul>
@@ -115,28 +115,25 @@
                                 @endforeach
                             </ul>
                         </div>
-                    </div> 
-                </div>                
-            </div> 
+                    </div>
+                </div>
+            </div>
             <div class="tab-pane enrollees" id="employees" role="tabpanel">
-                    <table class="table table-striped table-hover">
-                         <tbody>
-                            @forelse ($hiredPWDs as $hired)
-                                <tr>                                    
-                                    <td class="name">
-                                        <a href="{{ route('show-profile', $hired->application->user->id) }}">
-                                            {{ $hired->application->user->userInfo->name }}
-                                        </a>
-                                    </td>                                    
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center">No hired PWDs yet.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>                   
+                <h5>Enrollees</h5>
+                @forelse ($enrollees as $enrollee)
+                <div class="user-card d-flex justify-content-between align-items-center py-3 px-3">
+                    <div class="name">
+                        <a href="{{ route('show-profile', $hired->application->user->id) }}">
+                            {{ $hired->application->user->userInfo->name }}
+                        </a>
+                    </div>
+                </div>
+                @empty
+                <div class="user-card text-center py-3 px-3">
+                    No enrollees yet.
+                </div>
+                @endforelse
+            </div>
         </div>
     </div>
 

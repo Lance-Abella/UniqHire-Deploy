@@ -485,7 +485,7 @@ span.badge {
     min-height: fit-content;
     max-height: 20rem;
     overflow-y: auto; /* Changed from scroll to auto for better UX */
-    padding: 0;  /* Remove default padding */
+    padding: 0; /* Remove default padding */
 }
 
 .layout-container .dropdown-menu.show li a {
@@ -567,7 +567,7 @@ span.badge {
 }
 
 .layout-container .dropdown-menu.show li.unread::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 1rem;
     top: 50%;
@@ -624,7 +624,7 @@ span.badge {
 
 /* Unread Indicator */
 .notification-unread::before {
-    content: '';
+    content: "";
     display: inline-block;
     width: 8px;
     height: 8px;
@@ -1379,14 +1379,6 @@ input[type="range"]::-webkit-slider-thumb {
     align-items: center;
 }
 
-.agency-show-prog .table .completed {
-    background-color: var(--bg-color-02);
-}
-
-.agency-show-prog .table .completed .bx {
-    color: var(--primary-color);
-}
-
 .agency-show-prog .table td.check {
     width: 4rem;
 }
@@ -1448,52 +1440,6 @@ input[type="range"]::-webkit-slider-thumb {
     list-style: circle;
 }
 
-.agency-show-prog .table {
-    border-top: 3px solid lightgray;
-    width: 100%;
-}
-
-.agency-show-prog .table td input {
-    width: 1.2rem;
-    height: 1.2rem;
-    border: 1.8px solid lightgray;
-}
-
-.agency-show-prog .table .bx {
-    color: var(--bg-color-01);
-}
-
-.agency-show-prog .table .submit-btn:hover .bx {
-    color: var(--primary-color);
-}
-
-.agency-show-prog .table .submit-btn {
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
-    display: flex;
-    align-items: center;
-}
-
-.agency-show-prog .table .completed {
-    background-color: var(--bg-color-02);
-}
-
-.agency-show-prog .table .completed .bx {
-    color: var(--primary-color);
-}
-
-.agency-show-prog .table td.check {
-    width: 4rem;
-}
-
-.agency-show-prog .table td a:hover {
-    color: var(--primary-color);
-}
-
-.agency-show-prog .table td.btn-container {
-    /* width: 15rem; */
-}
-
 .agency-show-prog .prog-details .modal-btn {
     background-color: var(--primary-color-light);
     color: var(--primary-color);
@@ -1522,6 +1468,46 @@ input[type="range"]::-webkit-slider-thumb {
 .agency-show-prog .prog-details .text-danger {
     font-style: italic;
     font-size: 16px;
+}
+
+/* USER LIST IN SHOW DETAILS */
+.agency-show-prog .enrollees .user-card {
+    /* background-color: var(--bg-color-01); */
+    width: 100%;
+    box-shadow: var(--side-shadow-02);
+    margin-bottom: 0.5rem;
+    border-radius: var(--border-radius);
+}
+
+.agency-show-prog .enrollees .user-card:hover {
+    background-color: var(--hover-color);
+}
+
+.agency-show-prog .enrollees .user-card a {
+    font-weight: bold;
+}
+
+.agency-show-prog .enrollees .user-card a:hover {
+    color: var(--primary-color);
+}
+
+.agency-show-prog .enrollees .user-card .submit-btn {
+    padding: 0.5rem 1rem;
+}
+
+.agency-show-prog .enrollees .user-card .status {
+    color: var(--color-03);
+    /* font-weight: bold; */
+    font-style: italic;
+}
+
+.agency-show-prog .user-card .completed {
+    background-color: var(--bg-color-01);
+}
+
+.agency-show-prog .user-card .completed .bx {
+    color: var(--primary-color);
+    font-size: 1.5rem;
 }
 
 /* RATING  */
@@ -1760,8 +1746,9 @@ input[type="range"]::-webkit-slider-thumb {
     flex-direction: column;
     /* margin: 1rem; */
     align-items: center;
+    justify-content: center;
     padding: 1rem;
-    border-left: 1px solid lightgray;
+    /* border-left: 1px solid lightgray; */
 }
 
 .trainings-container .table-container {
@@ -1769,6 +1756,7 @@ input[type="range"]::-webkit-slider-thumb {
     padding: 1rem;
     height: 78vh;
     overflow-y: scroll;
+    border-right: 1px solid lightgray;
 }
 
 .trainings-container .table-container .applications {
