@@ -484,7 +484,8 @@ span.badge {
     width: 30rem;
     min-height: fit-content;
     max-height: 20rem;
-    overflow-y: scroll;
+    overflow-y: auto; /* Changed from scroll to auto for better UX */
+    padding: 0;  /* Remove default padding */
 }
 
 .layout-container .dropdown-menu.show li a {
@@ -550,6 +551,87 @@ span.badge {
 
 .layout-container .dropdown-menu .dropdown-item .notif-content {
     font-size: 17px;
+}
+
+.layout-container .dropdown-menu.show li {
+    position: relative; /* For unread indicator positioning */
+    border-bottom: 1px solid var(--hover-color);
+}
+
+.layout-container .dropdown-menu.show li:last-child {
+    border-bottom: none;
+}
+
+.layout-container .dropdown-menu.show li.unread {
+    background-color: var(--primary-color-light);
+}
+
+.layout-container .dropdown-menu.show li.unread::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+}
+
+.layout-container .dropdown-menu.show li a {
+    height: fit-content;
+    padding: 1rem 1rem 1rem 2.5rem; /* Added left padding for dot */
+}
+
+/* Custom scrollbar for notifications */
+.layout-container .dropdown-menu.show::-webkit-scrollbar {
+    width: 8px;
+}
+
+.layout-container .dropdown-menu.show::-webkit-scrollbar-track {
+    background: var(--bg-color-01);
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+.layout-container .dropdown-menu.show::-webkit-scrollbar-thumb {
+    background: var(--primary-color-light);
+    border-radius: var(--border-radius);
+}
+
+.layout-container .dropdown-menu.show::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* Notification States */
+.notification-unread {
+    background-color: #f0f7ff;
+    font-weight: 500;
+}
+
+.notification-read {
+    background-color: #ffffff;
+    color: #6c757d;
+}
+
+/* Hover States */
+.notification-unread:hover {
+    background-color: #e2f0ff;
+}
+
+.notification-read:hover {
+    background-color: #f8f9fa;
+}
+
+/* Unread Indicator */
+.notification-unread::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #0d6efd;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
 }
 
 /* HOMEPAGE LOGGED IN */

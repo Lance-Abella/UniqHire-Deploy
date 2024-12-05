@@ -283,6 +283,7 @@
             lat: lat,
             lng: lng
         };
+
         var geocoder = new google.maps.Geocoder();
 
         // Reverse geocode to get the address
