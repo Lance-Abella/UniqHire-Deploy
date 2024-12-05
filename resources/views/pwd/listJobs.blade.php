@@ -111,7 +111,7 @@
                                         </div>
                                         <div class="text-end date-posted">
                                             @php
-                                            $diff = $ranked['job']->created_at->diffInSeconds(now());
+                                            $diff = intval($ranked['job']->created_at->diffInSeconds(now()));
                                             @endphp
                                             <p class="text-end">
                                                 @if ($diff < 60)
@@ -250,13 +250,13 @@
 
 
     // Function to update disability items match-info
-    function updateDisabilityMatchInfo(userDisabilityId) {
-        const disabilityItems = document.querySelectorAll(".disability-item");
-        updateMatchClass(disabilityItems, (item) => {
-            const programDisabilityId = parseInt(item.getAttribute("data-disability-id"), 10);
-            return programDisabilityId === userDisabilityId;
-        }, "match-info", "notmatch-info");
-    }
+    // function updateDisabilityMatchInfo(userDisabilityId) {
+    //     const disabilityItems = document.querySelectorAll(".disability-item");
+    //     updateMatchClass(disabilityItems, (item) => {
+    //         const programDisabilityId = parseInt(item.getAttribute("data-disability-id"), 10);
+    //         return programDisabilityId === userDisabilityId;
+    //     }, "match-info", "notmatch-info");
+    // }
 
     // Function to update work setup match-info
     function updateWorkSetupMatchInfo(selectedSetups) {
@@ -283,8 +283,8 @@
 
         updateSalaryMatchInfo(minSalary, maxSalary);
 
-        const userDisabilityId = parseInt(document.getElementById("user-disability").value, 10);
-        updateDisabilityMatchInfo(userDisabilityId);
+        // const userDisabilityId = parseInt(document.getElementById("user-disability").value, 10);
+        // updateDisabilityMatchInfo(userDisabilityId);
 
         const selectedSetups = Array.from(document.querySelectorAll("input[name='setup[]']:checked")).map(input => input.value);
         updateWorkSetupMatchInfo(selectedSetups);
@@ -295,6 +295,25 @@
 
 
     document.addEventListener("DOMContentLoaded", function() {
+
+        var userDisabilityId = parseInt(document.getElementById('user-disability').value, 10);
+
+        // Get all programs' disability containers
+        var disabilityItems = document.querySelectorAll('.disability-item');
+
+        disabilityItems.forEach(function(item) {
+            var programDisabilityId = parseInt(item.getAttribute('data-disability-id'), 10);
+
+            // Check if the user's disability matches this program's disability
+            if (programDisabilityId === userDisabilityId) {
+                item.classList.add('match-info');
+                item.classList.remove('notmatch-info');
+            } else {
+                item.classList.add('notmatch-info');
+                item.classList.remove('match-info');
+                item.style.display = "none";
+            }
+        });
         // Initialize match-info on load
         rangeInput();
         updateMatchInfo();
@@ -308,6 +327,8 @@
         // Event listeners for filters
         addChangeListeners("input[name='setup[]']", updateMatchInfo);
         addChangeListeners("input[name='type[]']", updateMatchInfo);
+
+
     });
 </script>
 @endsection

@@ -7,8 +7,8 @@
     <div class="back-btn">
         @if (Route::currentRouteName() == 'job-details')
         <a href="{{ route('pwd-list-job') }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
-        @elseif(Route::currentRouteName() == 'show-details' )
-        <a href="{{ route('trainings') }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
+        @elseif(Route::currentRouteName() == 'show-job-details' )
+        <a href="{{ route('jobs') }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
         @endif
     </div>
     <div class="prog-details">
@@ -65,7 +65,7 @@
                 <a class="nav-link active" data-bs-toggle="tab" href="#requirements" role="tab">Requirements</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#employees" role="tab">Hired PWDs</a>
+                <a class="nav-link" data-bs-toggle="tab" href="#employees" role="tab">Employees</a>
             </li>
         </ul>
         <div class="tab-content">
@@ -85,20 +85,18 @@
                         </div>
                         <div class="more-info">
                             <h5>Salary</h5>
-                            <p>{{ $listing->salary . ' Pesos' }}</p>
+                            <p>{{ number_format($listing->salary, 0, '.', ',') . ' PHP' }}</p>
+                        </div>
+                        <div class="more-info">
+                            <h5>Work Type</h5>
+                            <p class="match-info">{{ $listing->type->name }}</p>
                         </div>
                     </div>
                     <div class="d-flex justify-content-start more-info mb-5">
                         <div class="more-info">
-                            <h5>Work Type</h5>
-                            <p>{{ $listing->type->name }}</p>
-                        </div>
-                        <div class="more-info">
                             <h5>Work Setup</h5>
-                            <p>{{ $listing->setup->name }}</p>
+                            <p class="match-info">{{ $listing->setup->name }}</p>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-start mb-5">
                         <div class="more-info">
                             <h5>Skills Required</h5>
                             <ul>
@@ -119,12 +117,12 @@
                 </div>
             </div>
             <div class="tab-pane enrollees" id="employees" role="tabpanel">
-                <h5>Enrollees</h5>
-                @forelse ($enrollees as $enrollee)
+                <h5>Employees</h5>
+                @forelse ($hiredPWDs as $employee)
                 <div class="user-card d-flex justify-content-between align-items-center py-3 px-3">
                     <div class="name">
-                        <a href="{{ route('show-profile', $hired->application->user->id) }}">
-                            {{ $hired->application->user->userInfo->name }}
+                        <a href="{{ route('show-profile', $employee->application->user->id) }}">
+                            {{ $employee->application->user->userInfo->name }}
                         </a>
                     </div>
                 </div>

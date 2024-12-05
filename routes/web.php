@@ -86,14 +86,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/pwd/calendar', [PwdController::class, 'showCalendar'])->middleware('role:PWD')->name('pwd-calendar');
     Route::post('/training-program/apply', [PwdController::class, 'application'])->middleware('role:PWD')->name('pwd-application');
     Route::post('/job/apply', [PwdController::class, 'jobApplication'])->middleware('role:PWD')->name('pwd-jobApplication');
-    Route::get('/training-programs', [PwdController::class, 'showTrainings'])->middleware('role:PWD')->name('trainings');
-    Route::get('/training-program/details/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('show-details');
+    Route::get('/track-trainings', [PwdController::class, 'showTrainings'])->middleware('role:PWD')->name('trainings');
+    Route::get('/track-trainings/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('show-details');
     Route::post('/training-program/rate', [PwdController::class, 'rateProgram'])->middleware('role:PWD')->name('rate-program');
     Route::get('/browse/job-postings', [RecommenderController::class, 'showJobs'])->middleware('role:PWD')->name('pwd-list-job');
     Route::get('/job-details/{id}', [PwdController::class, 'showListingDetails'])->middleware('role:PWD')->name('job-details');
     Route::post('/job-details/{id}', [PwdController::class, 'showListingDetails'])->middleware('role:PWD')->name('job-details');
     Route::get('/events', [PwdController::class, 'showEvents'])->middleware('role:PWD')->name('events');
     Route::post('/events/apply', [PwdController::class, 'eventApplication'])->middleware('role:PWD')->name('event-application');
+    Route::get('/track-jobs', [PwdController::class, 'showJobs'])->middleware('role:PWD')->name('jobs');
+    Route::get('/track-jobs/{id}', [PwdController::class, 'showListingDetails'])->middleware('role:PWD')->name('show-job-details');
 
 
     //SPONSOR Middleware
@@ -122,6 +124,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/employer/mark-complete', [EmployerController::class, 'markHired'])->middleware('role:Employer')->name('mark-hired');
     Route::get('/post-events', [EmployerController::class, 'showEvents'])->middleware('role:Employer')->name('show-post-events');
     Route::post('/post-events', [EmployerController::class, 'postEvent'])->middleware('role:Employer')->name('post-events');
+    Route::delete('/delete-event/{id}', [EmployerController::class, 'deleteEvent'])->middleware('role:Employer')->name('delete-event');
     Route::get('/employer/set-schedule/{id}', [EmployerController::class, 'setScheduleForm'])->middleware('role:Employer')->name('set-schedule');
     Route::post('/employer/set-schedule/{id}', [EmployerController::class, 'setSchedule'])->middleware('role:Employer')->name('set-schedule');
 });

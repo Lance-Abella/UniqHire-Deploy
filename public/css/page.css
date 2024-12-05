@@ -449,7 +449,7 @@ footer .btn button {
 /* CONTENT CONTAINER */
 .page-content {
     padding: 0 0 0 1.5rem;
-    /* height: 90vh; */
+    min-height: 90vh;
 }
 
 /* DATE PICKER */
@@ -501,7 +501,7 @@ span.badge {
 }
 
 .layout-container .dropdown-menu.show li a:hover {
-    background-color: var(--primary-color-light);
+    background-color: var(--hover-color);
 }
 
 .layout-container .dropdown-menu .dropdown-item .notif-owner {
@@ -520,37 +520,6 @@ span.badge {
 .layout-container .bxs-inbox {
     color: var(--primary-color);
     font-size: 33px;
-}
-
-.layout-container .dropdown-menu.show {
-    position: absolute;
-    top: 4rem;
-    right: 2rem;
-    width: 30rem;
-    min-height: fit-content;
-    max-height: 20rem;
-    overflow-y: scroll;
-}
-
-.layout-container .dropdown-menu.show li a {
-    height: fit-content;
-    padding: 1rem;
-}
-
-.layout-container .dropdown-menu.show li a,
-.layout-container .dropdown-menu .dropdown-item .notif-content {
-    overflow: hidden;
-    text-wrap: nowrap;
-    text-overflow: ellipsis;
-}
-
-.layout-container .dropdown-menu .dropdown-item .notif-owner {
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.layout-container .dropdown-menu .dropdown-item .notif-content {
-    font-size: 17px;
 }
 
 .layout-container .dropdown-menu.show li {
@@ -609,17 +578,17 @@ span.badge {
 }
 
 .notification-read {
-    background-color: #ffffff;
+    background-color: var(--bg-color-02);
     color: #6c757d;
 }
 
 /* Hover States */
 .notification-unread:hover {
-    background-color: #e2f0ff;
+    background-color: var(--hover-color);
 }
 
 .notification-read:hover {
-    background-color: #f8f9fa;
+    background-color: var(--hover-color);
 }
 
 /* Unread Indicator */
@@ -1510,6 +1479,11 @@ input[type="range"]::-webkit-slider-thumb {
     font-size: 1.5rem;
 }
 
+.agency-show-prog .user-card .set-sched button {
+    background-color: var(--primary-color-light);
+    color: var(--primary-color);
+}
+
 /* RATING  */
 .agency-show-prog .star-rating {
     cursor: pointer;
@@ -1793,9 +1767,9 @@ input[type="range"]::-webkit-slider-thumb {
     justify-content: center;
 } */
 
-.agency-prog-container .outer {
+/* .agency-prog-container .outer {
     height: 80vh;
-}
+} */
 .agency-prog-container .prog-grid {
     position: relative;
     left: 2.5rem;
@@ -1997,19 +1971,39 @@ table tbody .bx {
 }
 
 .fc .fc-daygrid-day.fc-day-today {
-    background-color: var(--primary-color-light);
+    background-color: var(--hover-color);
 }
 
 /* PROFILE */
+
+.profile-container {
+    /* width: 70%; */
+    display: flex;
+    justify-content: center;
+    display: grid;
+    grid-template-columns: 0.1fr 2fr;
+    grid-template-areas: "back details";
+    margin-bottom: 3rem;
+}
+
+.profile-container .back-btn {
+    grid-template-areas: back;
+}
+
+.profile-container .details {
+    grid-template-areas: details;
+    /* width: 75%; */
+}
+
 .profile-container .profile-info {
     display: flex;
     align-items: center;
 }
 
-.profile-container .back-btn {
+/* .profile-container .back-btn {
     position: fixed;
     left: 20rem;
-}
+} */
 
 .profile-container .profile-pic {
     background-color: var(--primary-color-light);
@@ -2069,7 +2063,7 @@ table tbody .bx {
 
 .profile-container .profile-info .details {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 0.5rem;
     width: 100%;
 }
@@ -2150,8 +2144,12 @@ table tbody .bx {
     align-items: center;
 }
 
-.profile-container .more-details .bio .bio-item .experiences li:hover {
+.profile-container .more-details .bio .bio-item .experiences li div:hover {
     background-color: var(--hover-color);
+}
+
+.profile-container .more-details .bio .bio-item .experiences li div {
+    width: 100%;
 }
 
 .profile-container .more-details .bio .bio-item .exp-title {
@@ -2346,7 +2344,7 @@ table tbody .bx {
 
 /* EVENTS */
 .events-container {
-    /* height: 90vh; */
+    min-height: 90vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2381,7 +2379,7 @@ table tbody .bx {
     background-color: var(--primary-color-light);
     width: 6rem;
     height: 6rem;
-    border-radius: 50%;
+    /* border-radius: 50%; */
     border: 3px solid var(--primary-color);
 }
 
@@ -2398,7 +2396,7 @@ table tbody .bx {
 }
 
 .events-container .event-card .prog-desc p {
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
 }
 
 .events-container .event-grid {
@@ -2409,6 +2407,14 @@ table tbody .bx {
 
 .events-container .event-card .infos {
     padding: 0 0.6rem;
+}
+.events-container .event-card .submit-btn {
+    padding: 0.5rem 1rem;
+}
+
+.events-container .event-card .submit-btn.delete {
+    background-color: var(--color-02-light);
+    color: var(--text-error);
 }
 
 /* MOBILE RESPONSIVE */

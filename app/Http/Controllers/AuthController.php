@@ -18,6 +18,7 @@ use App\Models\UserInfo;
 use App\Models\SkillUser;
 use App\Models\Socials;
 use App\Models\UserSocials;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -40,7 +41,9 @@ class AuthController extends Controller
         $latitude = $user->userInfo->latitude;
         $longitude = $user->userInfo->longitude;
 
-        return view('auth.profile', compact('levels', 'disabilities', 'user', 'certifications', 'skills', 'skilluser', 'experiences', 'latitude', 'longitude', 'socials', 'userSocials'));
+        $isEmployed = Employee::where('pwd_id', $id)->where('hiring_status', 'Accepted')->exists();
+
+        return view('auth.profile', compact('levels', 'disabilities', 'user', 'certifications', 'skills', 'skilluser', 'experiences', 'latitude', 'longitude', 'socials', 'userSocials', 'isEmployed'));
     }
 
     public function editProfile(Request $request)

@@ -13,7 +13,7 @@
         <div class="table-container">
             <div class="applications">
                 <div class="text-start header-texts fs-4 back-link-container border-bottom mb-3">
-                    Applications.
+                    Training Applications.
                 </div>
                 <table class="table table-striped table-hover">
                     <thead>
