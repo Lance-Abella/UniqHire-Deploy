@@ -141,7 +141,6 @@
                         <tbody>
                             @forelse ($enrollees as $enrollee)
                             <tr>
-                                <td class="check"><input class="form-check-input" type="checkbox"></td>
                                 <td class="name">
                                     <a href="{{ route('show-profile', $enrollee->application->user->id) }}">
                                         {{ $enrollee->application->user->userInfo->name }}

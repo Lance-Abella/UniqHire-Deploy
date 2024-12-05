@@ -13,7 +13,10 @@ class Employee extends Model
         'pwd_id',
         'job_id',
         'job_application_id',
-        'hiring_status'
+        'hiring_status',
+        'schedule',
+        'start_time',
+        'end_time'
     ];
 
     public function application()

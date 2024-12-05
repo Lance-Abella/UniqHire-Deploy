@@ -67,4 +67,9 @@ class UserInfo extends Model
     {
         return $this->belongsToMany(Socials::class, 'user_socials', 'user_id', 'social_id');
     }
+
+    public function events()
+    {
+        return $this->hasMany(Events::class, 'employer_id');
+    }
 }
