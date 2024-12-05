@@ -466,6 +466,10 @@ footer .btn button {
     display: none;
 }
 
+.dropdown-item.no-notif {
+    text-align: center;
+}
+
 .dropdown-toggle {
     display: flex;
 }
@@ -488,8 +492,13 @@ span.badge {
     padding: 0; /* Remove default padding */
 }
 
+.layout-container .dropdown-menu.show li {
+    min-height: 2rem;
+}
+
 .layout-container .dropdown-menu.show li a {
-    height: fit-content;
+    min-height: 2rem;
+    /* height: fit-content; */
     padding: 1rem;
 }
 
@@ -1977,9 +1986,16 @@ table tbody .bx {
 /* PROFILE */
 
 .profile-container {
-    /* width: 70%; */
+    width: 100%;
     display: flex;
     justify-content: center;
+}
+
+.profile-container .outer {
+    width: 70%;
+}
+
+.profile-container.prof {
     display: grid;
     grid-template-columns: 0.1fr 2fr;
     grid-template-areas: "back details";

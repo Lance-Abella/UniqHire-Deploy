@@ -386,6 +386,7 @@
                                     '</span>' +
                                     '<div class="notif-content sub-text">' +
                                     'entitled ' + '<span class="sub-text text-cap">' + notification.data.title + '</span>' +
+                                    '. Click to view details' +
                                     '</div>' +
                                     '</a></li>';
                             }
@@ -397,7 +398,7 @@
                         });
                     } else {
                         badge.addClass('d-none');
-                        notifDropdown.append('<li><span class="dropdown-item">No notifications</span></li>');
+                        notifDropdown.append('<li><span class="dropdown-item no-notif">No notifications</span></li>');
                     }
                 }).fail(function() {
                     console.error('Failed to fetch notifications');

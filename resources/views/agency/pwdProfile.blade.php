@@ -2,7 +2,7 @@
 
 @section('page-title', 'Profile')
 @section('page-content')
-<div class="profile-container">
+<div class="profile-container prof">
     <div class="back-btn">
         @if (Route::currentRouteName() == 'show-profile')
         <a href="{{ url()->previous() }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
