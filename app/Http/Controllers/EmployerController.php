@@ -16,7 +16,10 @@ use App\Models\WorkSetup;
 use App\Models\WorkType;
 use App\Models\User;
 use App\Notifications\JobApplicationAcceptedNotification;
+use App\Notifications\JobHiredNotification;
 use App\Notifications\NewJobListingNotification;
+use App\Notifications\SetEventsNotification;
+use App\Notifications\SetScheduleNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -247,18 +250,18 @@ class EmployerController extends Controller
     {
 
         $user = auth()->user()->userInfo->user_id;
-        
+
         if ($request->expectsJson()) {
-            
+
             $jobListings = JobListing::where('employer_id', $user)
                 ->get(['employer_id', 'position', 'end_date']);
             $trainingPrograms = TrainingProgram::where('agency_id', $user)
-            ->get(['agency_id', 'title', 'schedule']);
-            
+                ->get(['agency_id', 'title', 'schedule']);
+
 
             $events = [];
 
-            
+
 
             foreach ($jobListings as $job) {
                 // $scheduleDates = explode(',', $job->end_date);
@@ -277,7 +280,7 @@ class EmployerController extends Controller
                     ];
                 }
             }
-            
+
 
             foreach ($trainingPrograms as $program) {
                 $scheduleDates = explode(',', $program->schedule);
@@ -296,11 +299,10 @@ class EmployerController extends Controller
                     }
                 }
             }
-                    
+
             return response()->json($events);
-            
         }
-        
+
         return view('employer.calendar');
     }
 
@@ -313,23 +315,23 @@ class EmployerController extends Controller
         ]);
 
         $jobId = $validatedData['jobId'];
-        $userId = $validatedData['userId'];        
+        $userId = $validatedData['userId'];
         $employeeId = $validatedData['employeeId'];
         $hiringStatus = 'Accepted';
 
         // Find the enrollee and update completion status
         $employee = Employee::findOrFail($employeeId);
-        $employee->update(['hiring_status' => $hiringStatus]);       
+        $employee->update(['hiring_status' => $hiringStatus]);
 
-        // $pwdUser = $enrollee->pwd;
-        // $pwdUser->notify(new TrainingCompletedNotification($enrollee));
+        $pwdUser = $employee->pwd;
+        $pwdUser->notify(new JobHiredNotification($employee));
 
         return back()->with('success', 'Employee is hired.');
     }
 
     public function setScheduleForm($id)
     {
-        
+
         $employee = Employee::findOrFail($id);
 
         return view('employer.setSchedule', compact('employee'));
@@ -337,7 +339,7 @@ class EmployerController extends Controller
 
     public function setSchedule(Request $request, $id)
     {
-        
+
         $employee = Employee::findOrFail($id);
 
         // Validate the incoming request
@@ -351,10 +353,7 @@ class EmployerController extends Controller
         $start_time = $validatedData['start_time'];
         $end_time = $validatedData['end_time'];
 
-        // $pwdUser = $application->user;
-        // $jobListing = $application->job;
-
-        // $pwdUser->notify(new JobApplicationAcceptedNotification($jobListing));
+        $employee->pwd->notify(new SetScheduleNotification($employee));
 
         $employee->update([
             'schedule' => $schedule,
@@ -365,7 +364,7 @@ class EmployerController extends Controller
         return redirect()->route('jobs-show', $employee->job_id)->with('success', 'Interview schedule has been set.');
     }
 
-    
+
 
     public function showEvents()
     {
@@ -373,7 +372,8 @@ class EmployerController extends Controller
         return view('employer.events', compact('events'));
     }
 
-    public function postEvent(Request $request) {
+    public function postEvent(Request $request)
+    {
         $employer_id = Auth::user()->id;
         $request->validate([
             'title' => 'required|string|max:255',
@@ -383,7 +383,7 @@ class EmployerController extends Controller
             'end_time' => 'required|date_format:H:i|after:start_time',
         ]);
 
-        Events::create([
+        $event = Events::create([
             'title' => $request->title,
             'description' => $request->description,
             'schedule' => $request->schedule,
@@ -391,6 +391,16 @@ class EmployerController extends Controller
             'end_time' => $request->end_time,
             'employer_id' => $employer_id
         ]);
+
+        $employees = Employee::all();
+
+        if ($employees->isEmpty()) {
+            return redirect()->route('show-post-events')->with('error', 'No employees found to notify.');
+        }
+
+        foreach ($employees as $employee) {
+            $employee->pwd->notify(new SetEventsNotification($event));
+        }
 
         return redirect()->route('show-post-events');
     }
