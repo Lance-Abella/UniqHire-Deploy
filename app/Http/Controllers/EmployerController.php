@@ -18,6 +18,8 @@ use App\Models\User;
 use App\Notifications\JobApplicationAcceptedNotification;
 use App\Notifications\JobHiredNotification;
 use App\Notifications\NewJobListingNotification;
+use App\Notifications\SetEventsNotification;
+use App\Notifications\SetScheduleNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -351,10 +353,7 @@ class EmployerController extends Controller
         $start_time = $validatedData['start_time'];
         $end_time = $validatedData['end_time'];
 
-        // $pwdUser = $application->user;
-        // $jobListing = $application->job;
-
-        // $pwdUser->notify(new JobApplicationAcceptedNotification($jobListing));
+        $employee->pwd->notify(new SetScheduleNotification($employee));
 
         $employee->update([
             'schedule' => $schedule,
@@ -384,7 +383,7 @@ class EmployerController extends Controller
             'end_time' => 'required|date_format:H:i|after:start_time',
         ]);
 
-        Events::create([
+        $event = Events::create([
             'title' => $request->title,
             'description' => $request->description,
             'schedule' => $request->schedule,
@@ -392,6 +391,16 @@ class EmployerController extends Controller
             'end_time' => $request->end_time,
             'employer_id' => $employer_id
         ]);
+
+        $employees = Employee::all();
+
+        if ($employees->isEmpty()) {
+            return redirect()->route('show-post-events')->with('error', 'No employees found to notify.');
+        }
+
+        foreach ($employees as $employee) {
+            $employee->pwd->notify(new SetEventsNotification($event));
+        }
 
         return redirect()->route('show-post-events');
     }

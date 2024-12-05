@@ -193,9 +193,9 @@
                             </div>
                             <div>
                                 <ul class="d-flex align-items-center">
-                                    <li class="nav-item user-notif dropdown">
+                                    <li class="nav-item user-notif dropdown unread">
 
-                                        <a href="#" class="dropdown-toggle" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <a href="#" class="dropdown-toggle dropdown-item" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class='bx bxs-inbox'></i>
                                             <span id="notification-badge" class="badge bg-danger d-none">0</span> <!-- Badge element -->
                                         </a>
@@ -245,7 +245,7 @@
                 $.get("{{ route('notifications.getNotifications') }}", function(data) {
                     var notifDropdown = $('#notificationDropdown').next('.dropdown-menu');
                     var badge = $('#notification-badge');
-                    notifDropdown.empty(); // Clear existing notifications
+                    notifDropdown.empty();
 
                     if (data.length > 0) {
                         const unreadCount = data.filter(notification => !notification.read).length;
@@ -260,8 +260,11 @@
                             var url = notification.data.url || '#';
                             var id = notification.id;
 
+                            // Add read/unread class to the notification item
+                            var readClass = notification.read ? 'notification-read' : 'notification-unread';
+
                             if (notification.type === 'App\\Notifications\\NewTrainingProgramNotification') {
-                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.agency_name +
                                     '</span>' +
@@ -275,7 +278,7 @@
                                     '</div>' +
                                     '</a></li>'
                             } else if (notification.type === 'App\\Notifications\\PwdApplicationNotification') {
-                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
                                     'A PWD user has applied for your training program: ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.title +
@@ -285,7 +288,7 @@
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\ApplicationAcceptedNotification') {
-                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
                                     'Your application in ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.program_title +
@@ -299,7 +302,7 @@
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\TrainingCompletedNotification') {
-                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
                                     'Congratulations for completing: ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.program_title +
@@ -309,7 +312,7 @@
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\NewJobListingNotification') {
-                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
                                     'New Job Listing: ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.position +
@@ -319,7 +322,7 @@
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\JobApplicationAcceptedNotification') {
-                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
                                     'Accepted by Employer: ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.employer +
@@ -329,7 +332,7 @@
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\PwdJobApplicationNotification') {
-                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
                                     'New applicant for: ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.position +
@@ -339,7 +342,7 @@
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\SponsorDonationNotification') {
-                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
                                     'A sponsor has contributed: ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.amount +
@@ -350,7 +353,7 @@
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\JobHiredNotification') {
-                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
                                     'You have been hired by ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.title +
@@ -359,7 +362,34 @@
                                     'Congratulations!' +
                                     '</div>' +
                                     '</a></li>';
+                            } else if (notification.type === 'App\\Notifications\\SetScheduleNotification') {
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
+                                    'You have an interview with: ' +
+                                    '<span class="notif-owner text-cap">' +
+                                    notification.data.title +
+                                    '</span>' +
+                                    '<div class="notif-content sub-text">' +
+                                    'on ' +
+                                    notification.data.date +
+                                    ' ' +
+                                    notification.data.time +
+                                    '</div>' +
+                                    '</a></li>';
+                            } else if (notification.type === 'App\\Notifications\\SetEventsNotification') {
+                                notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
+                                    'There is an event: ' +
+                                    '<span class="notif-owner text-cap">' +
+                                    notification.data.title +
+                                    '</span>' +
+                                    '<div class="notif-content sub-text">' +
+                                    'Check it out!' +
+                                    '</div>' +
+                                    '</a></li>';
                             }
+                            notificationContent = notificationContent.replace(
+                                '<li>',
+                                `<li data-notification-id="${notification.id}">`
+                            );
                             notifDropdown.append(notificationContent);
                         });
                     } else {
@@ -371,14 +401,19 @@
                 });
             }
 
-            function markNotificationAsRead(id) {
+            // Modified click handler for notifications
+            $('#notificationDropdown').next('.dropdown-menu').on('click', 'a', function(e) {
+                e.preventDefault();
+                const notificationItem = $(this).closest('li');
+                const id = notificationItem.data('notification-id');
+
                 $.post('/notifications/mark-as-read', {
                         _token: '{{ csrf_token() }}',
-                        id: id,
+                        id: id
                     })
                     .done(function(response) {
                         if (response.status === 'success') {
-                            // Update badge count and dropdown
+                            // Update badge count
                             const unreadCount = response.unread_count;
                             const badge = $('#notification-badge');
 
@@ -388,71 +423,22 @@
                                 badge.addClass('d-none');
                             }
 
-                            // Remove the notification from the dropdown
-                            $(`[data-notification-id="${id}"]`).parent().remove();
-
-                            // If no notifications remain, show "No notifications"
-                            if ($('#notificationDropdown').next('.dropdown-menu').children().length === 0) {
-                                $('#notificationDropdown').next('.dropdown-menu').append('<li><span class="dropdown-item">No notifications</span></li>');
-                            }
-                        } else {
-                            console.error('Error marking notification as read:', response.message);
+                            // Navigate to the notification URL
+                            window.location.href = $(e.target).closest('a').attr('href');
                         }
                     })
                     .fail(function(error) {
-                        console.error('Error:', error);
+                        console.error('Error marking notification as read:', error);
+                        // Still navigate even if marking as read fails
+                        window.location.href = $(e.target).closest('a').attr('href');
                     });
-            }
-
-            $(document).on('click', '.notification', function() {
-                e.preventDefault();
-
-                var id = $(this).data('notification-id'); // Get the notification ID
-
-                if (id) {
-                    $.ajax({
-                        url: '/notifications/mark-as-read',
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                        },
-                        data: {
-                            id: id,
-                        },
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                // Update the UI or badge count accordingly
-                                $(this).closest('li').remove(); // Example: Remove badge
-                                updateNotificationBadge(response.unread_count); // Optional: Add a class to indicate read status
-                            }
-                        },
-                        error: function(error) {
-                            console.error('Error marking notification as read:', error); // Handle any error
-                        }
-                    });
-                } else {
-                    console.error('Notification ID is missing.');
-                }
             });
 
-
-            // Fetch notifications on page load
+            // Initial fetch
             fetchNotifications();
 
-            // Handle dropdown showing
-            $('#notificationDropdown').on('show.bs.dropdown', function() {
-                fetchNotifications();
-            });
-
-            $('#notificationDropdown').next('.dropdown-menu').on('click', 'a', function(e) {
-                const id = $(this).data('notification-id');
-                e.preventDefault(); // Prevent immediate page reload
-                markNotificationAsRead(id);
-                setTimeout(() => {
-                    window.location.href = $(this).attr('href'); // Navigate after marking
-                }, 500); // Delay by 500ms or suitable time
-            });
-
+            // Fetch on dropdown show
+            $('#notificationDropdown').on('show.bs.dropdown', fetchNotifications);
         });
 
         function toggleSubmenu() {

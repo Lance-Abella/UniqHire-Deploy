@@ -13,29 +13,31 @@ class NotificationController extends Controller
     public function getNotifications()
     {
         $user = auth()->user();
-        $notificationsQuery = $user->notifications->where('read', false);
+        $notificationsQuery = $user->notifications;
 
         if ($user->hasRole('PWD')) {
-            $notifications = $notificationsQuery->filter(function ($notifications) {
-                return in_array($notifications->type, [
+            $notifications = $notificationsQuery->filter(function ($notification) {
+                return in_array($notification->type, [
                     'App\\Notifications\\NewTrainingProgramNotification',
                     'App\\Notifications\\ApplicationAcceptedNotification',
                     'App\\Notifications\\TrainingCompletedNotification',
                     'App\\Notifications\\NewJobListingNotification',
                     'App\\Notifications\\JobApplicationAcceptedNotification',
                     'App\\Notifications\\JobHiredNotification',
+                    'App\\Notifications\\SetScheduleNotification',
+                    'App\\Notifications\\SetEventsNotification',
                 ]);
             });
         } else if ($user->hasRole('Training Agency')) {
-            $notifications = $notificationsQuery->filter(function ($notifications) {
-                return in_array($notifications->type, [
+            $notifications = $notificationsQuery->filter(function ($notification) {
+                return in_array($notification->type, [
                     'App\\Notifications\\PwdApplicationNotification',
                     'App\\Notifications\\SponsorDonationNotification',
                 ]);
             });
         } else if ($user->hasRole('Employer')) {
-            $notifications = $notificationsQuery->filter(function ($notifications) {
-                return in_array($notifications->type, [
+            $notifications = $notificationsQuery->filter(function ($notification) {
+                return in_array($notification->type, [
                     'App\\Notifications\\PwdJobApplicationNotification',
                 ]);
             });
@@ -43,8 +45,13 @@ class NotificationController extends Controller
             $notifications = $notificationsQuery;
         }
 
+        $formattedNotifications = $notifications->map(function ($notification) {
+            $notificationArray = $notification->toArray();
+            $notificationArray['read'] = !is_null($notification->read_at);
+            return $notificationArray;
+        });
 
-        return response()->json($notifications->toArray());
+        return response()->json($formattedNotifications);
     }
 
     public function markAsRead(Request $request)
@@ -53,7 +60,9 @@ class NotificationController extends Controller
             'id' => 'required|exists:notifications,id',
         ]);
 
-        $notification = auth()->user()->notifications->find($validated['id']);
+        $notification = auth()->user()->notifications()
+            ->where('id', $validated['id'])
+            ->first();
 
         if ($notification) {
             // Mark the notification as read
@@ -64,13 +73,13 @@ class NotificationController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'unread_count' => $unreadCount, // Send the updated unread count
+                'unread_count' => $unreadCount,
             ]);
         }
 
         return response()->json([
             'status' => 'error',
             'message' => 'Notification not found',
-        ]);
+        ], 404);
     }
 }
