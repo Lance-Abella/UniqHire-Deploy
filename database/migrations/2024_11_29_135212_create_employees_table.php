@@ -17,6 +17,9 @@ return new class extends Migration
             $table->foreignId('job_id')->constrained('job_listings')->onDelete('cascade');
             $table->foreignId('job_application_id')->constrained('job_applications')->onDelete('cascade');            
             $table->enum('hiring_status', ['Accepted', 'Denied', 'Pending'])->default('Pending');
+            $table->date('schedule')->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
             $table->timestamps();
         });
     }

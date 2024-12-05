@@ -8,6 +8,7 @@ use App\Models\JobApplication;
 use App\Models\EducationLevel;
 use App\Models\PwdFeedback;
 use App\Models\Enrollee;
+use App\Models\Events;
 use App\Models\TrainingProgram;
 use App\Models\Employee;
 use App\Models\Skill;
@@ -19,6 +20,7 @@ use App\Notifications\NewJobListingNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class EmployerController extends Controller
 {
@@ -103,24 +105,12 @@ class EmployerController extends Controller
         $requests = JobApplication::where('job_id', $listing->id)->where('application_status', 'Pending')->get();
         $employees = Employee::where('job_id', $listing->id)->get();
         $hiredPWDs = Employee::where('job_id', $listing->id)->where('hiring_status', 'Accepted')->get();
+        $totalHired = Employee::where('job_id', $listing->id)->where('hiring_status', 'Accepted')->count();
 
         $pendingsCount = $applications->where('application_status', 'Pending')->count();
-        // $ongoingCount = $enrollees->where('completion_status', 'Ongoing')->count();
-        $approvedCount = $applications->where('application_status', 'Approved')->count();
-        // $enrolleesCount = $applications->count();
+        $intervieweeCount = $applications->where('application_status', 'Approved')->count();
 
-        $applicantCount = JobApplication::where('job_id', $listing->id)
-            ->count();
-
-        // $slots = $listing->participants - $enrolleeCount;
-
-        // if ($listing->crowdfund) {
-        //     $raisedAmount = $listing->crowdfund->raised_amount ?? 0;
-        //     $goal = $listing->crowdfund->goal ?? 1;
-        //     $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
-        //     $listing->crowdfund->progress = $progress;
-        // }
-        return view('employer.showJob', compact('listing', 'applications', 'pendingsCount', 'approvedCount', 'applicantCount', 'requests', 'employees', 'hiredPWDs'));
+        return view('employer.showJob', compact('listing', 'applications', 'pendingsCount', 'intervieweeCount', 'totalHired', 'requests', 'employees', 'hiredPWDs'));
     }
 
     public function accept(Request $request)
@@ -337,10 +327,71 @@ class EmployerController extends Controller
         return back()->with('success', 'Employee is hired.');
     }
 
+    public function setScheduleForm($id)
+    {
+        
+        $employee = Employee::findOrFail($id);
+
+        return view('employer.setSchedule', compact('employee'));
+    }
+
+    public function setSchedule(Request $request, $id)
+    {
+        
+        $employee = Employee::findOrFail($id);
+
+        // Validate the incoming request
+        $validatedData = $request->validate([
+            'schedule' => 'required|date',
+            'start_time' => 'required|date_format:H:i|before:end_time',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+        ]);
+
+        $schedule = $validatedData['schedule'];
+        $start_time = $validatedData['start_time'];
+        $end_time = $validatedData['end_time'];
+
+        // $pwdUser = $application->user;
+        // $jobListing = $application->job;
+
+        // $pwdUser->notify(new JobApplicationAcceptedNotification($jobListing));
+
+        $employee->update([
+            'schedule' => $schedule,
+            'start_time' => $start_time,
+            'end_time' => $end_time
+        ]);
+
+        return redirect()->route('jobs-show', $employee->job_id)->with('success', 'Interview schedule has been set.');
+    }
+
     
 
     public function showEvents()
     {
-        return view('employer.events');
+        $events = Events::all();
+        return view('employer.events', compact('events'));
+    }
+
+    public function postEvent(Request $request) {
+        $employer_id = Auth::user()->id;
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'schedule' => 'required|date',
+            'start_time' => 'required|date_format:H:i|before:end_time',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+        ]);
+
+        Events::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'schedule' => $request->schedule,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'employer_id' => $employer_id
+        ]);
+
+        return redirect()->route('show-post-events');
     }
 }
