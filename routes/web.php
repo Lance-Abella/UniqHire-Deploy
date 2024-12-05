@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\RecommenderController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployerController;
@@ -77,7 +78,7 @@ Route::middleware('auth')->group(function () {
 
     // PWD Middleware
     // Route::post('/pwd/action', [PwdController::class, 'action'])->middleware('role:PWD')->name('pwd-action');
-    Route::get('/browse/training-programs', [PwdController::class, 'showPrograms'])->middleware('role:PWD')->name('pwd-list-program');
+    Route::get('/browse/training-programs', [RecommenderController::class, 'showPrograms'])->middleware('role:PWD')->name('pwd-list-program');
     Route::get('/training-details/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('training-details');
     Route::post('/training-details/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('training-details');
     Route::get('/pwd/calendar', [PwdController::class, 'showCalendar'])->middleware('role:PWD')->name('pwd-calendar');
@@ -86,10 +87,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/training-programs', [PwdController::class, 'showTrainings'])->middleware('role:PWD')->name('trainings');
     Route::get('/training-program/details/{id}', [PwdController::class, 'showDetails'])->middleware('role:PWD')->name('show-details');
     Route::post('/training-program/rate', [PwdController::class, 'rateProgram'])->middleware('role:PWD')->name('rate-program');
-    Route::get('/browse/job-postings', [PwdController::class, 'showJobs'])->middleware('role:PWD')->name('pwd-list-job');
+    Route::get('/browse/job-postings', [RecommenderController::class, 'showJobs'])->middleware('role:PWD')->name('pwd-list-job');
     Route::get('/job-details/{id}', [PwdController::class, 'showListingDetails'])->middleware('role:PWD')->name('job-details');
     Route::post('/job-details/{id}', [PwdController::class, 'showListingDetails'])->middleware('role:PWD')->name('job-details');
     Route::get('/events', [PwdController::class, 'showEvents'])->middleware('role:PWD')->name('events');
+    Route::post('/events/apply', [PwdController::class, 'eventApplication'])->middleware('role:PWD')->name('event-application');
 
 
     //SPONSOR Middleware

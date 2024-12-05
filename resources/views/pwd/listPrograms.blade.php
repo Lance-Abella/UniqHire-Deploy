@@ -77,7 +77,7 @@
                                             </div>
                                             <div class="text-end date-posted">
                                                 @php
-                                                $diff = $ranked['program']->created_at->diffInSeconds(now());
+                                                $diff = intval($ranked['program']->created_at->diffInSeconds(now()));
                                                 @endphp
                                                 <p class="text-end">
                                                     @if ($diff < 60)

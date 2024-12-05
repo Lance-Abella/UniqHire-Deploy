@@ -1900,7 +1900,7 @@ table tbody .bx {
 }
 
 .fc-h-event .fc-event-title-container {
-    background-color: var(--primary-color);
+    /* background-color: var(--primary-color); */
     border: none;
     border-radius: var(--border-radius);
     padding: 0.3rem;

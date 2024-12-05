@@ -103,14 +103,14 @@ class EmployerController extends Controller
         // $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
         $applications = JobApplication::where('job_id', $listing->id)->get();
         $requests = JobApplication::where('job_id', $listing->id)->where('application_status', 'Pending')->get();
-        $employees = Employee::where('job_id', $listing->id)->get();
+        $interviewees = Employee::where('job_id', $listing->id)->where('hiring_status', 'Pending')->get();
         $hiredPWDs = Employee::where('job_id', $listing->id)->where('hiring_status', 'Accepted')->get();
         $totalHired = Employee::where('job_id', $listing->id)->where('hiring_status', 'Accepted')->count();
 
         $pendingsCount = $applications->where('application_status', 'Pending')->count();
-        $intervieweeCount = $applications->where('application_status', 'Approved')->count();
+        $intervieweeCount = Employee::where('job_id', $listing->id)->where('hiring_status', 'Pending')->count();
 
-        return view('employer.showJob', compact('listing', 'applications', 'pendingsCount', 'intervieweeCount', 'totalHired', 'requests', 'employees', 'hiredPWDs'));
+        return view('employer.showJob', compact('listing', 'applications', 'pendingsCount', 'intervieweeCount', 'totalHired', 'requests', 'interviewees', 'hiredPWDs'));
     }
 
     public function accept(Request $request)
@@ -120,25 +120,25 @@ class EmployerController extends Controller
         // Validate the incoming request
         $validatedData = $request->validate([
             'pwd_id' => 'required|exists:users,id',
-            'job_id' => 'required|exists:training_applications,id',
+            'job_id' => 'required|exists:job_listings,id',
             'job_application_id' => 'required|exists:job_applications,id',
         ]);
-
+        Log::info("Nalapas sa validation"); 
         $pwdId = $validatedData['pwd_id'];
         $jobId = $validatedData['job_id'];
         $applicationId = $validatedData['job_application_id'];
         $hiringStatus = 'Pending';
 
         // Find the application by job_id
-        $application = JobApplication::findOrFail($jobId);
-        $application->application_status = 'Pending';
+        $application = JobApplication::findOrFail($applicationId);
+        $application->application_status = 'Approved';
         $application->save();
-
+        Log::info("testing");   
         $pwdUser = $application->user;
         $jobListing = $application->job;
-
-        $pwdUser->notify(new JobApplicationAcceptedNotification($jobListing));
-
+        
+        // $pwdUser->notify(new JobApplicationAcceptedNotification($jobListing));
+         
         // Create Enrollee record
         Employee::create([
             'pwd_id' => $pwdId,
@@ -147,7 +147,6 @@ class EmployerController extends Controller
             'hiring_status' => $hiringStatus,
         ]);
 
-        $application->update(['application_status' => 'Approved']);
         // return response()->json(['success' => true, 'message' => 'Application submitted successfully.']);
         return back()->with('success', 'Application proceeds to interview process.');
     }
@@ -251,14 +250,59 @@ class EmployerController extends Controller
         if ($request->expectsJson()) {
             
             $jobListings = JobListing::where('employer_id', $user)
-                ->get(['employer_id', 'position', 'end_date']);
+                ->get(['id', 'employer_id', 'position', 'end_date']);
             $trainingPrograms = TrainingProgram::where('agency_id', $user)
             ->get(['agency_id', 'title', 'schedule']);
-            
+            $employerEvents = Events::where('employer_id', $user)
+            ->get(['id', 'title', 'schedule', 'start_time']);
+            $job_id = JobListing::where('employer_id', $user)->get();
+            $interviews = Employee::whereIn('job_id', function ($query) use ($user) {
+            $query->select('id') 
+                    ->from('job_listings')
+                    ->where('employer_id', $user);
+            })->where('hiring_status', '!=', 'Accepted')
+            ->get(['id', 'job_id', 'schedule', 'pwd_id']);
+                        
 
             $events = [];
 
-            
+            foreach ($employerEvents as $event) {
+                // $scheduleDates = explode(',', $job->end_date);
+
+                // Convert MM/DD/YYYY to YYYY-MM-DD
+                $dateParts = explode('-', $event->schedule);
+                if (count($dateParts) == 3) {
+                    Log::info("kaabot sa if");
+                    $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
+                    Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
+                    $events[] = [
+                        'id' => $event->id,
+                        'title' => $event->title,
+                        'start' => $formattedDate,
+                        'color' => '#997C70', // FullCalendar expects start for all-day events
+                        'allDay' => true
+                    ];
+                }
+            }
+
+            foreach ($interviews as $interview) {
+                // $scheduleDates = explode(',', $job->end_date);
+
+                // Convert MM/DD/YYYY to YYYY-MM-DD
+                $dateParts = explode('-', $interview->schedule);
+                if (count($dateParts) == 3) {
+                    Log::info("kaabot sa if");
+                    $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
+                    Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
+                    $events[] = [
+                        'id' => $interview->id,
+                        'title' => '[Interview]: ' . $interview->pwd->userInfo->name,
+                        'start' => $formattedDate,
+                        'color' => '#FF5733', // FullCalendar expects start for all-day events
+                        'allDay' => true
+                    ];
+                }
+            }
 
             foreach ($jobListings as $job) {
                 // $scheduleDates = explode(',', $job->end_date);
@@ -272,7 +316,8 @@ class EmployerController extends Controller
                     $events[] = [
                         'id' => $job->employer_id,
                         'title' => $job->position,
-                        'start' => $formattedDate, // FullCalendar expects start for all-day events
+                        'start' => $formattedDate,
+                        'color' => 'rgb(222, 174, 0)', // FullCalendar expects start for all-day events
                         'allDay' => true
                     ];
                 }
@@ -290,7 +335,8 @@ class EmployerController extends Controller
                         $events[] = [
                             'id' => $program->id,
                             'title' => $program->title,
-                            'start' => $formattedDate, // FullCalendar expects start for all-day events
+                            'start' => $formattedDate,
+                            'color' => '#04b000', // FullCalendar expects start for all-day events
                             'allDay' => true
                         ];
                     }
@@ -351,6 +397,25 @@ class EmployerController extends Controller
         $start_time = $validatedData['start_time'];
         $end_time = $validatedData['end_time'];
 
+        $employerId = $employee->job->employer_id;
+
+        // Check for schedule conflicts across all jobs of the employer
+        $conflictingSchedule = Employee::whereHas('job', function ($query) use ($employerId) {
+                $query->where('employer_id', $employerId);
+            })
+            ->where('schedule', $schedule)
+            ->where(function ($query) use ($start_time, $end_time) {
+                $query->whereBetween('start_time', [$start_time, $end_time])
+                    ->orWhereBetween('end_time', [$start_time, $end_time])
+                    ->orWhereRaw('? BETWEEN start_time AND end_time', [$start_time])
+                    ->orWhereRaw('? BETWEEN start_time AND end_time', [$end_time]);
+            })
+            ->exists();
+
+        if ($conflictingSchedule) {
+            return redirect()->back()->with(['error' => 'The schedule conflicts with another interview set by the employer.']);
+        }
+        
         // $pwdUser = $application->user;
         // $jobListing = $application->job;
 

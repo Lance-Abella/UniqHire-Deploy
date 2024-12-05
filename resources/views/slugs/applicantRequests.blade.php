@@ -31,7 +31,7 @@
                                     <form action="{{ route('employer-accept') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="pwd_id" value="{{ $request->user->id }}">
-                                        <input type="hidden" name="job_id" value="{{ $request->id }}">
+                                        <input type="hidden" name="job_id" value="{{ $listing->id }}">
                                         <input type="hidden" name="job_application_id" value="{{ $request->id }}">
                                         <button type="submit" class="submit-btn border-0">Accept</button>
                                     </form>

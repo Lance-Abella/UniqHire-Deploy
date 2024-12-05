@@ -118,7 +118,7 @@
                             <td class="table-head">Status</td>
                         </thead>
                         <tbody>
-                            @forelse ($employees as $employee)
+                            @forelse ($interviewees as $employee)
                                 <tr>
                                     <td class="name">
                                         <a href="{{ route('show-profile', $employee->application->user->id) }}">
@@ -126,9 +126,20 @@
                                         </a>
                                     </td>
                                     <td>
+                                        @if($employee->schedule != null)
                                          {{ \Carbon\Carbon::parse(trim($employee->schedule))->format('F d, Y') }}
+                                         @else
+                                         - -
+                                         @endif
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse(trim($employee->start_time))->format('h:i A') }} - {{ \Carbon\Carbon::parse(trim($employee->end_time))->format('h:i A') }}</td>
+                                    <td>
+                                        @if($employee->start_time != null && $employee->end_time != null )
+                                         {{ \Carbon\Carbon::parse(trim($employee->start_time))->format('h:i A') }} - {{ \Carbon\Carbon::parse(trim($employee->end_time))->format('h:i A') }}
+                                         @else
+                                         - -
+                                         @endif
+                                        
+                                    </td>
                                     <td>
                                         <form action="{{route('set-schedule', $employee->id)}}" method="GET">
                                             @csrf
@@ -164,7 +175,7 @@
                             @forelse ($hiredPWDs as $hired)
                                 <tr>                                    
                                     <td class="name">
-                                        <a href="{{ route('show-profile', $employee->application->user->id) }}">
+                                        <a href="{{ route('show-profile', $hired->application->user->id) }}">
                                             {{ $hired->application->user->userInfo->name }}
                                         </a>
                                     </td>                                    
