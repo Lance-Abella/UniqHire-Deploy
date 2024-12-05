@@ -243,7 +243,6 @@
         $(document).ready(function() {
             function fetchNotifications() {
                 $.get("{{ route('notifications.getNotifications') }}", function(data) {
-                    console.log(data);
                     var notifDropdown = $('#notificationDropdown').next('.dropdown-menu');
                     var badge = $('#notification-badge');
                     notifDropdown.empty(); // Clear existing notifications
@@ -259,7 +258,7 @@
                         data.forEach(function(notification) {
                             var notificationContent = '';
                             var url = notification.data.url || '#';
-                            var notificationId = notification.id;
+                            var id = notification.id;
 
                             if (notification.type === 'App\\Notifications\\NewTrainingProgramNotification') {
                                 notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
@@ -350,6 +349,16 @@
                                     notification.data.program_title +
                                     '</div>' +
                                     '</a></li>';
+                            } else if (notification.type === 'App\\Notifications\\JobHiredNotification') {
+                                notificationContent = '<li><a class="dropdown-item" href="' + notification.data.url + '">' +
+                                    'You have been hired by ' +
+                                    '<span class="notif-owner text-cap">' +
+                                    notification.data.title +
+                                    '</span>' +
+                                    '<div class="notif-content sub-text">' +
+                                    'Congratulations!' +
+                                    '</div>' +
+                                    '</a></li>';
                             }
                             notifDropdown.append(notificationContent);
                         });
@@ -362,84 +371,67 @@
                 });
             }
 
-            //BADGE NOTIFICATION
-            function updateNotificationBadge() {
-                $.get("{{ route('notifications.getNotifications') }}", function(data) {
-                    const unreadCount = data.filter(notification => !notification.read).length;
-
-                    const badge = document.getElementById('notification-badge');
-                    if (unreadCount > 0) {
-                        badge.textContent = unreadCount;
-                        badge.classList.remove('d-none');
-                    } else {
-                        badge.classList.add('d-none');
-                    }
-                }).fail(function() {
-                    console.error('Failed to fetch notifications');
-                });
-            }
-
-            function markNotificationAsRead(notificationId) {
-                fetch('/notifications/mark-as-read', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        },
-                        body: JSON.stringify({
-                            notification_id: notificationId
-                        }),
+            function markNotificationAsRead(id) {
+                $.post('/notifications/mark-as-read', {
+                        _token: '{{ csrf_token() }}',
+                        id: id,
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            const badge = document.getElementById('notification-badge');
+                    .done(function(response) {
+                        if (response.status === 'success') {
+                            // Update badge count and dropdown
+                            const unreadCount = response.unread_count;
+                            const badge = $('#notification-badge');
 
-                            // Immediately update the badge count
-                            if (data.unread_count > 0) {
-                                badge.textContent = data.unread_count;
-                                badge.classList.remove('d-none');
+                            if (unreadCount > 0) {
+                                badge.text(unreadCount).removeClass('d-none');
                             } else {
-                                badge.classList.add('d-none');
+                                badge.addClass('d-none');
                             }
 
-                            // Optionally remove the read notification from the dropdown
-                            $(`[data-notification-id="${notificationId}"]`).parent().remove();
+                            // Remove the notification from the dropdown
+                            $(`[data-notification-id="${id}"]`).parent().remove();
 
-                            // If no more notifications, show "No notifications" message
-                            const notifDropdown = $('#notificationDropdown').next('.dropdown-menu');
-                            if (notifDropdown.children().length === 0) {
-                                notifDropdown.append('<li><span class="dropdown-item">No notifications</span></li>');
+                            // If no notifications remain, show "No notifications"
+                            if ($('#notificationDropdown').next('.dropdown-menu').children().length === 0) {
+                                $('#notificationDropdown').next('.dropdown-menu').append('<li><span class="dropdown-item">No notifications</span></li>');
                             }
                         } else {
-                            console.error('Error marking notification as read:', data.message);
+                            console.error('Error marking notification as read:', response.message);
                         }
                     })
-                    .catch(error => console.error('Error:', error));
+                    .fail(function(error) {
+                        console.error('Error:', error);
+                    });
             }
 
             $(document).on('click', '.notification', function() {
-                var notificationId = $(this).data('id'); // Get the notification ID
+                e.preventDefault();
 
-                if (notificationId) {
+                var id = $(this).data('notification-id'); // Get the notification ID
+
+                if (id) {
                     $.ajax({
                         url: '/notifications/mark-as-read',
                         type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        },
                         data: {
-                            id: notificationId, // Send the 'id' of the notification
-                            _token: '{{ csrf_token() }}', // CSRF token for security
+                            id: id,
                         },
                         success: function(response) {
                             if (response.status === 'success') {
                                 // Update the UI or badge count accordingly
-                                $(this).find('.notification-badge').remove(); // Example: Remove badge
-                                $(this).addClass('read'); // Optional: Add a class to indicate read status
+                                $(this).closest('li').remove(); // Example: Remove badge
+                                updateNotificationBadge(response.unread_count); // Optional: Add a class to indicate read status
                             }
                         },
                         error: function(error) {
-                            console.error(error); // Handle any error
+                            console.error('Error marking notification as read:', error); // Handle any error
                         }
                     });
+                } else {
+                    console.error('Notification ID is missing.');
                 }
             });
 
@@ -453,9 +445,9 @@
             });
 
             $('#notificationDropdown').next('.dropdown-menu').on('click', 'a', function(e) {
-                const notificationId = $(this).data('notification-id');
+                const id = $(this).data('notification-id');
                 e.preventDefault(); // Prevent immediate page reload
-                markNotificationAsRead(notificationId);
+                markNotificationAsRead(id);
                 setTimeout(() => {
                     window.location.href = $(this).attr('href'); // Navigate after marking
                 }, 500); // Delay by 500ms or suitable time

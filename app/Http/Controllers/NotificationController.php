@@ -23,6 +23,7 @@ class NotificationController extends Controller
                     'App\\Notifications\\TrainingCompletedNotification',
                     'App\\Notifications\\NewJobListingNotification',
                     'App\\Notifications\\JobApplicationAcceptedNotification',
+                    'App\\Notifications\\JobHiredNotification',
                 ]);
             });
         } else if ($user->hasRole('Training Agency')) {
@@ -56,7 +57,7 @@ class NotificationController extends Controller
 
         if ($notification) {
             // Mark the notification as read
-            $notification->update(['read' => 1]);
+            $notification->markAsRead();
 
             // Get the updated unread notifications count
             $unreadCount = auth()->user()->unreadNotifications->count();
