@@ -72,4 +72,9 @@ class UserInfo extends Model
     {
         return $this->hasMany(Events::class, 'employer_id');
     }
+
+    public function registerEvents()
+    {
+        return $this->belongsToMany(Event::class, 'participants');
+    }
 }
