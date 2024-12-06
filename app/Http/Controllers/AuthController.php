@@ -311,27 +311,34 @@ class AuthController extends Controller
             'long' => 'required|numeric|between:-180,180',
             'loc' => 'nullable|string|max:255',
             // 'pwd_id' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'pwd_id' => 'required|string|max:19|min:19',
+            'pwd_id' => 'nullable|string|max:19|min:19',
             'age' => 'nullable|integer|min:1|max:99',
             'founder' => 'nullable|string|max:255',
             'year_established' => 'nullable|integer|min:1000|max:3000',
             'email' => 'required|email',
             // 'skills' => 'required|array|min:1',
             // 'skills.*' => 'exists:skills,id',
-            // 'role' => 'required|string|exists:roles,id',
+            'role' => 'required|exists:roles,id',
         ]);
         Log::info("Nalapas sa validation!");
 
-        $pwdIdExists = Valid::where('valid_id_number', $request->pwd_id)->exists();
-        $pwdIdUsed = UserInfo::where('pwd_card', $request->pwd_id)->exists();
-        if (!$pwdIdExists) {
-            // Return an error response if the PWD ID is not valid
-            return back()->with('error', 'The provided PWD ID is not valid.');
+       if ($request->role == 2) {
+            $pwdIdExists = Valid::where('valid_id_number', $request->pwd_id)->exists();
+            $pwdIdUsed = UserInfo::where('pwd_card', $request->pwd_id)->exists();
+
+            if(empty($request->pwd_id)){
+                return back()->with('error', 'PWD ID Number is empty.');
+            }
+
+            if (!$pwdIdExists) {
+                return back()->with('error', 'The provided PWD ID Number is not valid.');
+            }
+
+            if ($pwdIdUsed) {
+                return back()->with('error', 'The provided PWD ID Number is already registered.');
+            }
         }
-        if ($pwdIdUsed) {
-            // Return an error response if the PWD ID is already registered
-            return back()->with('error', 'The provided PWD ID is already registered.');
-        }
+
 
         $user = User::create([
             // 'email' => $email,
