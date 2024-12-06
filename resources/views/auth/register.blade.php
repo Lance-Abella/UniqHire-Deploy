@@ -24,13 +24,15 @@
                         <label for="registerAs">Register As:</label>
                     </div>
                     <div class="col">
-                        <select class="form-select" name="role[]" id="role" aria-label="Small select example" onchange="togglePWDSection()">
+                        <select class="form-select" name="role" id="role" aria-label="Small select example" onchange="togglePWDSection()">
                             @foreach ($roles as $role)
                             @if ($role->role_name !== 'Admin')
                             <option value="{{ $role->id }}">{{ $role->role_name }}</option>
+                            
                             @endif
+                            
                             @endforeach
-                        </select>
+                        </select>                        
                     </div>
                 </div>
             </div>
@@ -51,7 +53,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email Address">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" value="{{ old('email') }}">
                             <label for="email">Email Address</label>
                             @error('email')
                             <span class="error-msg">{{ $message }}</span>
@@ -75,7 +77,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="floatingPassword" name="password" required placeholder="Password">
+                            <input type="password" class="form-control" id="floatingPassword" name="password" required placeholder="Password" >
                             <label for="floatingPassword">Password</label>
                             @error('password')
                             <span class="error-msg">{{ $message }}</span>
@@ -103,7 +105,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="number" class="form-control" id="age" name="age" placeholder="Age">
+                                <input type="number" class="form-control" id="age" name="age" placeholder="Age" value="{{ old('age') }}">
                                 <label for="age">Age</label>
                                 @error('age')
                                 <span class="error-msg">{{ $message }}</span>
@@ -148,7 +150,7 @@
                     <div class="row">
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" required placeholder="PWD ID Number">
+                            <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
                             <label for="name">PWD ID Number</label>
                             @error('pwd_id')
                             <span class="error-msg">{{ $message }}</span>
@@ -215,6 +217,7 @@
     function togglePWDSection() {
         var roleSelect = document.getElementById('role');
         var pwdSection = document.getElementById('pwd-section');
+        var pwdIdInput = document.getElementById('pwd_id');
         var disabilitySelect = document.getElementById('disabilities');
         var agencySection = document.getElementById('agency-section');
         var educationSelect = document.getElementById('education-level');
@@ -222,11 +225,12 @@
         if (roleSelect.value === '2') {
             pwdSection.style.display = 'block';
             agencySection.style.display = 'none';
-
+            pwdIdInput.setAttribute('required', 'required');
             removeOption(disabilitySelect, '1');
             removeOption(educationSelect, '1');
         } else {
             pwdSection.style.display = 'none';
+            pwdIdInput.removeAttribute('required');
             addNotApplicableOption(disabilitySelect);
             addNotApplicableOption(educationSelect);
             disabilitySelect.value = '1';
