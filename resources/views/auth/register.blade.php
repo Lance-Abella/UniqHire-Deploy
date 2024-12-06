@@ -136,15 +136,26 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row mb-4">
+                    <!-- <div class="row mb-4">
                         <div class="col">
                             PWD Card
                             <div class="input-group mb-3">
-                                <input type="file" name="pwd-card" class="form-control" id="choose-file" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                                <input type="file" name="pwd_card" class="form-control" id="choose-file" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
                                 <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04" onclick="clearFileInput('choose-file')">Remove</button>
                             </div>
                         </div>
+                    </div> -->
+                    <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" required placeholder="PWD ID Number">
+                            <label for="name">PWD ID Number</label>
+                            @error('pwd_id')
+                            <span class="error-msg">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
+                </div>
                 </div>
                 <div id="agency-section" style="display:none;">
                     <div class="row">
