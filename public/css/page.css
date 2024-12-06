@@ -477,16 +477,7 @@ span.badge {
     border: 1.5px solid white;
 }
 
-.layout-container .dropdown-menu.show {
-    position: absolute;
-    top: 4rem;
-    right: 2rem;
-    width: 30rem;
-    min-height: fit-content;
-    max-height: 20rem;
-    overflow-y: auto; /* Changed from scroll to auto for better UX */
-    padding: 0;  /* Remove default padding */
-}
+
 
 .layout-container .dropdown-menu.show li a {
     height: fit-content;
