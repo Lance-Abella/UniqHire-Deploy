@@ -25,7 +25,7 @@
     <input type="hidden" id="long" name="long" value="{{ $program->longitude }}">
     <input type="hidden" id="loc" name="loc" required>
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-    <label for="map">Select Your Location:</label>
+    <!-- <label for="map">Select Your Location:</label> -->
     <div id="map" class="map"></div>
     <p id="coordinates"></p>
     <div class="row">
@@ -46,7 +46,7 @@
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" id="startAge" name="start_age" value="{{$program->start_age}}" required placeholder="Input Age">
                         <label for="floatingInput">Age Range (from)</label>
-                        @error('age')
+                        @error('start_age')
                         <span class="error-msg">{{ $message }}</span>
                         @enderror
                     </div>
@@ -55,7 +55,7 @@
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" id="endAge" name="end_age" value="{{$program->end_age}}" required placeholder="Input Age">
                         <label for="floatingInput">Age Range (to)</label>
-                        @error('age')
+                        @error('end_age')
                         <span class="error-msg">{{ $message }}</span>
                         @enderror
                     </div>

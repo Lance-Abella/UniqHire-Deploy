@@ -7,8 +7,8 @@
     <div class="back-btn">
         @if (Route::currentRouteName() == 'job-details')
         <a href="{{ route('pwd-list-job') }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
-        @elseif(Route::currentRouteName() == 'show-details' )
-        <a href="{{ route('trainings') }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
+        @elseif(Route::currentRouteName() == 'show-job-details' )
+        <a href="{{ route('jobs') }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
         @endif
     </div>
     <div class="prog-details">
@@ -47,9 +47,9 @@
                     </button>
                     @else
                     <div class="d-flex flex-column align-items-end apply-btn-container">
-                        <button type="submit" class="submit-btn border-0" onclick="confirmApplication(event, 'apply-form-{{ $listing->id }}')">
-                                Apply
-                        </button>                       
+                        <button type="submit" class="submit-btn border-0" title="Apply for the position" onclick="confirmApplication(event, 'apply-form-{{ $listing->id }}')">
+                            Apply
+                        </button>
                     </div>
                     @endif
                 </form>
@@ -63,10 +63,10 @@
         <ul class="nav nav-underline" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" data-bs-toggle="tab" href="#requirements" role="tab">Requirements</a>
-            </li>       
+            </li>
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#employees" role="tab">Hired PWDs</a>
-            </li>       
+                <a class="nav-link" data-bs-toggle="tab" href="#employees" role="tab">Employees</a>
+            </li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="requirements" role="tabpanel">
@@ -83,22 +83,20 @@
                             @endforeach
                             </p>
                         </div>
-                         <div class="more-info">
-                                <h5>Salary</h5>
-                                <p>{{ $listing->salary . ' Pesos' }}</p>
-                            </div> 
+                        <div class="more-info">
+                            <h5>Salary</h5>
+                            <p>{{ number_format($listing->salary, 0, '.', ',') . ' PHP' }}</p>
+                        </div>
+                        <div class="more-info">
+                            <h5>Work Type</h5>
+                            <p class="match-info">{{ $listing->type->name }}</p>
+                        </div>
                     </div>
                     <div class="d-flex justify-content-start more-info mb-5">
                         <div class="more-info">
-                            <h5>Work Type</h5>
-                            <p>{{ $listing->type->name }}</p>
-                        </div> 
-                        <div class="more-info">
                             <h5>Work Setup</h5>
-                            <p>{{ $listing->setup->name }}</p>
-                        </div> 
-                    </div>
-                    <div class="d-flex justify-content-start mb-5">                       
+                            <p class="match-info">{{ $listing->setup->name }}</p>
+                        </div>
                         <div class="more-info">
                             <h5>Skills Required</h5>
                             <ul>
@@ -115,28 +113,25 @@
                                 @endforeach
                             </ul>
                         </div>
-                    </div> 
-                </div>                
-            </div> 
+                    </div>
+                </div>
+            </div>
             <div class="tab-pane enrollees" id="employees" role="tabpanel">
-                    <table class="table table-striped table-hover">
-                         <tbody>
-                            @forelse ($hiredPWDs as $hired)
-                                <tr>                                    
-                                    <td class="name">
-                                        <a href="{{ route('show-profile', $hired->application->user->id) }}">
-                                            {{ $hired->application->user->userInfo->name }}
-                                        </a>
-                                    </td>                                    
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center">No hired PWDs yet.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>                   
+                <h5>Employees</h5>
+                @forelse ($hiredPWDs as $employee)
+                <div class="user-card d-flex justify-content-between align-items-center py-3 px-3">
+                    <div class="name">
+                        <a href="{{ route('show-profile', $employee->application->user->id) }}">
+                            {{ $employee->application->user->userInfo->name }}
+                        </a>
+                    </div>
+                </div>
+                @empty
+                <div class="user-card text-center py-3 px-3">
+                    No enrollees yet.
+                </div>
+                @endforelse
+            </div>
         </div>
     </div>
 

@@ -197,9 +197,9 @@ class PwdController extends Controller
                     Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
                     $events[] = [
                         'id' => $event->id,
-                        'title' => $event->title,
+                        'title' => '[Event] ' . $event->title,
                         'start' => $formattedDate,
-                        'color' => '#997C70', 
+                        'color' => '#FB773C', // FullCalendar expects start for all-day events
                         'allDay' => true
                     ];
                 }
@@ -216,9 +216,9 @@ class PwdController extends Controller
                     Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
                     $events[] = [
                         'id' => $interview->id,
-                        'title' => '[Interview]: ' . $interview->job->employer->userInfo->name,
+                        'title' => '[Interview]: ' . $interview->pwd->userInfo->name,
                         'start' => $formattedDate,
-                        'color' => '#FF5733', // FullCalendar expects start for all-day events
+                        'color' => '#9B3922', // FullCalendar expects start for all-day events
                         'allDay' => true
                     ];
                 }
@@ -235,9 +235,9 @@ class PwdController extends Controller
                         $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
                         $events[] = [
                             'id' => $program->id,
-                            'title' => $program->title,
+                            'title' => '[Training] ' . $program->title,
                             'start' => $formattedDate,
-                            'color' => '#04b000', // FullCalendar expects `start` for all-day events
+                            'color' => '#347928', // FullCalendar expects `start` for all-day events
                             'allDay' => true
                         ];
                     }
@@ -269,6 +269,28 @@ class PwdController extends Controller
         }
 
         return view('pwd.trainings', compact('applications', 'trainings', 'trainingsCount', 'ongoingCount', 'completedCount', 'approvedCount', 'pendingsCount'));
+    }
+
+    public function showJobs(Request $request)
+    {
+        $id = Auth::user()->id;
+        $applications = JobApplication::where('user_id', $id)->where('application_status', 'Pending')->get();
+        $interviews = Employee::where('pwd_id', $id)->get();
+
+        $interviewCount = $interviews->where('hiring_status', 'Pending')->count();
+        $pendingsCount = $applications->where('application_status', 'Pending')->count();
+
+        // $trainingsCount = $jobs->count();
+        // $ongoingCount = $jobs->where('completion_status', 'Ongoing')->count();
+        // $completedCount = $trainings->where('completion_status', 'Completed')->count();
+        // $approvedCount = $applications->where('application_status', 'Approved')->count();
+        // $pendingsCount = $applications->where('application_status', 'Pending')->count();
+
+        if ($request->has('status') && $request->status != 'all') {
+            $interviews = $interviews->where('hiring_status', ucfirst($request->status));
+        }
+
+        return view('pwd.jobs', compact('applications', 'interviews', 'interviewCount', 'pendingsCount'));
     }
 
     public function rateProgram(Request $request)
@@ -370,39 +392,39 @@ class PwdController extends Controller
         ]);
 
         return redirect()->route('events')->with('success', 'You successfully registered to this event.');
-
-                
     }
 
 
     // HIRING SIDE
 
-    
 
 
-    
 
-   public function showEvents()
-{
-    $user = auth()->user()->userInfo;
 
-    // Check if the user is certified
-    $isCertified = DB::table("certification_details")
-        ->where('user_id', $user->user_id)
-        ->exists();
 
-    if (!$isCertified) {
-        return view('pwd.events', ['events' => [], 'message' => 'You need to complete a training program to view jobs.']);
+    public function showEvents()
+    {
+        $user = auth()->user()->userInfo;
+
+        // Check if the user is certified
+        $isCertified = DB::table("certification_details")
+            ->where('user_id', $user->user_id)
+            ->exists();
+
+        // Retrieve events where the user is not a participant
+        $events = Events::whereNotIn('id', function ($query) use ($user) {
+            $query->select('event_id')
+                ->from('participants')
+                ->where('user_id', $user->user_id);
+        })->latest()->paginate(10);
+
+        // $events = Events::with('users')->latest()->paginate(10);
+        // // dd($events);
+        $participantCounts = [];
+        foreach ($events as $event) {
+            $participantCounts[$event->id] = $event->users()->count();
+        }
+
+        return view('pwd.events', compact('events', 'participantCounts', 'isCertified'));
     }
-
-    // Retrieve events where the user is not a participant
-    $events = Events::whereNotIn('id', function ($query) use ($user) {
-        $query->select('event_id')
-              ->from('participants')
-              ->where('user_id', $user->user_id);
-    })->get();
-
-    return view('pwd.events', compact('events'));
-}
-
 }

@@ -38,16 +38,16 @@
                     @endphp
 
                     @if ($applicationStatus == 'Pending')
-                    <button type="submit" class="submit-btn pending border-0" disabled>
+                    <button type="submit" class="submit-btn pending border-0" disabled title="Your application is still in pending">
                         Pending
                     </button>
                     @elseif($applicationStatus == 'Approved')
-                    <button type="submit" class="submit-btn approved border-0" disabled>
+                    <button type="submit" class="submit-btn approved border-0" disabled title="You are officially enrolled to this program">
                         <i class='bx bx-check'></i>
                     </button>
                     @else
                     <div class="d-flex flex-column align-items-end apply-btn-container">
-                        <button type="submit" class="submit-btn border-0 {{ ((!$isCompletedProgram && !in_array($program->id, $nonConflictingPrograms)) || $slots <= 0) ? 'disabled' : '' }}" onclick="confirmApplication(event, 'apply-form-{{ $program->id }}')" @if((!$isCompletedProgram && !in_array($program->id, $nonConflictingPrograms)) || $slots <= 0) disabled @endif>
+                        <button type="submit" class="submit-btn border-0 {{ ((!$isCompletedProgram && !in_array($program->id, $nonConflictingPrograms)) || $slots <= 0) ? 'disabled' : '' }}" onclick="confirmApplication(event, 'apply-form-{{ $program->id }}')" @if((!$isCompletedProgram && !in_array($program->id, $nonConflictingPrograms)) || $slots <= 0) disabled @endif title="Apply for enrollment">
                                 Apply
                         </button>
                         @if (!in_array($program->id, $nonConflictingPrograms))
@@ -164,23 +164,23 @@
             </div>
 
             <div class="tab-pane enrollees" id="enrollees" role="tabpanel">
-                <table class="table table-striped table-hover">
-                    <tbody>
-                        @forelse ($enrollees as $enrollee)
-                        <tr>
-                            <td class="name">
-                                <a href="{{ route('show-profile', $enrollee->application->user->id) }}">
-                                    {{ $enrollee->application->user->userInfo->name }}
-                                </a>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="text-center">No enrollees yet.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                <h5>Enrollees</h5>
+                @forelse ($enrollees as $enrollee)
+                <div class="user-card d-flex justify-content-between align-items-center py-3 px-3">
+                    <div class="name">
+                        <a href="{{ route('show-profile', $enrollee->application->user->id) }}">
+                            {{ $enrollee->application->user->userInfo->name }}
+                        </a>
+                    </div>
+                    <div class="status">
+                        {{$enrollee->completion_status}}
+                    </div>
+                </div>
+                @empty
+                <div class="user-card text-center py-3 px-3">
+                    No enrollees yet.
+                </div>
+                @endforelse
             </div>
             @if ($program->crowdfund)
             <div class="tab-pane" id="sponsors" role="tabpanel">

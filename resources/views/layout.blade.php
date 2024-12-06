@@ -69,6 +69,12 @@
                                     </a>
                                 </li>
                                 <li class="side-item">
+                                    <a href="{{route('jobs')}}" class="side-item-link trainings-drop {{ request()->routeIs('jobs', 'show-job-details') ? 'active' : '' }}">
+                                        <i class='bx bx-briefcase-alt-2 side-icon'></i>
+                                        <span class="side-title">Jobs</span>
+                                    </a>
+                                </li>
+                                <li class="side-item">
                                     <a href="{{ route('pwd-calendar') }}" class="side-item-link {{ request()->routeIs('pwd-calendar') ? 'active' : '' }}">
                                         <i class='bx bx-calendar side-icon'></i>
                                         <span class="side-title">Calendar</span>
@@ -129,7 +135,7 @@
 
                                 @if (Auth::user()->hasRole('Employer'))
                                 <li class="side-item">
-                                    <a href="{{route('manage-jobs')}}" class="side-item-link {{ request()->routeIs('manage-jobs') ? 'active' : '' }}">
+                                    <a href="{{route('manage-jobs')}}" class="side-item-link {{ request()->routeIs('manage-jobs', 'jobs-show', 'set-schedule') ? 'active' : '' }}">
                                         <i class='bx bx-briefcase side-icon'></i>
                                         <span class="side-title">Job Listings</span>
                                     </a>
@@ -176,11 +182,11 @@
                                     <li class="nav-item "><a href="{{route('home')}}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
                                     @if (Auth::user()->hasRole('PWD'))
                                     <li class="nav-item "><a href="{{route('pwd-list-program')}}" class="{{ request()->routeIs('pwd-list-program', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
-                                    <li class="nav-item "><a href="{{route('pwd-list-job')}}" class="{{ request()->routeIs('pwd-list-job') ? 'active' : '' }}">Find Work</a></li>
+                                    <li class="nav-item "><a href="{{route('pwd-list-job')}}" class="{{ request()->routeIs('pwd-list-job', 'job-details') ? 'active' : '' }}">Find Work</a></li>
                                     <li class="nav-item "><a href="{{route('events')}}" class="{{ request()->routeIs('events') ? 'active' : '' }}">Events</a></li>
                                     @endif
                                     @if (Auth::user()->hasRole('Employer'))
-                                    <li class="nav-item "><a href="{{route('post-events')}}" class="{{ request()->routeIs('post-events') ? 'active' : '' }}">Events</a></li>
+                                    <li class="nav-item "><a href="{{route('post-events')}}" class="{{ request()->routeIs('show-post-events') ? 'active' : '' }}">Events</a></li>
                                     @endif
                                     @if (Auth::user()->hasRole('Sponsor'))
                                     <li class="nav-item "><a href="{{route('list-of-tp')}}" class="{{ request()->routeIs('list-of-tp', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
@@ -196,7 +202,7 @@
                                     <li class="nav-item user-notif dropdown unread">
 
                                         <a href="#" class="dropdown-toggle dropdown-item" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class='bx bxs-inbox'></i>
+                                            <i class='bx bxs-inbox' title="Notifications"></i>
                                             <span id="notification-badge" class="badge bg-danger d-none">0</span> <!-- Badge element -->
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
@@ -268,9 +274,9 @@
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.agency_name +
                                     '</span>' +
-                                    ' has posted a new training!' +
+                                    ' has posted a new training' +
                                     '<div class="notif-content sub-text">' +
-                                    'Entitled ' +
+                                    'entitled ' +
                                     '<span class="sub-text text-cap">' +
                                     notification.data.title +
                                     '</span>' +
@@ -279,23 +285,23 @@
                                     '</a></li>'
                             } else if (notification.type === 'App\\Notifications\\PwdApplicationNotification') {
                                 notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
-                                    'A PWD user has applied for your training program: ' +
+                                    'New Application for ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.title +
                                     '</span>' +
                                     '<div class="notif-content sub-text">' +
-                                    'Click to view application.' +
+                                    'Click here to review application.' +
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\ApplicationAcceptedNotification') {
                                 notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
-                                    'Your application in ' +
+                                    'Your application for ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.program_title +
                                     '</span>' +
                                     '<div class="notif-content sub-text">' +
                                     ' has been accepted by ' +
-                                    '<span class="notif-owner text-cap">' +
+                                    '<span class="sub-text text-cap">' +
                                     notification.data.agency_name +
                                     '</span>' +
                                     '. Click to view details.' +
@@ -303,53 +309,52 @@
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\TrainingCompletedNotification') {
                                 notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
-                                    'Congratulations for completing: ' +
+                                    "You've completed a training, " +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.program_title +
-                                    '</span>' +
+                                    '</span>' + ' completed ' +
                                     '<div class="notif-content sub-text">' +
-                                    ' You have been given a certificate, see profile. ' +
+                                    'Your certificate is now available in your profile.' +
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\NewJobListingNotification') {
                                 notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
-                                    'New Job Listing: ' +
                                     '<span class="notif-owner text-cap">' +
-                                    notification.data.position +
+                                    notification.data.employer +
                                     '</span>' +
+                                    ' is now hiring ' +
                                     '<div class="notif-content sub-text">' +
-                                    ' Click to view details. ' +
+                                    "They're looking for a " +
+                                    '<span class="sub-text text-cap">' + notification.data.position + '</span>' +
+                                    '. Click to view details. ' +
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\JobApplicationAcceptedNotification') {
                                 notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
-                                    'Accepted by Employer: ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.employer +
-                                    '</span>' +
-                                    '<div class="notif-content sub-text">' +
-                                    ' You have ' +
+                                    '</span>' + ' has accepted your application for ' + '<span class="notif-owner text-cap">' + notification.data.position + '</span>' + '<div class="notif-content sub-text">' +
+                                    "Your interview will be scheduled soon." +
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\PwdJobApplicationNotification') {
                                 notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
-                                    'New applicant for: ' +
+                                    'New applicant has applied for the position of ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.position +
                                     '</span>' +
                                     '<div class="notif-content sub-text">' +
-                                    ' Review it now. ' +
+                                    ' Click here to review the application. ' +
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\SponsorDonationNotification') {
                                 notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
-                                    'A sponsor has contributed: ' +
+                                    'New donation for  ' +
                                     '<span class="notif-owner text-cap">' +
-                                    notification.data.amount +
-                                    '</span>' +
-                                    '<div class="notif-content sub-text">' +
-                                    ' to your program: ' +
                                     notification.data.program_title +
+                                    '</span>' +
+                                    '<div class="notif-content sub-text">' + '<span class="sub-text text-cap">' + notification.data.donor + '</span>' +
+                                    +' has donated ' + '<span class="sub-text text-cap">' + notification.data.amount + '</span>' +
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\JobHiredNotification') {
@@ -357,32 +362,31 @@
                                     'You have been hired by ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.title +
-                                    '</span>' +
+                                    '</span>' + ' for ' + notification.data.position +
                                     '<div class="notif-content sub-text">' +
-                                    'Congratulations!' +
+                                    'Best of luck in your new role!' +
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\SetScheduleNotification') {
                                 notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
-                                    'You have an interview with: ' +
+                                    'Interview schedule with ' +
                                     '<span class="notif-owner text-cap">' +
                                     notification.data.title +
-                                    '</span>' +
+                                    '</span>' + 'is set' +
                                     '<div class="notif-content sub-text">' +
-                                    'on ' +
-                                    notification.data.date +
-                                    ' ' +
-                                    notification.data.time +
+                                    'on ' + '<span class="sub-text text-cap">' + notification.data.date + '</span>' +
+                                    ' starts at ' + '<span class="sub-text text-cap">' + notification.data.time + '</span>' +
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\SetEventsNotification') {
                                 notificationContent = '<li><a class="dropdown-item ' + readClass + '" href="' + notification.data.url + '">' +
-                                    'There is an event: ' +
+                                    'New event has been posted by ' +
                                     '<span class="notif-owner text-cap">' +
-                                    notification.data.title +
+                                    notification.data.owner +
                                     '</span>' +
                                     '<div class="notif-content sub-text">' +
-                                    'Check it out!' +
+                                    'entitled ' + '<span class="sub-text text-cap">' + notification.data.title + '</span>' +
+                                    '. Click to view details' +
                                     '</div>' +
                                     '</a></li>';
                             }
@@ -394,7 +398,7 @@
                         });
                     } else {
                         badge.addClass('d-none');
-                        notifDropdown.append('<li><span class="dropdown-item">No notifications</span></li>');
+                        notifDropdown.append('<li><span class="dropdown-item no-notif">No notifications</span></li>');
                     }
                 }).fail(function() {
                     console.error('Failed to fetch notifications');

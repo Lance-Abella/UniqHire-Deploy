@@ -25,7 +25,7 @@
     <input type="hidden" id="long" name="long" value="{{ $listing->longitude }}">
     <input type="hidden" id="loc" name="loc" required>
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-    <label for="map">Select Your Location:</label>
+    <!-- <label for="map">Select Your Location:</label> -->
     <div id="map" class="map"></div>
     <p id="coordinates"></p>
     <div class="row">
@@ -42,8 +42,8 @@
     <div class="row">
         <div class="col">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="floatingInput" name="salary" value="{{ $listing->salary }}" required placeholder="Salary" oninput="formatNumber(this)">
-                <label for="floatingInput">Salary</label>
+                <input type="text" class="form-control" id="salary" name="salary" value="{{ $listing->salary }}" required placeholder="Salary" oninput="formatNumber(this)">
+                <label for="salary">Salary</label>
                 @error('salary')
                 <span class="error-msg">{{ $message }}</span>
                 @enderror
@@ -53,6 +53,9 @@
             <div class="form-floating mb-3">
                 <input type="date" class="form-control date" name="end_date" value="{{ $listing->end_date }}" required placeholder="Choose Date">
                 <label for="floatingInput">End Date (Hiring until)</label>
+                @error('end_date')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
             </div>
         </div>
     </div>
@@ -63,9 +66,11 @@
                     @foreach ($setups as $setup)
                     <option value="{{ $setup->id }}" @if($setup->id == $listing->worksetup_id) selected @endif>{{ $setup->name }}</option>
                     @endforeach
-
                 </select>
                 <label for="floatingSelect">Work Setup</label>
+                @error('setup')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
             </div>
         </div>
         <div class="col">
@@ -74,13 +79,15 @@
                     @foreach ($types as $type)
                     <option value="{{ $type->id }}" @if( $type->id == $listing->worktype_id) selected @endif>{{ $type->name }}</option>
                     @endforeach
-
                 </select>
+                @error('type')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
                 <label for="floatingSelect">Work Type</label>
             </div>
         </div>
     </div>
-    <div class="row mb-1">
+    <div class="row border-bottom mb-1">
         <div class="col">
             <h5>Select Disabilities</h5>
             <div class="req-container">
@@ -97,6 +104,9 @@
                 </div>
                 @endif
                 @endforeach
+                @error('disabilities[]')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
             </div>
         </div>
         <div class="col">
@@ -113,17 +123,14 @@
                     </label>
                 </div>
                 @endforeach
-            </div>
-        </div>
-    </div>    
-    <div class="row border-bottom">
-        <div class="col">
-            <div class="form-floating mb-3">
+                @error('skills')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
             </div>
         </div>
     </div>
     <div class="d-flex justify-content-evenly mt-3 prog-btn">
-        <a href="{{route('programs-show', $listing->id)}}" class="deny-btn border-0">Cancel</a>
+        <a href="{{route('jobs-show', $listing->id)}}" class="deny-btn border-0">Cancel</a>
         <button type="submit" class="submit-btn border-0">Update</button>
     </div>
 </form>
@@ -142,108 +149,11 @@
         }
     }
 
-    function toggleCrowdfund() {
-        var hostCrowdfund = document.getElementById('host-crowdfund');
-        var crowdfundSection = document.getElementById('crowdfund-section');
-
-        if (hostCrowdfund.checked) {
-            // crowdfundSection.style.display = 'block';
-            document.getElementById('amount-needed').disabled = false;
-            document.getElementById('amount-needed').required = true;
-        } else {
-            // crowdfundSection.style.display = 'none';
-            document.getElementById('amount-needed').disabled = true;
-            document.getElementById('amount-needed').required = false;
-        }
-    }
-
-    function sortAndFormatDates(dateInput) {
-        let dates = dateInput.val().split(',');
-
-        // Parse and sort the dates
-        dates = dates.map(date => new Date(date.trim()));
-        dates.sort((a, b) => a - b);
-
-        // Format the dates back to the desired format (mm/dd/yyyy)
-        const sortedDates = dates.map(date =>
-            ('0' + (date.getMonth() + 1)).slice(-2) + '/' +
-            ('0' + date.getDate()).slice(-2) + '/' +
-            date.getFullYear()
-        );
-
-        // Update the input field with the sorted dates
-        dateInput.val(sortedDates.join(','));
-    }
-
     document.addEventListener('DOMContentLoaded', function() {
-        $('.date').datepicker({
-            multidate: true,
-            todayHighlight: true,
-        }).on('changeDate', function(e) {
-            sortAndFormatDates($(this));
-        });
-
-        // Trigger sorting when the input field loses focus
-        $('.date').on('blur', function() {
-            sortAndFormatDates($(this));
-        });
-
-        var amountNeededInput = document.getElementById('amount-needed');
+        var salaryInput = document.getElementById('salary');
         var participantsInput = document.getElementById('participants');
-        if (amountNeededInput) {
-            formatNumber(amountNeededInput);
+        if (salaryInput) {
+            formatNumber(salaryInput);
         }
-        if (participantsInput) {
-            formatNumber(participantsInput);
-        }
-
-        let competencyCount = document.querySelectorAll('#competencyList .input-group').length;
-        const addCompetencyBtn = document.getElementById('addCompetencyBtn');
-        const competencyList = document.getElementById('competencyList');
-
-        function toggleButtons() {
-            if (competencyCount >= 4) {
-                addCompetencyBtn.classList.add('d-none');
-            } else {
-                addCompetencyBtn.classList.remove('d-none');
-            }
-        }
-
-        addCompetencyBtn.addEventListener('click', function() {
-            if (competencyCount < 4) {
-                competencyCount++;
-                const competencyItem = document.createElement('div');
-                competencyItem.className = 'input-group mb-3';
-                competencyItem.innerHTML = `
-                <input type="text" class="form-control" placeholder="Enter competency" name="competencies[]" required>
-                <button class="btn btn-outline-secondary remove-btn" type="button">Remove</button>
-            `;
-                competencyList.appendChild(competencyItem);
-
-                competencyItem.querySelector('.remove-btn').addEventListener('click', function() {
-                    competencyList.removeChild(competencyItem);
-                    competencyCount--;
-                    toggleButtons();
-                });
-
-                competencyItem.querySelector('input').addEventListener('input', toggleButtons);
-
-                toggleButtons();
-            }
-        });
-
-        document.querySelectorAll('.remove-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const competencyItem = this.parentElement;
-                competencyList.removeChild(competencyItem);
-                competencyCount--;
-                toggleButtons();
-            });
-        });
-
-        toggleCrowdfund();
-        toggleButtons(); // Initialize the button states
     });
-
-    
 </script>

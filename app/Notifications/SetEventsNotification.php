@@ -51,6 +51,7 @@ class SetEventsNotification extends Notification
     {
         return [
             'title' => $this->Events->title,
+            'owner' => $this->Events->employer->name,
             'url' => url('/events'),
         ];
     }

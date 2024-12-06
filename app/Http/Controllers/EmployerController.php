@@ -126,7 +126,7 @@ class EmployerController extends Controller
             'job_id' => 'required|exists:job_listings,id',
             'job_application_id' => 'required|exists:job_applications,id',
         ]);
-        Log::info("Nalapas sa validation"); 
+        Log::info("Nalapas sa validation");
         $pwdId = $validatedData['pwd_id'];
         $jobId = $validatedData['job_id'];
         $applicationId = $validatedData['job_application_id'];
@@ -136,12 +136,12 @@ class EmployerController extends Controller
         $application = JobApplication::findOrFail($applicationId);
         $application->application_status = 'Approved';
         $application->save();
-        Log::info("testing");   
+        Log::info("testing");
         $pwdUser = $application->user;
         $jobListing = $application->job;
-        
+
         // $pwdUser->notify(new JobApplicationAcceptedNotification($jobListing));
-         
+
         // Create Enrollee record
         Employee::create([
             'pwd_id' => $pwdId,
@@ -255,17 +255,17 @@ class EmployerController extends Controller
             $jobListings = JobListing::where('employer_id', $user)
                 ->get(['id', 'employer_id', 'position', 'end_date']);
             $trainingPrograms = TrainingProgram::where('agency_id', $user)
-            ->get(['agency_id', 'title', 'schedule']);
+                ->get(['agency_id', 'title', 'schedule']);
             $employerEvents = Events::where('employer_id', $user)
-            ->get(['id', 'title', 'schedule', 'start_time']);
+                ->get(['id', 'title', 'schedule', 'start_time']);
             $job_id = JobListing::where('employer_id', $user)->get();
             $interviews = Employee::whereIn('job_id', function ($query) use ($user) {
-            $query->select('id') 
+                $query->select('id')
                     ->from('job_listings')
                     ->where('employer_id', $user);
             })->where('hiring_status', '!=', 'Accepted')
-            ->get(['id', 'job_id', 'schedule', 'pwd_id']);
-                        
+                ->get(['id', 'job_id', 'schedule', 'pwd_id']);
+
 
             $events = [];
 
@@ -280,9 +280,9 @@ class EmployerController extends Controller
                     Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
                     $events[] = [
                         'id' => $event->id,
-                        'title' => $event->title,
+                        'title' => '[Event] ' . $event->title,
                         'start' => $formattedDate,
-                        'color' => '#997C70', // FullCalendar expects start for all-day events
+                        'color' => '#FB773C', // FullCalendar expects start for all-day events
                         'allDay' => true
                     ];
                 }
@@ -301,7 +301,7 @@ class EmployerController extends Controller
                         'id' => $interview->id,
                         'title' => '[Interview]: ' . $interview->pwd->userInfo->name,
                         'start' => $formattedDate,
-                        'color' => '#FF5733', // FullCalendar expects start for all-day events
+                        'color' => '#9B3922', // FullCalendar expects start for all-day events
                         'allDay' => true
                     ];
                 }
@@ -318,9 +318,9 @@ class EmployerController extends Controller
                     Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
                     $events[] = [
                         'id' => $job->employer_id,
-                        'title' => $job->position,
+                        'title' => '[Job Listing] ' . $job->position,
                         'start' => $formattedDate,
-                        'color' => 'rgb(222, 174, 0)', // FullCalendar expects start for all-day events
+                        'color' => '#03346E', // FullCalendar expects start for all-day events
                         'allDay' => true
                     ];
                 }
@@ -337,9 +337,9 @@ class EmployerController extends Controller
                         $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
                         $events[] = [
                             'id' => $program->id,
-                            'title' => $program->title,
+                            'title' => '[Training] ' . $program->title,
                             'start' => $formattedDate,
-                            'color' => '#04b000', // FullCalendar expects start for all-day events
+                            'color' => '#347928', // FullCalendar expects `start` for all-day events
                             'allDay' => true
                         ];
                     }
@@ -403,8 +403,8 @@ class EmployerController extends Controller
 
         // Check for schedule conflicts across all jobs of the employer
         $conflictingSchedule = Employee::whereHas('job', function ($query) use ($employerId) {
-                $query->where('employer_id', $employerId);
-            })
+            $query->where('employer_id', $employerId);
+        })
             ->where('schedule', $schedule)
             ->where(function ($query) use ($start_time, $end_time) {
                 $query->whereBetween('start_time', [$start_time, $end_time])
@@ -417,7 +417,7 @@ class EmployerController extends Controller
         if ($conflictingSchedule) {
             return redirect()->back()->with(['error' => 'The schedule conflicts with another interview set by the employer.']);
         }
-        
+
         // $pwdUser = $application->user;
         // $jobListing = $application->job;
 
@@ -436,8 +436,13 @@ class EmployerController extends Controller
 
     public function showEvents()
     {
-        $events = Events::all();
-        return view('employer.events', compact('events'));
+        $events = Events::with('users')->latest()->paginate(10);
+        // dd($events);
+        $participantCounts = [];
+        foreach ($events as $event) {
+            $participantCounts[$event->id] = $event->users()->count();
+        }
+        return view('employer.events', compact('events', 'participantCounts'));
     }
 
     public function postEvent(Request $request)
@@ -471,5 +476,18 @@ class EmployerController extends Controller
         }
 
         return redirect()->route('show-post-events');
+    }
+
+    public function deleteEvent($id)
+    {
+        $event = Events::findOrFail($id); // Find the event or throw a 404 error if not found
+
+        // Check if the authenticated user is the owner of the event
+        if ($event->employer_id == Auth::id()) {
+            $event->delete(); // Delete the event
+            return redirect()->back()->with('success', 'Event deleted successfully.');
+        }
+
+        return redirect()->back()->with('error', 'You are not authorized to delete this event.');
     }
 }

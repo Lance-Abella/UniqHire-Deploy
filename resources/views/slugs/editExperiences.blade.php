@@ -28,9 +28,12 @@
                             <span class="error-msg">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="mb-3">
-                            <label for="">Date: </label>
-                            <input type="date" name="date" class="date-input">
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control date" name="date" required placeholder=" Choose Date">
+                            <label for="floatingInput">Date</label>
+                            @error('date')
+                            <span class="error-msg">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div class="modal-footer">
                             <button type="reset" class="deny-btn border-0">Clear</button>
