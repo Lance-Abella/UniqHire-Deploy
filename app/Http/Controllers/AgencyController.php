@@ -15,6 +15,9 @@ use App\Models\Competency;
 use App\Models\Skill;
 use App\Models\SkillUser;
 use App\Models\Experience;
+use App\Models\Employee;
+use App\Models\Socials;
+use App\Models\UserSocials;
 use App\Models\Transaction;
 use App\Notifications\ApplicationAcceptedNotification;
 use App\Notifications\NewTrainingProgramNotification;
@@ -70,7 +73,7 @@ class AgencyController extends Controller
         $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
         $applications = TrainingApplication::where('training_program_id', $program->id)->get();
         $requests = TrainingApplication::where('training_program_id', $program->id)->where('application_status', 'Pending')->get();
-        $enrollees = Enrollee::where('program_id', $program->id)->get();        
+        $enrollees = Enrollee::where('program_id', $program->id)->get();
         $pendingsCount = $applications->where('application_status', 'Pending')->count();
         $ongoingCount = $enrollees->where('completion_status', 'Ongoing')->count();
         $completedCount = $enrollees->where('completion_status', 'Completed')->count();
@@ -333,8 +336,9 @@ class AgencyController extends Controller
                         $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
                         $events[] = [
                             'id' => $program->id,
-                            'title' => $program->title,
-                            'start' => $formattedDate, // FullCalendar expects start for all-day events
+                            'title' => '[Training] ' . $program->title,
+                            'start' => $formattedDate,
+                            'color' => '#347928', // FullCalendar expects `start` for all-day events
                             'allDay' => true
                         ];
                     }
@@ -498,7 +502,15 @@ class AgencyController extends Controller
         $skilluser = SkillUser::where('user_id', $id)->get();
         $certifications = Enrollee::where('pwd_id', $id)->where('completion_status', 'Completed')->get();
         $experiences = Experience::where('user_id', $id)->get();
+        $socials = Socials::all();
+        $userSocials = UserSocials::where('user_id', $id)->get();
         // $enrollees = Enrollee::where('user_id', $user)->get();
-        return view('agency.pwdProfile', compact('user', 'certifications', 'skilluser', 'experiences'));
+        $latitude = $user->userInfo->latitude;
+        $longitude = $user->userInfo->longitude;
+        $isEmployed = Employee::where('pwd_id', $id)->where('hiring_status', 'Accepted')->exists();
+
+
+
+        return view('agency.pwdProfile', compact('user', 'certifications', 'skilluser', 'experiences', 'latitude', 'longitude', 'isEmployed', 'userSocials', 'skilluser'));
     }
 }

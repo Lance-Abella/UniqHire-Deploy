@@ -52,6 +52,7 @@ class JobHiredNotification extends Notification
     {
         return [
             'title' => $this->Employee->job->employer->userInfo->name,
+            'position' => $this->Employee->job->position,
             'completed_at' => now(),
             'url' => url('/job-details/' . $this->Employee->job->id),
         ];

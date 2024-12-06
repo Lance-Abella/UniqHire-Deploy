@@ -10,16 +10,8 @@
                     </li>
                     <li>
                         <span><i class='bx bxl-instagram-alt'></i> Instagram</span>
-                        <a href="">facebook.com</a>
+                        <a href="">instagram.com</a>
                     </li>
-                    <!-- <li>
-                <span><i class='bx bxl-facebook-circle'></i> Facebook</span>
-                <a href="">facebook.com</a>
-            </li>
-            <li>
-                <span><i class='bx bxl-facebook-circle'></i> Facebook</span>
-                <a href="">facebook.com</a>
-            </li> -->
                 </ul>
             </div>
             <div>

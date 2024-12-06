@@ -1,4 +1,4 @@
-<form  action="{{ route('set-schedule') }}" method="POST">
+<form action="{{ route('set-schedule') }}" method="POST">
     @csrf
     <div>
         <button type="button" class="submit-btn modal-btn border-0" data-bs-toggle="modal" data-bs-target="#donateModal">Set Schedule</button>
@@ -12,7 +12,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-floating mb-3">
-                           <input type="date" class="" name="schedule" required placeholder="Choose Date">
+                            <input type="date" class="" name="schedule" required placeholder="Choose Date">
                             <label for="floatingInput">Schedule Interview</label>
                             @error('schedule')
                             <span class="error-msg">{{ $message }}</span>
@@ -23,21 +23,21 @@
                                 <div class="form-floating mb-3">
                                     <input type="time" class="form-control" id="startTime" name="start_time" value="{{old('start_time')}}" required placeholder="Input Start Time">
                                     <label for="floatingInput">Time Start</label>
-                                            @error('start_time')
+                                    @error('start_time')
                                     <span class="error-msg">{{ $message }}</span>
-                                            @enderror
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-floating mb-3">
                                     <input type="time" class="form-control" id="endTime" name="end_time" value="{{old('end_time')}}" required placeholder="Input Start Time">
                                     <label for="floatingInput">Time End</label>
-                                                @error('end_time')
+                                    @error('end_time')
                                     <span class="error-msg">{{ $message }}</span>
-                                                @enderror
+                                    @enderror
                                 </div>
                             </div>
-                        </div>  
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="border-0 submit-btn">Enter</button>

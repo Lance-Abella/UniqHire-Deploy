@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\Enrollee;
+use App\Models\Valid;
 use App\Models\Role;
 use App\Models\Disability;
 use App\Models\EducationLevel;
@@ -18,6 +19,7 @@ use App\Models\UserInfo;
 use App\Models\SkillUser;
 use App\Models\Socials;
 use App\Models\UserSocials;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -40,7 +42,9 @@ class AuthController extends Controller
         $latitude = $user->userInfo->latitude;
         $longitude = $user->userInfo->longitude;
 
-        return view('auth.profile', compact('levels', 'disabilities', 'user', 'certifications', 'skills', 'skilluser', 'experiences', 'latitude', 'longitude', 'socials', 'userSocials'));
+        $isEmployed = Employee::where('pwd_id', $id)->where('hiring_status', 'Accepted')->exists();
+
+        return view('auth.profile', compact('levels', 'disabilities', 'user', 'certifications', 'skills', 'skilluser', 'experiences', 'latitude', 'longitude', 'socials', 'userSocials', 'isEmployed'));
     }
 
     public function editProfile(Request $request)
@@ -306,17 +310,34 @@ class AuthController extends Controller
             'lat' => 'required|numeric|between:-90,90',
             'long' => 'required|numeric|between:-180,180',
             'loc' => 'nullable|string|max:255',
-            'pwd_card' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            // 'pwd_id' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'pwd_id' => 'nullable|string|max:19|min:19',
             'age' => 'nullable|integer|min:1|max:99',
             'founder' => 'nullable|string|max:255',
             'year_established' => 'nullable|integer|min:1000|max:3000',
             'email' => 'required|email',
             // 'skills' => 'required|array|min:1',
             // 'skills.*' => 'exists:skills,id',
-            // 'role' => 'required|string|exists:roles,id',
+            'role' => 'required|exists:roles,id',
         ]);
         Log::info("Nalapas sa validation!");
 
+       if ($request->role == 2) {
+            $pwdIdExists = Valid::where('valid_id_number', $request->pwd_id)->exists();
+            $pwdIdUsed = UserInfo::where('pwd_card', $request->pwd_id)->exists();
+
+            if(empty($request->pwd_id)){
+                return back()->with('error', 'PWD ID Number is empty.');
+            }
+
+            if (!$pwdIdExists) {
+                return back()->with('error', 'The provided PWD ID Number is not valid.');
+            }
+
+            if ($pwdIdUsed) {
+                return back()->with('error', 'The provided PWD ID Number is already registered.');
+            }
+        }
 
 
         $user = User::create([
@@ -328,6 +349,18 @@ class AuthController extends Controller
         $user->role()->attach($request->role);
         Log::info("Registration reaches here!");
 
+        // $pwdCardPath = null;
+
+        // if ($request->hasFile('pwd_card')) {
+        //     $file = $request->file('pwd_card');
+        //     $fileName = time() . '_' . $file->getClientOriginalName();
+        //     $filePath = 'pwd_cards/' . $fileName;
+
+        //     Storage::disk('public')->put($filePath, file_get_contents($file));
+
+        //     $pwdCardPath = 'storage/' . $filePath;
+        // }
+
         UserInfo::create([
             'user_id' => $user->id,
             'disability_id' => $request->disability,
@@ -337,7 +370,7 @@ class AuthController extends Controller
             'latitude' => $request->lat,
             'longitude' => $request->long,
             'location' => $request->loc,
-            'pwd_card' => null,
+            'pwd_card' => $request->pwd_id,
             'age' => $request->age ?? 0,
             'founder' => $request->founder ?? '',
             'year_established' => $request->year_established ?? 0,

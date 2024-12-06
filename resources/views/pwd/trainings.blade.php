@@ -13,7 +13,7 @@
         <div class="table-container">
             <div class="applications">
                 <div class="text-start header-texts fs-4 back-link-container border-bottom mb-3">
-                    Applications.
+                    Training Applications.
                 </div>
                 <table class="table table-striped table-hover">
                     <thead>
@@ -38,7 +38,7 @@
                                     @if(!$loop->last)
                                 <p></p>
                                 @endif
-                                @endforeach                                
+                                @endforeach
                                 </p>
                             </td>
                             <td>
@@ -102,11 +102,13 @@
                                 <p></p>
                                 @endif
                                 @endforeach
-                                
+
                                 </p>
                             </td>
-                           <td><p>{{ \Carbon\Carbon::parse($training->program->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($training->program->end_time)->format('h:i A') }}
-                                </p></td>
+                            <td>
+                                <p>{{ \Carbon\Carbon::parse($training->program->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($training->program->end_time)->format('h:i A') }}
+                                </p>
+                            </td>
                             <td class="status-cell">
                                 <p class="match-info @if ($training->completion_status == 'Ongoing')
                                 pending
@@ -125,7 +127,7 @@
             </div>
         </div>
     </div>
-    <div class="counts-container">
+    <div class="counts-container border-left">
         <div class="counts">
             <h3>{{$pendingsCount}}</h3>
             <p>Pendings</p>

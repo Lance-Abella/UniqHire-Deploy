@@ -70,6 +70,9 @@
                                         @endforeach
                                     </select>
                                     <label for="education-level">Education Level</label>
+                                    @error('education')
+                                    <span class="error-msg">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                             @elseif ($user->hasRole('Training Agency') || $user->hasRole('Sponsor') || $user->hasRole('Employer'))
@@ -100,15 +103,15 @@
                                     @enderror
                                 </div>
                             </div>
-                            @endif                            
+                            @endif
                         </div>
                         <div class="col mb-3">
                             <input type="hidden" id="lat" name="lat" value="{{ $latitude }}">
                             <input type="hidden" id="long" name="long" value="{{ $longitude }}">
                             <input type="hidden" id="loc" name="loc" required>
-                            <input id="pac-input" class="controls" type="text" placeholder="Search Box">                        
+                            <input id="pac-input" class="controls" type="text" placeholder="Search Box">
                             <div id="map" class="map"></div>
-                        </div>                                                
+                        </div>
                         @if($user->hasRole('PWD'))
                         <div class="form-floating mb-3">
                             <select class="form-select" id="floatingSelect" name="disability" aria-label="Floating label select example">
@@ -117,9 +120,11 @@
                                 <option value="{{ $disability->id }}" @if ($user->userInfo->disability_id == $disability->id ) selected @endif >{{ $disability->disability_name }}</option>
                                 @endif
                                 @endforeach
-
                             </select>
                             <label for="floatingSelect">Disability</label>
+                            @error('disability')
+                            <span class="error-msg">{{ $message }}</span>
+                            @enderror
                         </div>
                         @endif
                         <hr>

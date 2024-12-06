@@ -62,7 +62,8 @@ class AdminController extends Controller
 
     public function showSkills()
     {
-        $skills = Skill::all()->paginate(18);
+        // $skills = Skill::all()->paginate(18);
+        $skills = Skill::paginate(18);
 
         return view('admin.skillManage', compact('skills'));
     }

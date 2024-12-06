@@ -19,19 +19,13 @@ return new class extends Migration
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
             $table->string('location')->nullable();
-
             $table->integer('participants')->default(0);
             $table->string('schedule');
-            //requirements
             $table->foreignId('education_id')->constrained('education_levels')->onDelete('cascade');
-
             $table->integer('start_age')->default(0);
             $table->integer('end_age')->default(0);
             $table->time('start_time')->default('00:00:00');
             $table->time('end_time')->default('00:00:00');
-
-            // $table->foreignId('worktype_id')->constrained('work_types')->onDelete('cascade');
-            // $table->foreignId('worksetup_id')->constrained('work_setups')->onDelete('cascade');
             $table->timestamps();
         });
     }

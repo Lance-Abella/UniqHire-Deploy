@@ -1,5 +1,5 @@
 @extends('layout')
-@section('page-title', 'Add Training Program')
+@section('page-title', 'Set Schedule')
 @section('page-content')
 <form action="{{route('set-schedule', $employee->id)}}" method="POST" class="container mb-5 add-form" style="height:90vh;">
     @csrf
@@ -10,32 +10,32 @@
         </div>
     </div>
     <div class="form-floating mb-3">
-                           <input type="date" class="form-control date" name="schedule" required placeholder="Choose Date">
-                            <label for="floatingInput">Schedule Interview</label>
-                            @error('schedule')
-                            <span class="error-msg">{{ $message }}</span>
-                            @enderror
-                        </div>
-       <div class="row">
-                            <div class="col">
-                                <div class="form-floating mb-3">
-                                    <input type="time" class="form-control" id="startTime" name="start_time" value="{{old('start_time')}}" required placeholder="Input Start Time">
-                                    <label for="floatingInput">Time Start</label>
-                                            @error('start_time')
-                                    <span class="error-msg">{{ $message }}</span>
-                                            @enderror
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-floating mb-3">
-                                    <input type="time" class="form-control" id="endTime" name="end_time" value="{{old('end_time')}}" required placeholder="Input Start Time">
-                                    <label for="floatingInput">Time End</label>
-                                                @error('end_time')
-                                    <span class="error-msg">{{ $message }}</span>
-                                                @enderror
-                                </div>
-                            </div>
-                        </div> 
+        <input type="date" class="form-control date" name="schedule" required placeholder="Choose Date" value="{{$employee->schedule}}">
+        <label for="floatingInput">Schedule Interview</label>
+        @error('schedule')
+        <span class="error-msg">{{ $message }}</span>
+        @enderror
+    </div>
+    <div class="row border-bottom mb-3">
+        <div class="col">
+            <div class="form-floating mb-3">
+                <input type="time" class="form-control" id="startTime" name="start_time" value="{{$employee->start_time}}" required placeholder="Input Start Time">
+                <label for="floatingInput">Time Start</label>
+                @error('start_time')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-floating mb-3">
+                <input type="time" class="form-control" id="endTime" name="end_time" value="{{$employee->end_time}}" required placeholder="Input Start Time">
+                <label for="floatingInput">Time End</label>
+                @error('end_time')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
+            </div>
+        </div>
+    </div>
 
     <div class="d-flex justify-content-evenly mt-3 prog-btn">
         <button type="reset" class="deny-btn border-0">Clear</button>
