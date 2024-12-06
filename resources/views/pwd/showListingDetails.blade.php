@@ -128,7 +128,7 @@
                 </div>
                 @empty
                 <div class="user-card text-center py-3 px-3">
-                    No enrollees yet.
+                    No Employees yet.
                 </div>
                 @endforelse
             </div>
