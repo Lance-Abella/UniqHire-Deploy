@@ -1017,8 +1017,8 @@ span.badge {
     height: 0.5rem;
     border-radius: var(--border-radius);
     position: absolute;
-    left: 25%;
-    right: 25%;
+    left: 0%;
+    right: 0%;
     background-color: var(--primary-color-light);
 }
 

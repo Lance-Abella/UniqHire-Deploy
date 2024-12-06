@@ -299,7 +299,7 @@ class EmployerController extends Controller
                     Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
                     $events[] = [
                         'id' => $interview->id,
-                        'title' => '[Interview]: ' . $interview->pwd->userInfo->name,
+                        'title' => '[Interview] ' . $interview->pwd->userInfo->name,
                         'start' => $formattedDate,
                         'color' => '#9B3922', // FullCalendar expects start for all-day events
                         'allDay' => true
