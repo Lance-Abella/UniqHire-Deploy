@@ -197,7 +197,7 @@ class PwdController extends Controller
                     Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
                     $events[] = [
                         'id' => $event->id,
-                        'title' => '[Event]: ' . $event->title,
+                        'title' => '[Event] ' . $event->title,
                         'start' => $formattedDate,
                         'color' => '#FB773C', // FullCalendar expects start for all-day events
                         'allDay' => true
@@ -216,7 +216,7 @@ class PwdController extends Controller
                     Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
                     $events[] = [
                         'id' => $interview->id,
-                        'title' => '[Interview]: ' . $interview->job->employer->userInfo->name,
+                        'title' => '[Interview] ' . $interview->job->employer->userInfo->name,
                         'start' => $formattedDate,
                         'color' => '#9B3922', // FullCalendar expects start for all-day events
                         'allDay' => true

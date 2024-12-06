@@ -280,7 +280,7 @@ class EmployerController extends Controller
                     Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
                     $events[] = [
                         'id' => $event->id,
-                        'title' => '[Event]: ' . $event->title,
+                        'title' => '[Event] ' . $event->title,
                         'start' => $formattedDate,
                         'color' => '#FB773C', // FullCalendar expects start for all-day events
                         'allDay' => true
@@ -318,7 +318,7 @@ class EmployerController extends Controller
                     Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
                     $events[] = [
                         'id' => $job->employer_id,
-                        'title' => '[Job Listing]: ' . $job->position,
+                        'title' => '[Job Listing] ' . $job->position,
                         'start' => $formattedDate,
                         'color' => '#03346E', // FullCalendar expects start for all-day events
                         'allDay' => true
@@ -337,7 +337,7 @@ class EmployerController extends Controller
                         $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
                         $events[] = [
                             'id' => $program->id,
-                            'title' => '[Training]: ' . $program->title,
+                            'title' => '[Training] ' . $program->title,
                             'start' => $formattedDate,
                             'color' => '#347928', // FullCalendar expects `start` for all-day events
                             'allDay' => true
