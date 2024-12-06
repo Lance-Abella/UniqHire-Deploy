@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AllUser;
 use App\Models\Disability;
+use App\Models\Valid;
 use App\Models\EducationLevel;
 use App\Models\Skill;
 use App\Models\User;
@@ -70,6 +71,13 @@ class DatabaseSeeder extends Seeder
         $git = Socials::create(['name' => 'Github']);
         $web = Socials::create(['name' => 'Website']);
         // $fb = Socials::create(['name' => 'Facebook']);
+
+        // Valid ID Numbers
+        $id_one = Valid::create(['valid_id_number' => '13-5416-000-0000001']);
+        $id_two = Valid::create(['valid_id_number' => '13-5416-000-0000002']);
+        $id_three = Valid::create(['valid_id_number' => '13-5416-000-0000003']);
+        $id_four = Valid::create(['valid_id_number' => '13-5416-000-0000004']);
+        $id_five = Valid::create(['valid_id_number' => '13-5416-000-0000005']);
 
 
         $adminuser = User::create([
