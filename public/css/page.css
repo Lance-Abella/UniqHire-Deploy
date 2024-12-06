@@ -1449,7 +1449,8 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* USER LIST IN SHOW DETAILS */
-.agency-show-prog .enrollees .user-card {
+.agency-show-prog .enrollees .user-card,
+.events-container .user-card {
     /* background-color: var(--bg-color-01); */
     width: 100%;
     box-shadow: var(--side-shadow-02);
@@ -1457,7 +1458,8 @@ input[type="range"]::-webkit-slider-thumb {
     border-radius: var(--border-radius);
 }
 
-.agency-show-prog .enrollees .user-card:hover {
+.agency-show-prog .enrollees .user-card:hover,
+.events-container .user-card:hover {
     background-color: var(--hover-color);
 }
 
@@ -2390,6 +2392,10 @@ table tbody .bx {
     padding: 0.7rem 1rem;
     width: 10rem;
 }
+.events-container .event-card .submit-btn.disabled {
+    background-color: var(--color-03-light);
+    color: var(--bg-color-02);
+}
 
 .events-container .event-card .prog-img {
     background-color: var(--primary-color-light);
@@ -2431,6 +2437,19 @@ table tbody .bx {
 .events-container .event-card .submit-btn.delete {
     background-color: var(--color-02-light);
     color: var(--text-error);
+}
+
+.events-container .event-card .submit-btn.modal-btn {
+    background-color: transparent;
+    color: var(--text-color);
+    padding: 0 0.3rem;
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+.events-container .event-card .submit-btn.modal-btn span {
+    color: var(--primary-color);
+    font-weight: bold;
 }
 
 /* MOBILE RESPONSIVE */

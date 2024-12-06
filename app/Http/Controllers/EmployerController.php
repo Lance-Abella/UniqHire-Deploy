@@ -436,8 +436,13 @@ class EmployerController extends Controller
 
     public function showEvents()
     {
-        $events = Events::latest()->paginate(10);
-        return view('employer.events', compact('events'));
+        $events = Events::with('users')->latest()->paginate(10);
+        // dd($events);
+        $participantCounts = [];
+        foreach ($events as $event) {
+            $participantCounts[$event->id] = $event->users()->count();
+        }
+        return view('employer.events', compact('events', 'participantCounts'));
     }
 
     public function postEvent(Request $request)

@@ -411,10 +411,6 @@ class PwdController extends Controller
             ->where('user_id', $user->user_id)
             ->exists();
 
-        if (!$isCertified) {
-            return view('pwd.events', ['events' => [], 'message' => 'You need to complete a training program to view jobs.']);
-        }
-
         // Retrieve events where the user is not a participant
         $events = Events::whereNotIn('id', function ($query) use ($user) {
             $query->select('event_id')
@@ -422,6 +418,13 @@ class PwdController extends Controller
                 ->where('user_id', $user->user_id);
         })->latest()->paginate(10);
 
-        return view('pwd.events', compact('events'));
+        // $events = Events::with('users')->latest()->paginate(10);
+        // // dd($events);
+        $participantCounts = [];
+        foreach ($events as $event) {
+            $participantCounts[$event->id] = $event->users()->count();
+        }
+
+        return view('pwd.events', compact('events', 'participantCounts', 'isCertified'));
     }
 }

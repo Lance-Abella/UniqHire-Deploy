@@ -25,7 +25,7 @@
     <input type="hidden" id="long" name="long" value="{{ $listing->longitude }}">
     <input type="hidden" id="loc" name="loc" required>
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-    <label for="map">Select Your Location:</label>
+    <!-- <label for="map">Select Your Location:</label> -->
     <div id="map" class="map"></div>
     <p id="coordinates"></p>
     <div class="row">
@@ -53,6 +53,9 @@
             <div class="form-floating mb-3">
                 <input type="date" class="form-control date" name="end_date" value="{{ $listing->end_date }}" required placeholder="Choose Date">
                 <label for="floatingInput">End Date (Hiring until)</label>
+                @error('end_date')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
             </div>
         </div>
     </div>
@@ -63,9 +66,11 @@
                     @foreach ($setups as $setup)
                     <option value="{{ $setup->id }}" @if($setup->id == $listing->worksetup_id) selected @endif>{{ $setup->name }}</option>
                     @endforeach
-
                 </select>
                 <label for="floatingSelect">Work Setup</label>
+                @error('setup')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
             </div>
         </div>
         <div class="col">
@@ -74,8 +79,10 @@
                     @foreach ($types as $type)
                     <option value="{{ $type->id }}" @if( $type->id == $listing->worktype_id) selected @endif>{{ $type->name }}</option>
                     @endforeach
-
                 </select>
+                @error('type')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
                 <label for="floatingSelect">Work Type</label>
             </div>
         </div>
@@ -97,6 +104,9 @@
                 </div>
                 @endif
                 @endforeach
+                @error('disabilities[]')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
             </div>
         </div>
         <div class="col">
@@ -113,6 +123,9 @@
                     </label>
                 </div>
                 @endforeach
+                @error('skills')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
             </div>
         </div>
     </div>

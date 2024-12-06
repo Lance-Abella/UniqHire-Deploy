@@ -47,7 +47,7 @@
                     </button>
                     @else
                     <div class="d-flex flex-column align-items-end apply-btn-container">
-                        <button type="submit" class="submit-btn border-0" onclick="confirmApplication(event, 'apply-form-{{ $listing->id }}')">
+                        <button type="submit" class="submit-btn border-0" title="Apply for the position" onclick="confirmApplication(event, 'apply-form-{{ $listing->id }}')">
                             Apply
                         </button>
                     </div>

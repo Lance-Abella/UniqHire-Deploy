@@ -202,7 +202,7 @@
                                     <li class="nav-item user-notif dropdown unread">
 
                                         <a href="#" class="dropdown-toggle dropdown-item" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class='bx bxs-inbox'></i>
+                                            <i class='bx bxs-inbox' title="Notifications"></i>
                                             <span id="notification-badge" class="badge bg-danger d-none">0</span> <!-- Badge element -->
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">

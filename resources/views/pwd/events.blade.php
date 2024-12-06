@@ -54,7 +54,11 @@
                         <span>&nbsp; | &nbsp;</span>
                         <span><strong>Time</strong> &nbsp;</span>
                         <div class="match-info">
-                            <td>{{ \Carbon\Carbon::parse(trim($event->start_time))->format('h:i A') }} - {{ \Carbon\Carbon::parse(trim($event->end_time))->format('h:i A') }}</td>
+                            {{ \Carbon\Carbon::parse(trim($event->start_time))->format('h:i A') }} - {{ \Carbon\Carbon::parse(trim($event->end_time))->format('h:i A') }}
+                        </div>
+                        <span>&nbsp; | &nbsp;</span>
+                        <div class="">
+                            @include('slugs.participants')
                         </div>
                     </div>
                     <div class="px-2">
@@ -63,7 +67,12 @@
                             <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                             <input type="hidden" name="event_id" value="{{ $event->id }}">
                             <div>
-                                <button type="submit" class="submit-btn border-0">
+                                <button type="submit" class="submit-btn border-0 @if (!$isCertified)
+                                    disabled
+                                    @endif
+                                    " @if (!$isCertified)
+                                    disabled
+                                    @endif title="Enroll and get certified first">
                                     Register
                                 </button>
                             </div>

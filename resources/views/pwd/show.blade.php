@@ -38,16 +38,16 @@
                     @endphp
 
                     @if ($applicationStatus == 'Pending')
-                    <button type="submit" class="submit-btn pending border-0" disabled>
+                    <button type="submit" class="submit-btn pending border-0" disabled title="Your application is still in pending">
                         Pending
                     </button>
                     @elseif($applicationStatus == 'Approved')
-                    <button type="submit" class="submit-btn approved border-0" disabled>
+                    <button type="submit" class="submit-btn approved border-0" disabled title="You are officially enrolled to this program">
                         <i class='bx bx-check'></i>
                     </button>
                     @else
                     <div class="d-flex flex-column align-items-end apply-btn-container">
-                        <button type="submit" class="submit-btn border-0 {{ ((!$isCompletedProgram && !in_array($program->id, $nonConflictingPrograms)) || $slots <= 0) ? 'disabled' : '' }}" onclick="confirmApplication(event, 'apply-form-{{ $program->id }}')" @if((!$isCompletedProgram && !in_array($program->id, $nonConflictingPrograms)) || $slots <= 0) disabled @endif>
+                        <button type="submit" class="submit-btn border-0 {{ ((!$isCompletedProgram && !in_array($program->id, $nonConflictingPrograms)) || $slots <= 0) ? 'disabled' : '' }}" onclick="confirmApplication(event, 'apply-form-{{ $program->id }}')" @if((!$isCompletedProgram && !in_array($program->id, $nonConflictingPrograms)) || $slots <= 0) disabled @endif title="Apply for enrollment">
                                 Apply
                         </button>
                         @if (!in_array($program->id, $nonConflictingPrograms))

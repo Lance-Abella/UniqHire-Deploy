@@ -104,7 +104,11 @@
                         <span>&nbsp; | &nbsp;</span>
                         <span><strong>Time</strong> &nbsp;</span>
                         <div class="match-info">
-                            <td>{{ \Carbon\Carbon::parse(trim($event->start_time))->format('h:i A') }} - {{ \Carbon\Carbon::parse(trim($event->end_time))->format('h:i A') }}</td>
+                            {{ \Carbon\Carbon::parse(trim($event->start_time))->format('h:i A') }} - {{ \Carbon\Carbon::parse(trim($event->end_time))->format('h:i A') }}
+                        </div>
+                        <span>&nbsp; | &nbsp;</span>
+                        <div class="">
+                            @include('slugs.participants')
                         </div>
                     </div>
                     @if ($event->employer_id == Auth::user()->id)
