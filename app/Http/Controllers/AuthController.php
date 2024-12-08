@@ -278,7 +278,7 @@ class AuthController extends Controller
                 return redirect()->route('login-page')->withInput()->with('info', 'Your account is still being verified. Thank you for your patience!');
             } else {
                 Auth::logout();
-                return redirect()->route('login-page')->withInput()->with('info', 'Your account is currently deactivated. If you believe this is a mistake or would like to reactivate your account, please contact our support team. We are here to help!');
+                return redirect()->route('login-page')->withInput()->with('info', 'Your account is currently deactivated. Please contact our support team. We are here to help!');
             }
         } else {
             return back()->withInput()->with('error', 'The provided credentials do not match our records');
@@ -381,7 +381,7 @@ class AuthController extends Controller
             'age' => $request->age ?? 0,
             'founder' => $request->founder ?? '',
             'year_established' => $request->year_established ?? 0,
-            'registration_status' => $validatedData['registration_status']
+            'registration_status' => $validatedData['registration_status'] ?? 'Pending'
         ]);
 
         return redirect()->route('login-page')->with('success', 'Your account has been successfully registered! Please allow up to 1 hour for the verification process. Thank you for your patience.');
