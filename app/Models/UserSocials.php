@@ -20,9 +20,6 @@ class UserSocials extends Model
         return $this->belongsTo(UserInfo::class, 'user_id');
     }
 
-    /**
-     * Relationship to the Socials model
-     */
     public function social()
     {
         return $this->belongsTo(Socials::class, 'social_id');

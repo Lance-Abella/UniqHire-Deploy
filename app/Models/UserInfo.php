@@ -18,14 +18,15 @@ class UserInfo extends Model
         'latitude',
         'longitude',
         'location',
-        'pwd_card',
+        'pwd_id',
         'age',
         'about',
         'founder',
         'year_established',
         'affiliations',
         'awards',
-        'paypal_account'
+        'paypal_account',
+        'registration_status'
     ];
 
     public function user()

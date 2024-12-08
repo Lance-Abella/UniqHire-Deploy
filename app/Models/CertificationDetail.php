@@ -27,10 +27,10 @@ class CertificationDetail extends Model
     public function skills()
     {
         return $this->belongsToMany(
-            Skill::class,                // Related model
-            'program_skill',             // Pivot table
-            'training_program_id',       // Foreign key on pivot table (related to `TrainingProgram`)
-            'skill_id'                   // Foreign key on pivot table (related to `Skill`)
-        )->withTimestamps();           // Optionally include timestamps if needed
+            Skill::class,                
+            'program_skill',             
+            'training_program_id',       
+            'skill_id'                   
+        )->withTimestamps();          
     }
 }

@@ -22,26 +22,19 @@ class PaymentController extends Controller
     {
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
-
-        // Get the access token response, which is an array
         $response = $provider->getAccessToken();
 
-        // Make sure the response is an array and contains the access token
         if (isset($response['access_token'])) {
-            $token = $response['access_token'];  // Access token as a string
+            $token = $response['access_token']; 
         } else {
-            // Log the error response and return back with an error message
             Log::error('PayPal access token request failed', ['response' => $response]);
             return back()->with('error', 'Unable to retrieve PayPal access token.');
         }
 
-        // Pass the access token to the provider
-        $provider->setAccessToken($response); // Pass the whole response array
+        $provider->setAccessToken($response); 
         $crowdfundEvent = CrowdfundEvent::findOrFail($request->crowdfund_id);
-        $payeeEmail = $crowdfundEvent->program->agency->userInfo->paypal_account; // The dynamic PayPal email of the agency
+        $payeeEmail = $crowdfundEvent->program->agency->userInfo->paypal_account;
 
-
-        // Now proceed with creating the order
         $response = $provider->createOrder([
             "intent" => "CAPTURE",
             "purchase_units" => [
@@ -51,7 +44,7 @@ class PaymentController extends Controller
                         "value" => $this->convertToNumber($request->amount),
                     ],
                     "payee" => [
-                        "email_address" => $payeeEmail,  // Dynamically set the payee (receiver)
+                        "email_address" => $payeeEmail,
                     ],
                 ],
             ],
@@ -69,11 +62,8 @@ class PaymentController extends Controller
             ],
         ]);
 
-        // Log the response for debugging purposes
-        Log::info('PayPal Create Order Response', $response);
-
         if (isset($response['id'])) {
-            return redirect()->away($response['links'][1]['href']); // Redirect to PayPal
+            return redirect()->away($response['links'][1]['href']);
         }
 
         return back()->with('error', 'Error processing payment.');
@@ -90,14 +80,8 @@ class PaymentController extends Controller
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
         $token = $provider->getAccessToken();
-
         $provider->setAccessToken($token);
         $response = $provider->capturePaymentOrder($request->query('token'));
-
-        // Log the purchase_units response to inspect the structure
-        // Log::info('Purchase Units Response', ['purchase_units' => $response['purchase_units']]);
-        Log::info('PayPal Capture Payment Response', ['response' => $response]);
-
         $paymentDetails = $response['purchase_units'][0]['payments']['captures'][0] ?? null;
         $crowdfundEvent = CrowdfundEvent::findOrFail($request->query('crowdfund_id'));
         $payeeEmail = $crowdfundEvent->program->agency->userInfo->paypal_account;
@@ -105,7 +89,6 @@ class PaymentController extends Controller
         if ($paymentDetails && isset($paymentDetails['amount']['value'])) {
             $amount = $paymentDetails['amount']['value'];
 
-            // Save transaction
             $transaction = Transaction::create([
                 'name' => $request->name ?? 'Anonymous',
                 'email' => $request->email,
@@ -117,7 +100,6 @@ class PaymentController extends Controller
                 'receiver' => $payeeEmail
             ]);
 
-            // Update raised amount
             $crowdfundEvent = CrowdfundEvent::findOrFail($request->query('crowdfund_id'));
             $crowdfundEvent->raised_amount += $transaction->amount;
             $crowdfundEvent->save();
@@ -127,8 +109,6 @@ class PaymentController extends Controller
             if ($agencyUser) {
                 $agencyUser->user->notify(new SponsorDonationNotification($transaction));
             }
-
-
 
             return redirect()->route('trainingprog-details', $programId)->with('success', 'Payment successful!');
         }

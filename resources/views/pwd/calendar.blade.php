@@ -12,7 +12,7 @@
 	document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
+        initialView: 'timeGridWeek',
         events: function(info, successCallback, failureCallback) {
             fetch('/pwd/calendar', {
                 method: 'GET',
@@ -23,7 +23,23 @@
             .then(response => response.json())
             .then(data => successCallback(data))
             .catch(error => failureCallback(error));
-        }
+        },
+        views: {
+            dayGridMonth: {
+                displayEventTime: false, 
+            },
+            timeGridWeek: {
+                displayEventTime: true, 
+            },
+            timeGridDay: {
+                displayEventTime: true, 
+            },
+        },
+        eventTimeFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+        },
     });
     calendar.render();
 });

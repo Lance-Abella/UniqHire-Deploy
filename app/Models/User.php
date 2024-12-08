@@ -12,17 +12,6 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // /**
-    //  * The attributes that are mass assignable.
-    //  *
-    //  * @var array<int, string>
-    //  */
-    // protected $fillable = [
-    //     'name',
-    //     'email',
-    //     'password',
-    // ];
-
     protected $fillable = [
         'email',
         'password',
@@ -36,10 +25,6 @@ class User extends Authenticatable
     public function hasRole($role)
     {
         return $this->role()->where('role_name', $role)->exists();
-        //    if (is_string($role)) {
-        //         return $this->roles->contains('name', $role);
-        //     }
-        //     return $this->roles->contains('id', $role->id);
     }
 
     public function userInfo()
