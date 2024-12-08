@@ -22,14 +22,14 @@
             <form action="{{ url('/login') }}" method="POST">
                 @csrf
                 <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="floatingInput" name="email" placeholder="Email">
+                    <input type="email" class="form-control" id="floatingInput" name="email" placeholder="Email" value="{{ old('email') }}">
                     <label for="floatingInput">Email Address</label>
                     @error('email')
                     <span class="error-msg">{{ $message }}</span>
                     @enderror
                 </div>
                 <div class="form-floating mb-2">
-                    <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password">
+                    <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password" value="{{ old('password') }}">
                     <label for="floatingPassword">Password</label>
                     @error('password')
                     <span class="error-msg">{{ $message }}</span>

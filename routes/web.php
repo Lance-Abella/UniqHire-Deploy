@@ -62,6 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::put('skills/edit/{skill}', [AdminController::class, 'updateSkill'])->middleware('role:Admin')->name('skill-update');
     Route::delete('skills/{skill}', [AdminController::class, 'deleteSkill'])->middleware('role:Admin')->name('skill-delete');
     Route::delete('user/{id}', [AdminController::class, 'deleteUser'])->middleware('role:Admin')->name('user-delete');
+    Route::patch('/users/{id}/toggle-status', [AdminController::class, 'toggleStatus'])->middleware('role:Admin')->name('user-toggle-status');
+    Route::patch('user/{id}/set-status/{status}', [AdminController::class, 'setStatus'])->middleware('role:Admin')->name('user-set-status');
+
 
 
     //Trainer Middleware

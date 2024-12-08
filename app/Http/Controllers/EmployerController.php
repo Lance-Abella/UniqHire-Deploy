@@ -86,8 +86,6 @@ class EmployerController extends Controller
 
         $jobListing->skill()->attach($request->skills);
         $jobListing->disability()->attach($request->disabilities);
-
-        //NOTIFY PWD USERS!!! JOB
         $pwdUsers = User::whereHas('role', function ($query) {
             $query->where('role_name', 'PWD');
         })->get();
@@ -103,7 +101,6 @@ class EmployerController extends Controller
     {
         $listing = JobListing::findOrFail($id);
         $userId = auth()->id();
-        // $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
         $applications = JobApplication::where('job_id', $listing->id)->get();
         $requests = JobApplication::where('job_id', $listing->id)->where('application_status', 'Pending')->get();
         $interviewees = Employee::where('job_id', $listing->id)->where('hiring_status', 'Pending')->get();
@@ -118,31 +115,22 @@ class EmployerController extends Controller
 
     public function accept(Request $request)
     {
-        Log::info("Reached accept method");
-
-        // Validate the incoming request
         $validatedData = $request->validate([
             'pwd_id' => 'required|exists:users,id',
             'job_id' => 'required|exists:job_listings,id',
             'job_application_id' => 'required|exists:job_applications,id',
         ]);
-        Log::info("Nalapas sa validation");
+
         $pwdId = $validatedData['pwd_id'];
         $jobId = $validatedData['job_id'];
         $applicationId = $validatedData['job_application_id'];
         $hiringStatus = 'Pending';
-
-        // Find the application by job_id
         $application = JobApplication::findOrFail($applicationId);
         $application->application_status = 'Approved';
         $application->save();
-        Log::info("testing");
         $pwdUser = $application->user;
         $jobListing = $application->job;
 
-        // $pwdUser->notify(new JobApplicationAcceptedNotification($jobListing));
-
-        // Create Enrollee record
         Employee::create([
             'pwd_id' => $pwdId,
             'job_id' => $jobId,
@@ -150,19 +138,14 @@ class EmployerController extends Controller
             'hiring_status' => $hiringStatus,
         ]);
 
-        // return response()->json(['success' => true, 'message' => 'Application submitted successfully.']);
         return back()->with('success', 'Application proceeds to interview process.');
     }
 
     public function deleteJob($id)
     {
-        Log::info("nakasud ari");
         $listing = JobListing::findOrFail($id);
 
-
-
         if ($listing && $listing->employer_id == auth()->id()) {
-            // Find and delete related notifications
             DB::table('notifications')
                 ->where('data', 'like', '%"employer_id":' . $id . '%')
                 ->delete();
@@ -184,24 +167,17 @@ class EmployerController extends Controller
             return redirect()->route('manage-jobs');
         }
 
-        // Fetch provinces and cities
         $provinceResponse = file_get_contents('https://psgc.cloud/api/provinces');
         $provinces = json_decode($provinceResponse, true);
-
-        // Fetch disabilities and education levels
         $disabilities = Disability::all();
         $levels = EducationLevel::all();
         $skills = Skill::all();
 
-        // Return the view with all required data
         return view('employer.editJob', compact('listing', 'provinces', 'disabilities', 'levels', 'skills', 'setups', 'types'));
-
-        // return redirect()->route('programs-manage');
     }
 
     public function updateJob(Request $request, $id)
     {
-        Log::info("nakaabot sa updateJob");
         $job = JobListing::find($id);
 
         if ($job && $job->employer_id == auth()->id()) {
@@ -219,8 +195,6 @@ class EmployerController extends Controller
                 'setup' => 'exists:work_setups,id',
                 'type' => 'exists:work_types,id'
             ]);
-
-            Log::info("lapas sa validation");
 
             $salary = $this->convertToNumber($request->salary);
 
@@ -255,93 +229,157 @@ class EmployerController extends Controller
             $jobListings = JobListing::where('employer_id', $user)
                 ->get(['id', 'employer_id', 'position', 'end_date']);
             $trainingPrograms = TrainingProgram::where('agency_id', $user)
-                ->get(['agency_id', 'title', 'schedule']);
+                ->get(['agency_id', 'title', 'schedule', 'start_time', 'end_time']);
             $employerEvents = Events::where('employer_id', $user)
-                ->get(['id', 'title', 'schedule', 'start_time']);
+                ->get(['id', 'title', 'schedule', 'start_time', 'end_time']);
             $job_id = JobListing::where('employer_id', $user)->get();
             $interviews = Employee::whereIn('job_id', function ($query) use ($user) {
                 $query->select('id')
                     ->from('job_listings')
                     ->where('employer_id', $user);
             })->where('hiring_status', '!=', 'Accepted')
-                ->get(['id', 'job_id', 'schedule', 'pwd_id']);
-
+                ->get(['id', 'job_id', 'schedule', 'pwd_id', 'start_time', 'end_time']);
 
             $events = [];
 
             foreach ($employerEvents as $event) {
-                // $scheduleDates = explode(',', $job->end_date);
 
-                // Convert MM/DD/YYYY to YYYY-MM-DD
                 $dateParts = explode('-', $event->schedule);
-                if (count($dateParts) == 3) {
-                    Log::info("kaabot sa if");
-                    $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
-                    Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
-                    $events[] = [
-                        'id' => $event->id,
-                        'title' => '[Event] ' . $event->title,
-                        'start' => $formattedDate,
-                        'color' => '#FB773C', // FullCalendar expects start for all-day events
-                        'allDay' => true
-                    ];
+                $startParts = explode(':', $event->start_time);
+                $endParts = explode(':', $event->end_time);
+
+                if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
+
+                    try {
+                        $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
+
+                        $startFormatted = sprintf(
+                            '%s %02d:%02d:%02d',
+                            $formattedDate,
+                            $startParts[0],
+                            $startParts[1],
+                            $startParts[2]
+                        );
+
+                        $endFormatted = sprintf(
+                            '%s %02d:%02d:%02d',
+                            $formattedDate,
+                            $endParts[0],
+                            $endParts[1],
+                            $endParts[2]
+                        );
+
+                        $events[] = [
+                            'id' => $event->id,
+                            'title' => '[Event] ' . $event->title,
+                            'start' => $startFormatted,
+                            'end' => $endFormatted,
+                            'color' => '#FB773C',
+                            'allDay' => false
+                        ];
+                    } catch (\Exception $e) {
+                        Log::error("Error formatting date and time: " . $e->getMessage());
+                    }
                 }
             }
 
             foreach ($interviews as $interview) {
-                // $scheduleDates = explode(',', $job->end_date);
-
-                // Convert MM/DD/YYYY to YYYY-MM-DD
                 $dateParts = explode('-', $interview->schedule);
-                if (count($dateParts) == 3) {
-                    Log::info("kaabot sa if");
-                    $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
-                    Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
-                    $events[] = [
-                        'id' => $interview->id,
-                        'title' => '[Interview] ' . $interview->pwd->userInfo->name,
-                        'start' => $formattedDate,
-                        'color' => '#9B3922', // FullCalendar expects start for all-day events
-                        'allDay' => true
-                    ];
+                $startParts = explode(':', $interview->start_time);
+                $endParts = explode(':', $interview->end_time);
+
+                if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
+
+                    try {
+                        $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
+
+                        $startFormatted = sprintf(
+                            '%s %02d:%02d:%02d',
+                            $formattedDate,
+                            $startParts[0],
+                            $startParts[1],
+                            $startParts[2]
+                        );
+
+                        $endFormatted = sprintf(
+                            '%s %02d:%02d:%02d',
+                            $formattedDate,
+                            $endParts[0],
+                            $endParts[1],
+                            $endParts[2]
+                        );
+
+                        $events[] = [
+                            'id' => $interview->id,
+                            'title' => '[Interview] ' . $interview->pwd->userInfo->name,
+                            'start' => $startFormatted,
+                            'end' => $endFormatted,
+                            'color' => '#9B3922',
+                            'allDay' => false
+                        ];
+                    } catch (\Exception $e) {
+                        Log::error("Error formatting date and time: " . $e->getMessage());
+                    }
                 }
             }
 
             foreach ($jobListings as $job) {
-                // $scheduleDates = explode(',', $job->end_date);
-
-                // Convert MM/DD/YYYY to YYYY-MM-DD
                 $dateParts = explode('-', $job->end_date);
+
                 if (count($dateParts) == 3) {
-                    Log::info("kaabot sa if");
                     $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
-                    Log::info("Formatted Date:", ['formattedDate' => $formattedDate]);
                     $events[] = [
                         'id' => $job->employer_id,
                         'title' => '[Job Listing] ' . $job->position,
                         'start' => $formattedDate,
-                        'color' => '#03346E', // FullCalendar expects start for all-day events
+                        'color' => '#03346E',
                         'allDay' => true
                     ];
                 }
             }
 
-
             foreach ($trainingPrograms as $program) {
                 $scheduleDates = explode(',', $program->schedule);
+                $startTime = $program->start_time;
+                $endTime = $program->end_time;
 
                 foreach ($scheduleDates as $date) {
-                    // Convert MM/DD/YYYY to YYYY-MM-DD
                     $dateParts = explode('/', $date);
-                    if (count($dateParts) == 3) {
-                        $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
-                        $events[] = [
-                            'id' => $program->id,
-                            'title' => '[Training] ' . $program->title,
-                            'start' => $formattedDate,
-                            'color' => '#347928', // FullCalendar expects `start` for all-day events
-                            'allDay' => true
-                        ];
+                    $startParts = explode(':', $startTime);
+                    $endParts = explode(':', $endTime);
+
+                    if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
+
+                        try {
+                            $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
+
+                            $startFormatted = sprintf(
+                                '%s %02d:%02d:%02d',
+                                $formattedDate,
+                                $startParts[0],
+                                $startParts[1],
+                                $startParts[2]
+                            );
+
+                            $endFormatted = sprintf(
+                                '%s %02d:%02d:%02d',
+                                $formattedDate,
+                                $endParts[0],
+                                $endParts[1],
+                                $endParts[2]
+                            );
+
+                            $events[] = [
+                                'id' => $program->id,
+                                'title' => '[Training] ' . $program->title,
+                                'start' => $startFormatted,
+                                'end' => $endFormatted,
+                                'color' => '#347928',
+                                'allDay' => false
+                            ];
+                        } catch (\Exception $e) {
+                            Log::error("Error formatting date and time: " . $e->getMessage());
+                        }
                     }
                 }
             }
@@ -364,8 +402,6 @@ class EmployerController extends Controller
         $userId = $validatedData['userId'];
         $employeeId = $validatedData['employeeId'];
         $hiringStatus = 'Accepted';
-
-        // Find the enrollee and update completion status
         $employee = Employee::findOrFail($employeeId);
         $employee->update(['hiring_status' => $hiringStatus]);
 
@@ -387,8 +423,6 @@ class EmployerController extends Controller
     {
 
         $employee = Employee::findOrFail($id);
-
-        // Validate the incoming request
         $validatedData = $request->validate([
             'schedule' => 'required|date',
             'start_time' => 'required|date_format:H:i|before:end_time',
@@ -401,11 +435,9 @@ class EmployerController extends Controller
 
         $employerId = $employee->job->employer_id;
 
-        // Check for schedule conflicts across all jobs of the employer
         $conflictingSchedule = Employee::whereHas('job', function ($query) use ($employerId) {
             $query->where('employer_id', $employerId);
-        })
-            ->where('schedule', $schedule)
+        })->where('schedule', $schedule)
             ->where(function ($query) use ($start_time, $end_time) {
                 $query->whereBetween('start_time', [$start_time, $end_time])
                     ->orWhereBetween('end_time', [$start_time, $end_time])
@@ -418,11 +450,6 @@ class EmployerController extends Controller
             return redirect()->back()->with(['error' => 'The schedule conflicts with another interview set by the employer.']);
         }
 
-        // $pwdUser = $application->user;
-        // $jobListing = $application->job;
-
-        // $pwdUser->notify(new JobApplicationAcceptedNotification($jobListing));
-
         $employee->update([
             'schedule' => $schedule,
             'start_time' => $start_time,
@@ -432,16 +459,15 @@ class EmployerController extends Controller
         return redirect()->route('jobs-show', $employee->job_id)->with('success', 'Interview schedule has been set.');
     }
 
-
-
     public function showEvents()
     {
         $events = Events::with('users')->latest()->paginate(10);
-        // dd($events);
         $participantCounts = [];
+
         foreach ($events as $event) {
             $participantCounts[$event->id] = $event->users()->count();
         }
+
         return view('employer.events', compact('events', 'participantCounts'));
     }
 
@@ -468,7 +494,7 @@ class EmployerController extends Controller
         $employees = Employee::all();
 
         if ($employees->isEmpty()) {
-            return redirect()->route('show-post-events')->with('error', 'No employees found to notify.');
+            return redirect()->route('show-post-events')->with('error', 'No users found to notify.');
         }
 
         foreach ($employees as $employee) {
@@ -480,11 +506,10 @@ class EmployerController extends Controller
 
     public function deleteEvent($id)
     {
-        $event = Events::findOrFail($id); // Find the event or throw a 404 error if not found
+        $event = Events::findOrFail($id);
 
-        // Check if the authenticated user is the owner of the event
         if ($event->employer_id == Auth::id()) {
-            $event->delete(); // Delete the event
+            $event->delete();
             return redirect()->back()->with('success', 'Event deleted successfully.');
         }
 

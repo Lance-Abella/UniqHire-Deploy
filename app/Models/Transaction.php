@@ -25,7 +25,6 @@ class Transaction extends Model
         return $this->belongsTo(CrowdfundEvent::class, 'crowdfund_id');
     }
 
-    // Define the relationship with the sponsor (user info)
     public function sponsor()
     {
         return $this->belongsTo(UserInfo::class, 'sponsor_id');

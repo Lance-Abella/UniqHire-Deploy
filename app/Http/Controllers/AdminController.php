@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserInfo;
 use App\Models\Role;
 use App\Models\Skill;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -58,11 +59,8 @@ class AdminController extends Controller
         return view('admin.sponsorUsers', compact('users'));
     }
 
-    // SKILLS MANAGING
-
     public function showSkills()
     {
-        // $skills = Skill::all()->paginate(18);
         $skills = Skill::paginate(18);
 
         return view('admin.skillManage', compact('skills'));
@@ -86,7 +84,7 @@ class AdminController extends Controller
 
     public function editSkill(Skill $skill)
     {
-        return view('admin.editSkill', compact('skill')); // Create a form view for editing a skill
+        return view('admin.editSkill', compact('skill'));
     }
 
     public function updateSkill(Request $request, Skill $skill)
@@ -112,4 +110,39 @@ class AdminController extends Controller
         $id->delete();
         return back()->with('success', 'User account deleted successfully!');
     }
+
+    public function toggleStatus($id)
+    {
+        $user = User::findOrFail($id);
+        $userInfo = $user->userInfo;
+
+        if ($userInfo->registration_status == 'Pending') {
+            $userInfo->registration_status = 'Activated';
+        } elseif ($userInfo->registration_status == 'Activated') {
+            $userInfo->registration_status = 'Deactivated';
+        } else {
+            $userInfo->registration_status = 'Activated';
+        }
+
+        $userInfo->save();
+
+        return redirect()->back()->with('success', 'User registration status updated successfully.');
+    }
+
+    public function setStatus(Request $request, $id, $status)
+    {
+        $user = User::findOrFail($id);
+        $userInfo = $user->userInfo;
+
+        if ($userInfo->registration_status == 'Pending') {
+            $userInfo->registration_status = $status;
+            $userInfo->save();
+
+            return redirect()->back()->with('success', "User registration status set to $status.");
+        }
+
+        return redirect()->back()->with('error', 'Status cannot be changed.');
+    }
+
+
 }

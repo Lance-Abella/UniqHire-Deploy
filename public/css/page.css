@@ -115,8 +115,22 @@ li {
 }
 
 .deny-btn {
-    padding: 1rem;
+    padding: 0.5rem;
     color: var(--text-error);
+    background-color: transparent;
+    font-weight: bold;
+}
+
+.set-btn {
+    padding: 0.5rem;
+    color: var(--color-01);
+    background-color: transparent;
+    font-weight: bold;
+}
+
+.activate-btn {
+    padding: 0.5rem;
+    color: var(--primary-color);
     background-color: transparent;
     font-weight: bold;
 }
@@ -1913,6 +1927,13 @@ table tbody .bx {
 
 .fc-toolbar-title {
     font-weight: var(--header-extrabold);
+}
+
+.fc-event-time {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--bg-color-01);
+    font-family: Arial, sans-serif;
 }
 
 /* .fc-view-harness {
