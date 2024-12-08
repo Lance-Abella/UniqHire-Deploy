@@ -58,14 +58,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/sponsor/all', [AdminController::class, 'showSponsors'])->middleware('role:Admin')->name('sponsor-list');
     Route::get('/skill/all', [AdminController::class, 'showSkills'])->middleware('role:Admin')->name('skill-list');
     Route::post('/skill/add', [AdminController::class, 'addSkill'])->middleware('role:Admin')->name('skill-add');
-    Route::get('skills/edit/{skill}', [AdminController::class, 'editSkill'])->middleware('role:Admin')->name('skill-edit');
-    Route::put('skills/edit/{skill}', [AdminController::class, 'updateSkill'])->middleware('role:Admin')->name('skill-update');
-    Route::delete('skills/{skill}', [AdminController::class, 'deleteSkill'])->middleware('role:Admin')->name('skill-delete');
+    Route::get('/skills/edit/{skill}', [AdminController::class, 'editSkill'])->middleware('role:Admin')->name('skill-edit');
+    Route::put('/skills/edit/{skill}', [AdminController::class, 'updateSkill'])->middleware('role:Admin')->name('skill-update');
+    Route::delete('/skills/{skill}', [AdminController::class, 'deleteSkill'])->middleware('role:Admin')->name('skill-delete');
     Route::delete('user/{id}', [AdminController::class, 'deleteUser'])->middleware('role:Admin')->name('user-delete');
     Route::patch('/users/{id}/toggle-status', [AdminController::class, 'toggleStatus'])->middleware('role:Admin')->name('user-toggle-status');
     Route::patch('user/{id}/set-status/{status}', [AdminController::class, 'setStatus'])->middleware('role:Admin')->name('user-set-status');
-
-
+    Route::get('/disability/all', [AdminController::class, 'showDisabilities'])->middleware('role:Admin')->name('disability-list');
+    Route::post('/disability/add', [AdminController::class, 'addDisability'])->middleware('role:Admin')->name('disability-add');
+    Route::get('/disability/edit/{disability}', [AdminController::class, 'editDisability'])->middleware('role:Admin')->name('disability-edit');
+    Route::put('/disability/edit/{disability}', [AdminController::class, 'updateDisability'])->middleware('role:Admin')->name('disability-update');
+    Route::delete('/disability/{disability}', [AdminController::class, 'deleteDisability'])->middleware('role:Admin')->name('disability-delete');
 
     //Trainer Middleware
     Route::get('/manage-program', [AgencyController::class, 'showPrograms'])->middleware('role:Training Agency,Employer')->name('programs-manage');

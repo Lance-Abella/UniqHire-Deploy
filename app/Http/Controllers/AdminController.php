@@ -95,7 +95,7 @@ class AdminController extends Controller
 
         $skill->update($request->all());
 
-        return redirect()->route('skill-list')->with('success', 'Skill updated successfully!');
+        return redirect()->route('skill-list')->withInput()->with('success', 'Skill updated successfully!');
     }
 
     public function deleteSkill(Skill $skill)
@@ -103,6 +103,51 @@ class AdminController extends Controller
         $skill->delete();
 
         return back()->with('success', 'Skill deleted successfully!');
+    }
+
+    public function showDisabilities()
+    {
+        $disabilities = Disability::paginate(18);
+
+        return view('admin.disabilityManage', compact('disabilities'));
+    }
+
+    public function addDisability(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        Disability::create([
+            'disability_name' => $request->name,
+        ]);
+
+        return redirect()->route('disability-list')->withInput()->with('success', 'Disability added successfully.');
+    }
+
+    public function editDisability(Disability $disability)
+    {
+        return view('admin.editDisability', compact('disability'));
+    }
+
+    public function updateDisability(Request $request, Disability $disability)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $disability->update([
+            'disability_name' => $request->name,
+        ]);
+
+        return redirect()->route('disability-list')->withInput()->with('success', 'Disability updated successfully!');
+    }
+
+    public function deleteDisability(Disability $disability)
+    {
+        $disability->delete();
+
+        return back()->with('success', 'Disability deleted successfully!');
     }
 
     public function deleteUser(User $id)
@@ -143,6 +188,4 @@ class AdminController extends Controller
 
         return redirect()->back()->with('error', 'Status cannot be changed.');
     }
-
-
 }
