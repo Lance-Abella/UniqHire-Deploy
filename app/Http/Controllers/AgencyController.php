@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Carbon\Carbon;
 
 use function Laravel\Prompts\table;
 
@@ -46,10 +47,7 @@ class AgencyController extends Controller
             ->with('crowdfund')
             ->get();
 
-
-
         foreach ($programs as $program) {
-
             $program->enrolleeCount = Enrollee::where('program_id', $program->id)
                 ->where('completion_status', 'Ongoing')
                 ->count();
@@ -57,9 +55,9 @@ class AgencyController extends Controller
             $program->slots = $program->participants - $program->enrolleeCount;
 
             if ($program->crowdfund) {
-                $raisedAmount = $program->crowdfund->raised_amount ?? 0; // Default to 0 if raised_amount is null
-                $goal = $program->crowdfund->goal ?? 1; // Default to 1 to avoid division by zero
-                $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0; // Calculate progress percentage
+                $raisedAmount = $program->crowdfund->raised_amount ?? 0; 
+                $goal = $program->crowdfund->goal ?? 1;
+                $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
                 $program->crowdfund->progress = $progress;
             }
         }
@@ -78,26 +76,27 @@ class AgencyController extends Controller
         $ongoingCount = $enrollees->where('completion_status', 'Ongoing')->count();
         $completedCount = $enrollees->where('completion_status', 'Completed')->count();
         $enrolleesCount = $enrollees->count();
-
         $enrolleeCount = Enrollee::where('program_id', $program->id)
             ->count();
-
         $slots = $program->participants - $enrolleeCount;
 
         $sponsors = [];
+
         if ($program->crowdfund) {
             $crowdfundId = $program->crowdfund->id ?? null;
+
             if ($crowdfundId) {
                 $sponsors = Transaction::where('crowdfund_id', $crowdfundId)
-                    ->where('status', 'Completed') // Only include successful transactions
+                    ->where('status', 'Completed')
                     ->get(['name', 'amount']);
             }
-            // dd($sponsors);
+
             $raisedAmount = $program->crowdfund->raised_amount ?? 0;
             $goal = $program->crowdfund->goal ?? 1;
             $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
             $program->crowdfund->progress = $progress;
         }
+
         return view('agency.showProg', compact('program', 'applications', 'reviews', 'enrollees', 'pendingsCount', 'ongoingCount', 'completedCount', 'enrolleesCount', 'requests', 'slots', 'sponsors'));
     }
 
@@ -111,7 +110,6 @@ class AgencyController extends Controller
 
     public function addProgram(Request $request)
     {
-        // Validate the request data
         $request->validate([
             'title' => 'required|string|max:255',
             'lat' => 'required|numeric|between:-90,90',
@@ -134,9 +132,6 @@ class AgencyController extends Controller
 
         $participants = $this->convertToNumber($request->participants);
 
-
-
-        // try {
         $trainingProgram = TrainingProgram::create([
             'agency_id' => auth()->id(),
             'title' => $request->title,
@@ -167,12 +162,9 @@ class AgencyController extends Controller
                 $competencyIds[] = $existingCompetency->id;
             }
 
-            // Attach competencies to the training program
             $trainingProgram->competencies()->sync($competencyIds);
         }
 
-
-        //NOTIFY PWD USERS!!! TRAINING PROGRAM
         $pwdUsers = User::whereHas('role', function ($query) {
             $query->where('role_name', 'PWD');
         })->get();
@@ -197,14 +189,15 @@ class AgencyController extends Controller
         $program = TrainingProgram::find($id);
 
         if ($program && $program->agency_id == auth()->id()) {
-            // Find and delete related notifications
             DB::table('notifications')
                 ->where('data', 'like', '%"training_program_id":' . $id . '%')
                 ->delete();
 
             $program->delete();
+
             return redirect()->route('programs-manage')->with('success', 'Training program deleted successfully');
         } else {
+
             return redirect()->route('programs-manage')->with('error', 'Failed to delete training program');
         }
     }
@@ -217,19 +210,13 @@ class AgencyController extends Controller
             return redirect()->route('programs-manage');
         }
 
-        // Fetch provinces and cities
         $provinceResponse = file_get_contents('https://psgc.cloud/api/provinces');
         $provinces = json_decode($provinceResponse, true);
-
-        // Fetch disabilities and education levels
         $disabilities = Disability::all();
         $levels = EducationLevel::all();
         $skills = Skill::all();
 
-        // Return the view with all required data
         return view('agency.editProg', compact('program', 'provinces', 'disabilities', 'levels', 'skills'));
-
-        // return redirect()->route('programs-manage');
     }
 
     public function updateProgram(Request $request, $id)
@@ -283,7 +270,6 @@ class AgencyController extends Controller
                     $competencyIds[] = $existingCompetency->id;
                 }
 
-                // Attach competencies to the training program
                 $program->competencies()->sync($competencyIds);
             }
 
@@ -302,7 +288,7 @@ class AgencyController extends Controller
                     ]);
                 }
             } else {
-                // If goal is not present, it means the crowdfund checkbox is unchecked, so delete the crowdfund event if it exists
+
                 if ($program->crowdfund) {
                     $program->crowdfund->delete();
                 }
@@ -316,31 +302,57 @@ class AgencyController extends Controller
 
     public function showCalendar(Request $request)
     {
-
         $user = auth()->user()->userInfo->user_id;
-        log::info($user);
 
         if ($request->expectsJson()) {
             $trainingPrograms = TrainingProgram::where('agency_id', $user)
-                ->get(['agency_id', 'title', 'schedule']);
+                ->get(['agency_id', 'title', 'schedule', 'start_time', 'end_time']);
 
             $events = [];
 
             foreach ($trainingPrograms as $program) {
                 $scheduleDates = explode(',', $program->schedule);
-
+                $startTime = $program->start_time; 
+                $endTime = $program->end_time;
+                
                 foreach ($scheduleDates as $date) {
-                    // Convert MM/DD/YYYY to YYYY-MM-DD
                     $dateParts = explode('/', $date);
-                    if (count($dateParts) == 3) {
-                        $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
-                        $events[] = [
-                            'id' => $program->id,
-                            'title' => '[Training] ' . $program->title,
-                            'start' => $formattedDate,
-                            'color' => '#347928', // FullCalendar expects `start` for all-day events
-                            'allDay' => true
-                        ];
+                    $startParts = explode(':', $startTime); 
+                    $endParts = explode(':', $endTime);
+
+                    if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
+
+                        try{
+                            $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
+
+                            $startFormatted = sprintf(
+                                '%s %02d:%02d:%02d',
+                                $formattedDate,
+                                $startParts[0],
+                                $startParts[1],
+                                $startParts[2]
+                            );
+
+                            $endFormatted = sprintf(
+                                '%s %02d:%02d:%02d',
+                                $formattedDate,
+                                $endParts[0],
+                                $endParts[1],
+                                $endParts[2]
+                            );
+                            
+                            $events[] = [
+                                'id' => $program->id,
+                                'title' => '[Training] ' . $program->title,
+                                'start' => $startFormatted,
+                                'end' => $endFormatted,
+                                'color' => '#347928', 
+                                'allDay' => false
+                            ];
+                        }catch (\Exception $e) {
+                            Log::error("Error formatting date and time: " . $e->getMessage());
+                        }
+                        
                     }
                 }
             }
@@ -355,7 +367,6 @@ class AgencyController extends Controller
     {
         Log::info("Reached accept method");
 
-        // Validate the incoming request
         $validatedData = $request->validate([
             'pwd_id' => 'required|exists:users,id',
             'program_id' => 'required|exists:training_programs,id',
@@ -366,19 +377,14 @@ class AgencyController extends Controller
         $programId = $validatedData['program_id'];
         $applicationId = $validatedData['training_application_id'];
         $completionStatus = 'Ongoing';
-
-        // Find the application by training_id
         $application = TrainingApplication::findOrFail($applicationId);
         $application->application_status = 'Approved';
         $application->save();
-
         $pwdUser = $application->user;
         $trainingProgram = $application->program;
 
         $pwdUser->notify(new ApplicationAcceptedNotification($trainingProgram));
 
-
-        // Create Enrollee record
         Enrollee::create([
             'pwd_id' => $pwdId,
             'program_id' => $programId,
@@ -388,13 +394,11 @@ class AgencyController extends Controller
 
         $application->update(['application_status' => 'Approved']);
 
-        // return response()->json(['success' => true, 'message' => 'Application submitted successfully.']);
         return back()->with('success', 'Application is accepted');
     }
 
     public function application(Request $request)
     {
-
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             'training_program_id' => 'required|exists:training_programs,id',
@@ -419,10 +423,9 @@ class AgencyController extends Controller
 
         $progSkills = DB::table('program_skill')
             ->where('training_program_id', $programId)
-            ->pluck('skill_id') // Fetching only the skill IDs
+            ->pluck('skill_id')
             ->toArray();
 
-        // Fetch skills already assigned to the user
         $userSkills = SkillUser::where('user_id', $userId)
             ->pluck('skill_id')
             ->toArray();
@@ -438,13 +441,11 @@ class AgencyController extends Controller
         $enrolleeId = $validatedData['enrolleeId'];
         $completionStatus = 'Completed';
 
-        // Find the enrollee and update completion status
         $enrollee = Enrollee::findOrFail($enrolleeId);
         $enrollee->update(['completion_status' => $completionStatus]);
 
-        // Insert a new row in the certification_details table
         DB::table('certification_details')->insert([
-            'program_id' => $enrollee->program_id, // assuming program_id is a property of the Enrollee model
+            'program_id' => $enrollee->program_id,
             'user_id' => $enrollee->pwd_id,
             'created_at' => now(),
             'updated_at' => now(),
@@ -456,46 +457,6 @@ class AgencyController extends Controller
         return back()->with('success', 'Enrollee completed the training and certification record created.');
     }
 
-
-
-
-    // public function action(Request $request)
-    // {
-    //     log::info("calendar reach in action!");
-    //     if($request->ajax())
-    // 	{
-    // 		if($request->type == 'add')
-    // 		{
-    // 			$event = TrainingProgram::create([
-    // 				'title'		=>	$request->title,
-    // 				'start'		=>	$request->start,
-    // 				'end'		=>	$request->end
-    // 			]);
-
-    // 			return response()->json($event);
-    // 		}
-
-    // 		if($request->type == 'update')
-    // 		{
-    // 			$event = TrainingProgram::find($request->id)->update([
-    // 				'title'		=>	$request->title,
-    // 				'start'		=>	$request->start,
-    // 				'end'		=>	$request->end
-    // 			]);
-
-    // 			return response()->json($event);
-    // 		}
-
-    // 		if($request->type == 'delete')
-    // 		{
-    // 			$event = TrainingProgram::find($request->id)->delete();
-
-    // 			return response()->json($event);
-    // 		}
-    // 	}
-    // }
-
-    //TEMPORARY LOGIC
     public function showEnrolleeProfile($id)
     {
         $user = User::find($id);
@@ -504,12 +465,9 @@ class AgencyController extends Controller
         $experiences = Experience::where('user_id', $id)->get();
         $socials = Socials::all();
         $userSocials = UserSocials::where('user_id', $id)->get();
-        // $enrollees = Enrollee::where('user_id', $user)->get();
         $latitude = $user->userInfo->latitude;
         $longitude = $user->userInfo->longitude;
         $isEmployed = Employee::where('pwd_id', $id)->where('hiring_status', 'Accepted')->exists();
-
-
 
         return view('agency.pwdProfile', compact('user', 'certifications', 'skilluser', 'experiences', 'latitude', 'longitude', 'isEmployed', 'userSocials', 'skilluser'));
     }

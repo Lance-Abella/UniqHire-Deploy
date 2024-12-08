@@ -35,13 +35,11 @@ class AuthController extends Controller
         $skills = Skill::whereNotIn('id', $addedSkillIds)->get();
         $socials = Socials::all();
         $userSocials = UserSocials::where('user_id', $id)->get();
-        // $skills = Skill::all();
         $skilluser = SkillUser::where('user_id', $id)->get();
         $experiences = Experience::where('user_id', $id)->get();
         $certifications = CertificationDetail::where('user_id', $id)->get();
         $latitude = $user->userInfo->latitude;
         $longitude = $user->userInfo->longitude;
-
         $isEmployed = Employee::where('pwd_id', $id)->where('hiring_status', 'Accepted')->exists();
 
         return view('auth.profile', compact('levels', 'disabilities', 'user', 'certifications', 'skills', 'skilluser', 'experiences', 'latitude', 'longitude', 'socials', 'userSocials', 'isEmployed'));
@@ -66,7 +64,6 @@ class AuthController extends Controller
             'affiliations' => 'nullable|string',
             'paypal' => 'nullable|string',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-
             'socials' => 'nullable|array',
             'socials.*' => 'integer|exists:socials,id',
             'social_links' => 'nullable|array',
@@ -114,7 +111,6 @@ class AuthController extends Controller
         }
 
         if ($request->has('socials') && $request->has('social_links')) {
-            // Get the new socials and links from the request
             $socialLinks = $request->input('social_links', []);
             $socials = $request->input('socials', []);
 
@@ -254,7 +250,6 @@ class AuthController extends Controller
         return view('auth.forgotPass');
     }
 
-    //LOGIN PROCESS
     public function showLogin()
     {
         return view('auth.login');
@@ -268,21 +263,28 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            if (Auth::user()->hasRole('PWD')) {
-                return redirect()->intended(route('pwd-list-program'));
+
+            $user = auth()->user()->load('userInfo');
+
+            if ($user->userInfo->registration_status == 'Activated') {
+                $request->session()->regenerate();
+                if (Auth::user()->hasRole('PWD')) {
+                    return redirect()->intended(route('pwd-list-program'))->with('logged-in', 'Logged in successfully');
+                } else {
+                    return redirect()->intended(route('home'))->with('logged-in', 'Logged in successfully');
+                }
+            } elseif ($user->userInfo->registration_status == 'Pending') {
+                Auth::logout();
+                return redirect()->route('login-page')->withInput()->with('info', 'Your account is still being verified. Thank you for your patience!');
             } else {
-                return redirect()->intended(route('home'));
+                Auth::logout();
+                return redirect()->route('login-page')->withInput()->with('info', 'Your account is currently deactivated. If you believe this is a mistake or would like to reactivate your account, please contact our support team. We are here to help!');
             }
         } else {
-            return back()->with('error', 'The provided credentials do not match our records');
-            // return back()->withErrors([
-            //     'email' => 'The provided credentials do not match our records',
-            // ])->with('error', 'The provided credentials do not match our records');
+            return back()->withInput()->with('error', 'The provided credentials do not match our records');
         }
     }
 
-    // REGISTRATION PROCESS
     public function showRegistration()
     {
         $roles = Role::all();
@@ -300,66 +302,71 @@ class AuthController extends Controller
             $email = $request->email;
         }
 
-        Log::info("Kaabot ari!");
-        $request->validate([
+        $validatedData = $request->validate([
             'password' => 'required|string|min:4|max:255|confirmed',
-            // 'disability' => 'required|string|exists:disabilities,id',
-            // 'education' => 'required|string|exists:education_level,name',
             'name' => 'required|string|max:255',
-            'contactnumber' => 'required|string|max:11|min:11',
+            'contactnumber' => 'required|string|size:11',
             'lat' => 'required|numeric|between:-90,90',
             'long' => 'required|numeric|between:-180,180',
             'loc' => 'nullable|string|max:255',
-            // 'pwd_id' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'pwd_id' => 'nullable|string|max:19|min:19',
+            'pwd_id' => 'nullable|string|max:30',
             'age' => 'nullable|integer|min:1|max:99',
             'founder' => 'nullable|string|max:255',
             'year_established' => 'nullable|integer|min:1000|max:3000',
             'email' => 'required|email',
-            // 'skills' => 'required|array|min:1',
-            // 'skills.*' => 'exists:skills,id',
-            'role' => 'required|exists:roles,id',
+            'role' => 'required|exists:roles,id'
         ]);
-        Log::info("Nalapas sa validation!");
 
-       if ($request->role == 2) {
+        if ($request->role == 2) {
             $pwdIdExists = Valid::where('valid_id_number', $request->pwd_id)->exists();
-            $pwdIdUsed = UserInfo::where('pwd_card', $request->pwd_id)->exists();
+            $pwdIdUsed = UserInfo::where('pwd_id', $request->pwd_id)->exists();
 
-            if(empty($request->pwd_id)){
-                return back()->with('error', 'PWD ID Number is empty.');
+            if (empty($request->pwd_id)) {
+                return redirect()->back()->withInput()->with('error', 'PWD ID Number is empty.');
             }
 
             if (!$pwdIdExists) {
-                return back()->with('error', 'The provided PWD ID Number is not valid.');
+                return redirect()->back()->withInput()->with('error', 'The provided PWD ID Number is not valid.');
             }
 
             if ($pwdIdUsed) {
-                return back()->with('error', 'The provided PWD ID Number is already registered.');
+                return redirect()->back()->withInput()->with('error', 'The provided PWD ID Number is already registered.');
             }
+
+            $validatedData['registration_status'] = 'Activated';
+        } elseif ($request->role == 3) {
+            $IdUsed = UserInfo::where('pwd_id', $request->pwd_id)->exists();
+
+            if (empty($request->pwd_id)) {
+                return redirect()->back()->withInput()->with('error', 'Training Provider Accreditation Number is empty.');
+            }
+
+            if ($IdUsed) {
+                return redirect()->back()->withInput()->with('error', 'The provided Training Provider Accreditation Number is already registered.');
+            }
+
+            $validatedData['registration_status'] = 'Pending';
+        } elseif ($request->role == 4) {
+            $IdUsed = UserInfo::where('pwd_id', $request->pwd_id)->exists();
+
+            if (empty($request->pwd_id)) {
+                return redirect()->back()->withInput()->with('error', 'DTI Business Registration Number');
+            }
+
+            if ($IdUsed) {
+                return redirect()->back()->withInput()->with('error', 'The provided DTI Business Registration Number is already registered.');
+            }
+
+            $validatedData['registration_status'] = 'Pending';
         }
 
 
         $user = User::create([
-            // 'email' => $email,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
         $user->role()->attach($request->role);
-        Log::info("Registration reaches here!");
-
-        // $pwdCardPath = null;
-
-        // if ($request->hasFile('pwd_card')) {
-        //     $file = $request->file('pwd_card');
-        //     $fileName = time() . '_' . $file->getClientOriginalName();
-        //     $filePath = 'pwd_cards/' . $fileName;
-
-        //     Storage::disk('public')->put($filePath, file_get_contents($file));
-
-        //     $pwdCardPath = 'storage/' . $filePath;
-        // }
 
         UserInfo::create([
             'user_id' => $user->id,
@@ -370,16 +377,14 @@ class AuthController extends Controller
             'latitude' => $request->lat,
             'longitude' => $request->long,
             'location' => $request->loc,
-            'pwd_card' => $request->pwd_id,
+            'pwd_id' => $request->pwd_id,
             'age' => $request->age ?? 0,
             'founder' => $request->founder ?? '',
             'year_established' => $request->year_established ?? 0,
+            'registration_status' => $validatedData['registration_status']
         ]);
 
-        // $userInfo->skills()->attach($request->skills);
-
-        // return redirect()->route('login-page');
-        return redirect()->route('login-page')->with('success', 'Account registered successfully!');
+        return redirect()->route('login-page')->with('success', 'Your account has been successfully registered! Please allow up to 1 hour for the verification process. Thank you for your patience.');
     }
 
     public function logout(Request $request)
@@ -429,10 +434,8 @@ class AuthController extends Controller
             $fileName = time() . '.' . $file->getClientOriginalExtension();
             $filePath = 'profile_photos/' . $fileName;
 
-            // Save the file to the specified disk
             Storage::disk('profile_photos')->put($fileName, file_get_contents($file));
 
-            // Update the user's profile_path
             $user->profile_path = $filePath;
             $user->save();
         }

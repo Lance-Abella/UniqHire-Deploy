@@ -11,7 +11,7 @@
     <table class="table table-striped table-hover">
         <thead>
             <tr>
-                <td class="table-head">User ID</td>
+                <td class="table-head">PWD ID Number</td>
                 <td class="table-head">Name</td>
                 <td class="table-head">Email</td>
                 <td class="table-head">Contact Number</td>
@@ -23,7 +23,7 @@
         <tbody class="table-group-divider text-center">
             @forelse ($users as $user)
             <tr>
-                <td>{{ $user->id }}</td>
+                <td>{{ $user->userInfo->pwd_id }}</td>
                 <!-- <td>{{ $user->userInfo->firstname . ' ' . $user->userInfo->lastname }}</td> -->
                 <td>{{ $user->userInfo->name }}</td>
                 <td>{{ $user->email }}</td>

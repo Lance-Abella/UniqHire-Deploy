@@ -13,13 +13,13 @@
     </head>
 
     <body>
-        @if (session('success'))
+        @if(session('success'))
         <script>
             Swal.fire({
                 title: "Success",
                 text: "{{session('success')}}",
                 icon: "success",
-                timer: 3000,
+                timer: 4000,
             });
         </script>
         @endif
@@ -29,7 +29,38 @@
                 title: "Error",
                 text: "{{session('error')}}",
                 icon: "error",
+                timer: 4000,
+            });
+        </script>
+        @endif
+        @if (session('info'))
+        <script>
+            Swal.fire({
+                title: "Info",
+                text: "{{session('info')}}",
+                icon: "info",
+                timer: 4500,
+            });
+        </script>
+        @endif
+        @if(session('logged-in'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
                 timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+
+
+            Toast.fire({
+                icon: "success",
+                title: "{{ session('logged-in') }}"
             });
         </script>
         @endif
@@ -80,41 +111,45 @@
                                         <span class="side-title">Calendar</span>
                                     </a>
                                 </li>
-                                <li class="side-item">
+                                <!-- <li class="side-item">
                                     <a href="#" class="side-item-link">
                                         <i class='bx bx-cog side-icon'></i>
                                         <span class="side-title">Settings</span>
                                     </a>
-                                </li>
+                                </li> -->
 
                                 @endif
 
                                 <!-- ADMIN ROLE ACCESS -->
                                 @if (Auth::user()->hasRole('Admin'))
-                                <li class="side-item"><a href="{{route('pwd-list')}}" class="side-item-link">
+                                <li class="side-item"><a href="{{route('pwd-list')}}" class="side-item-link {{ request()->routeIs('pwd-list') ? 'active' : '' }}">
                                         <i class='bx bx-handicap side-icon'></i>
                                         <span class="side-title">PWDs</span>
                                     </a></li>
-                                <li class="side-item"><a href="{{route('trainer-list')}}" class="side-item-link">
+                                <li class="side-item"><a href="{{route('trainer-list')}}" class="side-item-link {{ request()->routeIs('trainer-list') ? 'active' : '' }}">
                                         <i class='bx bxs-school side-icon'></i>
                                         <span class="side-title">Training Agencies</span>
                                     </a></li>
-                                <li class="side-item"><a href="{{route('employee-list')}}" class="side-item-link">
+                                <li class="side-item"><a href="{{route('employee-list')}}" class="side-item-link {{ request()->routeIs('employee-list') ? 'active' : '' }}">
                                         <i class='bx bx-briefcase-alt-2 side-icon'></i>
                                         <span class="side-title">Employers</span>
                                     </a></li>
-                                <li class="side-item"><a href="{{route('sponsor-list')}}" class="side-item-link">
+                                <li class="side-item"><a href="{{route('sponsor-list')}}" class="side-item-link {{ request()->routeIs('sponsor-list') ? 'active' : '' }}">
                                         <i class='bx bx-dollar-circle side-icon'></i>
                                         <span class="side-title">Sponsors</span>
                                     </a></li>
-                                <li class="side-item"><a href="{{route('skill-list')}}" class="side-item-link">
+                                <li class="side-item"><a href="{{route('skill-list')}}" class="side-item-link {{ request()->routeIs('skill-list') ? 'active' : '' }}">
                                         <i class='bx bxs-brain side-icon'></i>
-                                        <span class="side-title">Manage Skills</span>
+                                        <span class="side-title">Skills</span>
                                     </a></li>
-                                <li class="side-item"><a href="" class="side-item-link">
+                                <li class="side-item"><a href="{{route('disability-list')}}" class="side-item-link {{ request()->routeIs('disability-list') ? 'active' : '' }}">
+                                        <i class='bx bx-body side-icon'></i>
+                                        <span class="side-title">Disabilities</span>
+                                    </a></li>
+                                <!-- <li class="side-item"><a href="" class="side-item-link">
                                         <i class='bx bx-cog side-icon'></i>
                                         <span class="side-title">Settings</span>
-                                    </a></li>
+                                    </a></li> -->
                                 <!-- <li><a href="#"><i class='bx bx-briefcase-alt-2 side-icon'></i><span class="side-title">Employers</span></a></li> -->
                                 @endif
                                 <!-- TRAINER ROLE ACCESS -->

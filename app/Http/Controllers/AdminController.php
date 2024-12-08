@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserInfo;
 use App\Models\Role;
 use App\Models\Skill;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -58,11 +59,8 @@ class AdminController extends Controller
         return view('admin.sponsorUsers', compact('users'));
     }
 
-    // SKILLS MANAGING
-
     public function showSkills()
     {
-        // $skills = Skill::all()->paginate(18);
         $skills = Skill::paginate(18);
 
         return view('admin.skillManage', compact('skills'));
@@ -86,7 +84,7 @@ class AdminController extends Controller
 
     public function editSkill(Skill $skill)
     {
-        return view('admin.editSkill', compact('skill')); // Create a form view for editing a skill
+        return view('admin.editSkill', compact('skill'));
     }
 
     public function updateSkill(Request $request, Skill $skill)
@@ -97,7 +95,7 @@ class AdminController extends Controller
 
         $skill->update($request->all());
 
-        return redirect()->route('skill-list')->with('success', 'Skill updated successfully!');
+        return redirect()->route('skill-list')->withInput()->with('success', 'Skill updated successfully!');
     }
 
     public function deleteSkill(Skill $skill)
@@ -107,9 +105,87 @@ class AdminController extends Controller
         return back()->with('success', 'Skill deleted successfully!');
     }
 
+    public function showDisabilities()
+    {
+        $disabilities = Disability::paginate(18);
+
+        return view('admin.disabilityManage', compact('disabilities'));
+    }
+
+    public function addDisability(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        Disability::create([
+            'disability_name' => $request->name,
+        ]);
+
+        return redirect()->route('disability-list')->withInput()->with('success', 'Disability added successfully.');
+    }
+
+    public function editDisability(Disability $disability)
+    {
+        return view('admin.editDisability', compact('disability'));
+    }
+
+    public function updateDisability(Request $request, Disability $disability)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $disability->update([
+            'disability_name' => $request->name,
+        ]);
+
+        return redirect()->route('disability-list')->withInput()->with('success', 'Disability updated successfully!');
+    }
+
+    public function deleteDisability(Disability $disability)
+    {
+        $disability->delete();
+
+        return back()->with('success', 'Disability deleted successfully!');
+    }
+
     public function deleteUser(User $id)
     {
         $id->delete();
         return back()->with('success', 'User account deleted successfully!');
+    }
+
+    public function toggleStatus($id)
+    {
+        $user = User::findOrFail($id);
+        $userInfo = $user->userInfo;
+
+        if ($userInfo->registration_status == 'Pending') {
+            $userInfo->registration_status = 'Activated';
+        } elseif ($userInfo->registration_status == 'Activated') {
+            $userInfo->registration_status = 'Deactivated';
+        } else {
+            $userInfo->registration_status = 'Activated';
+        }
+
+        $userInfo->save();
+
+        return redirect()->back()->with('success', 'User registration status updated successfully.');
+    }
+
+    public function setStatus(Request $request, $id, $status)
+    {
+        $user = User::findOrFail($id);
+        $userInfo = $user->userInfo;
+
+        if ($userInfo->registration_status == 'Pending') {
+            $userInfo->registration_status = $status;
+            $userInfo->save();
+
+            return redirect()->back()->with('success', "User registration status set to $status.");
+        }
+
+        return redirect()->back()->with('error', 'Status cannot be changed.');
     }
 }

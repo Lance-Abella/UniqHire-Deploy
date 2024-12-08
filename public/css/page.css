@@ -115,8 +115,22 @@ li {
 }
 
 .deny-btn {
-    padding: 1rem;
+    padding: 0.5rem;
     color: var(--text-error);
+    background-color: transparent;
+    font-weight: bold;
+}
+
+.set-btn {
+    padding: 0.5rem;
+    color: var(--color-01);
+    background-color: transparent;
+    font-weight: bold;
+}
+
+.activate-btn {
+    padding: 0.5rem;
+    color: var(--primary-color);
     background-color: transparent;
     font-weight: bold;
 }
@@ -1017,8 +1031,8 @@ span.badge {
     height: 0.5rem;
     border-radius: var(--border-radius);
     position: absolute;
-    left: 25%;
-    right: 25%;
+    left: 0%;
+    right: 0%;
     background-color: var(--primary-color-light);
 }
 
@@ -1701,7 +1715,8 @@ input[type="range"]::-webkit-slider-thumb {
     text-align: center;
 }
 
-.trainings-container .table tbody tr .match-info {
+.trainings-container .table tbody tr .match-info,
+.users-container .table tbody tr .match-info {
     /* margin-bottom: 1rem; */
     /* padding-top: 0.5rem; */
     /* width: 5rem; */
@@ -1710,10 +1725,18 @@ input[type="range"]::-webkit-slider-thumb {
     width: 100%;
 }
 
-.trainings-container .table tbody tr .match-info.pending {
+.trainings-container .table tbody tr .match-info.pending,
+.users-container .table tbody tr .match-info.pending {
     background-color: var(--color-01-light);
     color: var(--color-01);
     border-color: var(--color-01);
+}
+
+.trainings-container .table tbody tr .match-info.denied,
+.users-container .table tbody tr .match-info.denied {
+    background-color: var(--color-02-light);
+    color: var(--color-02);
+    border-color: var(--color-02);
 }
 
 .trainings-container .table tbody tr td a {
@@ -1913,6 +1936,13 @@ table tbody .bx {
 
 .fc-toolbar-title {
     font-weight: var(--header-extrabold);
+}
+
+.fc-event-time {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--bg-color-01);
+    font-family: Arial, sans-serif;
 }
 
 /* .fc-view-harness {

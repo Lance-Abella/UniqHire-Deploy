@@ -65,10 +65,7 @@ class NotificationController extends Controller
             ->first();
 
         if ($notification) {
-            // Mark the notification as read
             $notification->markAsRead();
-
-            // Get the updated unread notifications count
             $unreadCount = auth()->user()->unreadNotifications->count();
 
             return response()->json([
