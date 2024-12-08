@@ -78,6 +78,21 @@ class DatabaseSeeder extends Seeder
         $id_three = Valid::create(['valid_id_number' => '13-5416-000-0000003']);
         $id_four = Valid::create(['valid_id_number' => '13-5416-000-0000004']);
         $id_five = Valid::create(['valid_id_number' => '13-5416-000-0000005']);
+        $id_six = Valid::create(['valid_id_number' => '13-5416-000-0000006']);
+        $id_seven = Valid::create(['valid_id_number' => '13-5416-000-0000007']);
+        $id_eight = Valid::create(['valid_id_number' => '13-5416-000-0000008']);
+        $id_nine = Valid::create(['valid_id_number' => '13-5416-000-0000009']);
+        $id_ten = Valid::create(['valid_id_number' => '13-5416-000-0000010']);
+        $id_eleven = Valid::create(['valid_id_number' => '13-5416-000-0000011']);
+        $id_twelve = Valid::create(['valid_id_number' => '13-5416-000-0000012']);
+        $id_thirteen = Valid::create(['valid_id_number' => '13-5416-000-0000013']);
+        $id_fourteen = Valid::create(['valid_id_number' => '13-5416-000-0000014']);
+        $id_fifteen = Valid::create(['valid_id_number' => '13-5416-000-0000015']);
+        $id_sixteen = Valid::create(['valid_id_number' => '13-5416-000-0000016']);
+        $id_seventeen = Valid::create(['valid_id_number' => '13-5416-000-0000017']);
+        $id_eighteen = Valid::create(['valid_id_number' => '13-5416-000-0000018']);
+        $id_nineteen = Valid::create(['valid_id_number' => '13-5416-000-0000019']);
+        $id_twenty = Valid::create(['valid_id_number' => '13-5416-000-0000020']);
 
 
         $adminuser = User::create([
@@ -94,6 +109,7 @@ class DatabaseSeeder extends Seeder
             'disability_id' => $none->id,
             'educational_id' => $not_applicable->id,
             'user_id' => $adminuser->id,
+            'registration_status' => 'Activated'
         ]);
 
 

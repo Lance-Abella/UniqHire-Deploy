@@ -77,7 +77,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="floatingPassword" name="password" required placeholder="Password" >
+                            <input type="password" class="form-control" id="floatingPassword" name="password" required placeholder="Password" value="{{ old('password') }}">
                             <label for="floatingPassword">Password</label>
                             @error('password')
                             <span class="error-msg">{{ $message }}</span>
@@ -86,7 +86,7 @@
                     </div>
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required placeholder="Confirm Password">
+                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required placeholder="Confirm Password" value="{{ old('password_confirmation') }}">
                             <label for="password_confirmation">Confirm Password</label>
                         </div>
                     </div>
@@ -148,22 +148,22 @@
                         </div>
                     </div> -->
                     <div class="row">
-                    <div class="col">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
-                            <label for="name">PWD ID Number</label>
-                            @error('pwd_id')
-                            <span class="error-msg">{{ $message }}</span>
-                            @enderror
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
+                                <label for="name">PWD ID Number</label>
+                                @error('pwd_id')
+                                <span class="error-msg">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
                 <div id="agency-section" style="display:none;">
                     <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="founder" name="founder" value="{{ old('name') }}" placeholder="Founder">
+                                <input type="text" class="form-control" id="founder" name="founder" value="{{ old('founder') }}" placeholder="Founder">
                                 <label for="founder">Founder</label>
                                 @error('founder')
                                 <span class="error-msg">{{ $message }}</span>
@@ -172,9 +172,20 @@
                         </div>
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="number" class="form-control" id="year_established" name="year_established" placeholder="Year Established">
+                                <input type="number" class="form-control" id="year_established" name="year_established" placeholder="Year Established" value="{{ old('year_established') }}">
                                 <label for="year_established">Year Established</label>
                                 @error('year_established')
+                                <span class="error-msg">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
+                                <label for="name" id="id_label"></label>
+                                @error('pwd_id')
                                 <span class="error-msg">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -221,6 +232,7 @@
         var disabilitySelect = document.getElementById('disabilities');
         var agencySection = document.getElementById('agency-section');
         var educationSelect = document.getElementById('education-level');
+        var idLabel = document.getElementById('id_label');
 
         if (roleSelect.value === '2') {
             pwdSection.style.display = 'block';
@@ -241,6 +253,13 @@
             agencySection.style.display = 'block';
         } else {
             agencySection.style.display = 'none';
+        }
+
+        if (roleSelect.value === '3') {
+            idLabel.textContent = 'Training Provider Accreditation Number';
+        }
+        if (roleSelect.value === '4') {
+            idLabel.textContent = 'DTI Business Registration Number';
         }
     }
 

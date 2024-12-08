@@ -19,7 +19,7 @@
                 title: "Success",
                 text: "{{session('success')}}",
                 icon: "success",
-                timer: 3000,
+                timer: 4000,
             });
         </script>
         @endif
@@ -29,7 +29,17 @@
                 title: "Error",
                 text: "{{session('error')}}",
                 icon: "error",
-                timer: 3000,
+                timer: 4000,
+            });
+        </script>
+        @endif
+        @if (session('info'))
+        <script>
+            Swal.fire({
+                title: "Info",
+                text: "{{session('info')}}",
+                icon: "info",
+                timer: 4000,
             });
         </script>
         @endif
@@ -80,12 +90,12 @@
                                         <span class="side-title">Calendar</span>
                                     </a>
                                 </li>
-                                <li class="side-item">
+                                <!-- <li class="side-item">
                                     <a href="#" class="side-item-link">
                                         <i class='bx bx-cog side-icon'></i>
                                         <span class="side-title">Settings</span>
                                     </a>
-                                </li>
+                                </li> -->
 
                                 @endif
 
@@ -111,10 +121,10 @@
                                         <i class='bx bxs-brain side-icon'></i>
                                         <span class="side-title">Manage Skills</span>
                                     </a></li>
-                                <li class="side-item"><a href="" class="side-item-link">
+                                <!-- <li class="side-item"><a href="" class="side-item-link">
                                         <i class='bx bx-cog side-icon'></i>
                                         <span class="side-title">Settings</span>
-                                    </a></li>
+                                    </a></li> -->
                                 <!-- <li><a href="#"><i class='bx bx-briefcase-alt-2 side-icon'></i><span class="side-title">Employers</span></a></li> -->
                                 @endif
                                 <!-- TRAINER ROLE ACCESS -->

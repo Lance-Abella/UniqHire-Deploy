@@ -34,7 +34,7 @@ class RecommenderController extends Controller
 {
     private function calculateDistance($lat1, $lng1, $lat2, $lng2)
     {
-        $earthRadius = 6371; // Radius of the earth in km
+        $earthRadius = 6371; 
 
         $latDifference = deg2rad($lat2 - $lat1);
         $lngDifference = deg2rad($lng2 - $lng1);
@@ -45,7 +45,7 @@ class RecommenderController extends Controller
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
-        $distance = $earthRadius * $c; // Distance in km
+        $distance = $earthRadius * $c; 
 
         return round($distance, 2);
     }
@@ -307,21 +307,6 @@ class RecommenderController extends Controller
 
         $minSalary = $request->minSalary;
         $maxSalary = $request->maxSalary;
-
-        // if ($request->has('minSalary') && $request->has('maxSalary')) {
-        //     $query->whereBetween('salary', [$request->minSalary, $request->maxSalary]);
-        // } elseif ($request->has('minSalary')) {
-        //     $query->where('salary', '>=', $request->minSalary);
-        // } elseif ($request->has('maxSalary')) {
-        //     $query->where('salary', '<=', $request->maxSalary);
-        // }
-
-
-        // if (isset($request->type) && ($request->setup != null)) {
-        //     $query->whereHas('type', function ($q) use ($request) {
-        //         $q->whereIn('name', $request->type);
-        //     });
-        // }
         $query->whereDate('end_date', '>=', $currentDate);
         $query->whereNotIn('id', $approvedJobIds);
         $query->whereHas('disability', function ($q) use ($user) {

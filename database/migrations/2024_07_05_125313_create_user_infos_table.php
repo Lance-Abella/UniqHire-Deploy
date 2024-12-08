@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
             $table->string('location')->nullable();
-            $table->string('pwd_card')->nullable();
+            $table->string('pwd_id')->nullable();
             $table->integer('age')->default(0);
             $table->text('about')->nullable();
             $table->string('founder')->default('');
@@ -30,6 +30,7 @@ return new class extends Migration
             $table->text('awards')->nullable();
             $table->string('profile_path')->nullable();
             $table->string('paypal_account')->nullable();
+            $table->enum('registration_status', ['Pending', 'Activated', 'Deactivated'])->default('Pending');
             $table->timestamps();
         });
     }
