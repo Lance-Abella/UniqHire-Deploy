@@ -28,11 +28,11 @@
                             @foreach ($roles as $role)
                             @if ($role->role_name !== 'Admin')
                             <option value="{{ $role->id }}">{{ $role->role_name }}</option>
-                            
+
                             @endif
-                            
+
                             @endforeach
-                        </select>                        
+                        </select>
                     </div>
                 </div>
             </div>
@@ -96,10 +96,10 @@
                         <input type="hidden" id="lat" name="lat" required>
                         <input type="hidden" id="long" name="long" required>
                         <input type="hidden" id="loc" name="loc" required>
-                        <input id="pac-input" class="controls" type="text" placeholder="Search Box">                        
+                        <input id="pac-input" class="controls" type="text" placeholder="Search Box">
                         <div id="map" class="map"></div>
                     </div>
-                </div>                
+                </div>
                 <hr>
                 <div id="pwd-section">
                     <div class="row">
@@ -147,17 +147,6 @@
                             </div>
                         </div>
                     </div> -->
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
-                                <label for="name">PWD ID Number</label>
-                                @error('pwd_id')
-                                <span class="error-msg">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div id="agency-section" style="display:none;">
                     <div class="row">
@@ -180,15 +169,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
-                                <label for="name" id="id_label"></label>
-                                @error('pwd_id')
-                                <span class="error-msg">{{ $message }}</span>
-                                @enderror
-                            </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
+                            <label for="name" id="id_label">PWD ID Number</label>
+                            @error('pwd_id')
+                            <span class="error-msg">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -255,11 +244,18 @@
             agencySection.style.display = 'none';
         }
 
-        if (roleSelect.value === '3') {
+        if (roleSelect.value === '2') {
+            idLabel.textContent = 'PWD ID Number';
+            pwdIdInput.style.display = 'block';
+        } else if (roleSelect.value === '3') {
             idLabel.textContent = 'Training Provider Accreditation Number';
-        }
-        if (roleSelect.value === '4') {
+            pwdIdInput.style.display = 'block';
+        } else if (roleSelect.value === '4') {
             idLabel.textContent = 'DTI Business Registration Number';
+            pwdIdInput.style.display = 'block';
+        } else if (roleSelect.value === '5') {
+            pwdIdInput.style.display = 'none';
+            idLabel.textContent = '';
         }
     }
 

@@ -263,28 +263,24 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            
+
             $user = auth()->user()->load('userInfo');
 
-            if($user->userInfo->registration_status == 'Activated'){
+            if ($user->userInfo->registration_status == 'Activated') {
                 $request->session()->regenerate();
                 if (Auth::user()->hasRole('PWD')) {
-                    return redirect()->intended(route('pwd-list-program'));
+                    return redirect()->intended(route('pwd-list-program'))->with('logged-in', 'Logged in successfully');
                 } else {
-                    return redirect()->intended(route('home'));
+                    return redirect()->intended(route('home'))->with('logged-in', 'Logged in successfully');
                 }
-            } 
-            elseif($user->userInfo->registration_status == 'Pending'){
+            } elseif ($user->userInfo->registration_status == 'Pending') {
                 Auth::logout();
-                return redirect()->route('login-page')->withInput()->with('info', 'Your credentials are currently under review. Verification is still in progress. Thank you for your patience!');
-            } 
-            else{
+                return redirect()->route('login-page')->withInput()->with('info', 'Your account is still being verified. Thank you for your patience!');
+            } else {
                 Auth::logout();
                 return redirect()->route('login-page')->withInput()->with('info', 'Your account is currently deactivated. If you believe this is a mistake or would like to reactivate your account, please contact our support team. We are here to help!');
             }
-            
-        } 
-        else {
+        } else {
             return back()->withInput()->with('error', 'The provided credentials do not match our records');
         }
     }
@@ -318,18 +314,18 @@ class AuthController extends Controller
             'founder' => 'nullable|string|max:255',
             'year_established' => 'nullable|integer|min:1000|max:3000',
             'email' => 'required|email',
-            'role' => 'required|exists:roles,id'            
+            'role' => 'required|exists:roles,id'
         ]);
 
-       if ($request->role == 2) {
+        if ($request->role == 2) {
             $pwdIdExists = Valid::where('valid_id_number', $request->pwd_id)->exists();
             $pwdIdUsed = UserInfo::where('pwd_id', $request->pwd_id)->exists();
 
-            if(empty($request->pwd_id)){
+            if (empty($request->pwd_id)) {
                 return redirect()->back()->withInput()->with('error', 'PWD ID Number is empty.');
             }
 
-            if (!$pwdIdExists){
+            if (!$pwdIdExists) {
                 return redirect()->back()->withInput()->with('error', 'The provided PWD ID Number is not valid.');
             }
 
@@ -338,11 +334,10 @@ class AuthController extends Controller
             }
 
             $validatedData['registration_status'] = 'Activated';
-
-        } elseif($request->role == 3) {
+        } elseif ($request->role == 3) {
             $IdUsed = UserInfo::where('pwd_id', $request->pwd_id)->exists();
 
-            if(empty($request->pwd_id)){
+            if (empty($request->pwd_id)) {
                 return redirect()->back()->withInput()->with('error', 'Training Provider Accreditation Number is empty.');
             }
 
@@ -351,11 +346,10 @@ class AuthController extends Controller
             }
 
             $validatedData['registration_status'] = 'Pending';
-
-        } elseif($request->role == 4) {
+        } elseif ($request->role == 4) {
             $IdUsed = UserInfo::where('pwd_id', $request->pwd_id)->exists();
 
-            if(empty($request->pwd_id)){
+            if (empty($request->pwd_id)) {
                 return redirect()->back()->withInput()->with('error', 'DTI Business Registration Number');
             }
 
@@ -365,7 +359,7 @@ class AuthController extends Controller
 
             $validatedData['registration_status'] = 'Pending';
         }
-        
+
 
         $user = User::create([
             'email' => $request->email,
