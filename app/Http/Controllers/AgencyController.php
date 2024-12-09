@@ -22,6 +22,7 @@ use App\Models\Transaction;
 use App\Notifications\ApplicationAcceptedNotification;
 use App\Notifications\NewTrainingProgramNotification;
 use App\Notifications\TrainingCompletedNotification;
+use App\Notifications\PwdApplicationNotification;
 use Illuminate\Http\Request;
 use DateTime;
 use Illuminate\Support\Facades\Log;
@@ -55,7 +56,7 @@ class AgencyController extends Controller
             $program->slots = $program->participants - $program->enrolleeCount;
 
             if ($program->crowdfund) {
-                $raisedAmount = $program->crowdfund->raised_amount ?? 0; 
+                $raisedAmount = $program->crowdfund->raised_amount ?? 0;
                 $goal = $program->crowdfund->goal ?? 1;
                 $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
                 $program->crowdfund->progress = $progress;
@@ -312,17 +313,17 @@ class AgencyController extends Controller
 
             foreach ($trainingPrograms as $program) {
                 $scheduleDates = explode(',', $program->schedule);
-                $startTime = $program->start_time; 
+                $startTime = $program->start_time;
                 $endTime = $program->end_time;
-                
+
                 foreach ($scheduleDates as $date) {
                     $dateParts = explode('/', $date);
-                    $startParts = explode(':', $startTime); 
+                    $startParts = explode(':', $startTime);
                     $endParts = explode(':', $endTime);
 
                     if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
 
-                        try{
+                        try {
                             $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
 
                             $startFormatted = sprintf(
@@ -340,19 +341,18 @@ class AgencyController extends Controller
                                 $endParts[1],
                                 $endParts[2]
                             );
-                            
+
                             $events[] = [
                                 'id' => $program->id,
                                 'title' => '[Training] ' . $program->title,
                                 'start' => $startFormatted,
                                 'end' => $endFormatted,
-                                'color' => '#347928', 
+                                'color' => '#347928',
                                 'allDay' => false
                             ];
-                        }catch (\Exception $e) {
+                        } catch (\Exception $e) {
                             Log::error("Error formatting date and time: " . $e->getMessage());
                         }
-                        
                     }
                 }
             }
@@ -470,5 +470,12 @@ class AgencyController extends Controller
         $isEmployed = Employee::where('pwd_id', $id)->where('hiring_status', 'Accepted')->exists();
 
         return view('agency.pwdProfile', compact('user', 'certifications', 'skilluser', 'experiences', 'latitude', 'longitude', 'isEmployed', 'userSocials', 'skilluser'));
+    }
+
+    public function deny(TrainingApplication $trainid)
+    {
+        $trainid->delete();
+
+        return back()->with('success', 'Application denied');
     }
 }
