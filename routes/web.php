@@ -69,6 +69,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/disability/edit/{disability}', [AdminController::class, 'editDisability'])->middleware('role:Admin')->name('disability-edit');
     Route::put('/disability/edit/{disability}', [AdminController::class, 'updateDisability'])->middleware('role:Admin')->name('disability-update');
     Route::delete('/disability/{disability}', [AdminController::class, 'deleteDisability'])->middleware('role:Admin')->name('disability-delete');
+    Route::get('/social-media/all', [AdminController::class, 'showSocials'])->middleware('role:Admin')->name('social-list');
+    Route::post('/social-media/add', [AdminController::class, 'addSocial'])->middleware('role:Admin')->name('social-add');
+    Route::get('/social-media/edit/{social}', [AdminController::class, 'editSocial'])->middleware('role:Admin')->name('social-edit');
+    Route::put('/social-media/edit/{social}', [AdminController::class, 'updateSocial'])->middleware('role:Admin')->name('social-update');
+    Route::delete('/social-media/{social}', [AdminController::class, 'deleteSocial'])->middleware('role:Admin')->name('social-delete');
 
     //Trainer Middleware
     Route::get('/manage-program', [AgencyController::class, 'showPrograms'])->middleware('role:Training Agency,Employer')->name('programs-manage');

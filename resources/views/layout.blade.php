@@ -138,13 +138,17 @@
                                         <i class='bx bx-dollar-circle side-icon'></i>
                                         <span class="side-title">Sponsors</span>
                                     </a></li>
-                                <li class="side-item"><a href="{{route('skill-list')}}" class="side-item-link {{ request()->routeIs('skill-list') ? 'active' : '' }}">
+                                <li class="side-item"><a href="{{route('skill-list')}}" class="side-item-link {{ request()->routeIs('skill-list', 'skill-edit') ? 'active' : '' }}">
                                         <i class='bx bxs-brain side-icon'></i>
                                         <span class="side-title">Skills</span>
                                     </a></li>
-                                <li class="side-item"><a href="{{route('disability-list')}}" class="side-item-link {{ request()->routeIs('disability-list') ? 'active' : '' }}">
+                                <li class="side-item"><a href="{{route('disability-list')}}" class="side-item-link {{ request()->routeIs('disability-list', 'disability-edit') ? 'active' : '' }}">
                                         <i class='bx bx-body side-icon'></i>
                                         <span class="side-title">Disabilities</span>
+                                    </a></li>
+                                <li class="side-item"><a href="{{route('social-list')}}" class="side-item-link {{ request()->routeIs('social-list', 'social-edit') ? 'active' : '' }}">
+                                        <i class='bx bx-globe side-icon'></i>
+                                        <span class="side-title">Socials</span>
                                     </a></li>
                                 <!-- <li class="side-item"><a href="" class="side-item-link">
                                         <i class='bx bx-cog side-icon'></i>
@@ -225,7 +229,6 @@
                                     @endif
                                     @if (Auth::user()->hasRole('Sponsor'))
                                     <li class="nav-item "><a href="{{route('list-of-tp')}}" class="{{ request()->routeIs('list-of-tp', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
-                                    <li class="nav-item "><a href="">Find Work</a></li>
                                     @endif
 
                                     <!-- <li class="nav-item"><a href="{{ route('home') }}/#about" class="">About</a></li> -->

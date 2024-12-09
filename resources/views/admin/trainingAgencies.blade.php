@@ -18,8 +18,8 @@
                 <td class="table-head">Location</td>
                 <td class="table-head">Account Status</td>
                 <!-- <td class="table-head">Disability</td> -->
-                <td class="table-head" colspan="2">--</td>
-                <td class="table-head" colspan="2">--</td>
+                <td class="table-head" colspan="2">Set Status</td>
+                <td class="table-head" colspan="2">Actions</td>
             </tr>
         </thead>
         <tbody class="table-group-divider text-center">
@@ -88,7 +88,7 @@
         event.preventDefault();
         Swal.fire({
             title: "Confirmation",
-            text: "Do you really want to delete this?",
+            text: "Do you really want to delete this user?",
             icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -105,7 +105,7 @@
         event.preventDefault();
         Swal.fire({
             title: "Confirmation",
-            text: "Do you want to change the user's status?",
+            text: "Do you want to change the user's account status?",
             icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
