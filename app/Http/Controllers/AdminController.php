@@ -22,7 +22,7 @@ class AdminController extends Controller
     {
         $users = User::whereHas('userInfo', function ($query) {
             $query->whereNotNull('disability_id')->where('disability_id', '!=', 1);
-        })->paginate(18);
+        })->paginate(8);
 
         return view('admin.pwdUsers', compact('users'));
     }
@@ -32,7 +32,7 @@ class AdminController extends Controller
         $trainingID = Role::where('role_name', 'Training Agency')->value('id');
         $users = User::whereHas('role', function ($query) use ($trainingID) {
             $query->where('role_id', $trainingID);
-        })->paginate(18);
+        })->paginate(8);
 
         return view('admin.trainingAgencies', compact('users'));
     }
@@ -43,7 +43,7 @@ class AdminController extends Controller
 
         $users = User::whereHas('role', function ($query) use ($employeeID) {
             $query->where('role_id', $employeeID);
-        })->paginate(18);
+        })->paginate(8);
 
         return view('admin.employeeUsers', compact('users'));
     }
@@ -54,14 +54,14 @@ class AdminController extends Controller
 
         $users = User::whereHas('role', function ($query) use ($sponsorID) {
             $query->where('role_id', $sponsorID);
-        })->paginate(18);
+        })->paginate(8);
 
         return view('admin.sponsorUsers', compact('users'));
     }
 
     public function showSkills()
     {
-        $skills = Skill::paginate(18);
+        $skills = Skill::paginate(8);
 
         return view('admin.skillManage', compact('skills'));
     }
@@ -107,7 +107,7 @@ class AdminController extends Controller
 
     public function showDisabilities()
     {
-        $disabilities = Disability::paginate(18);
+        $disabilities = Disability::paginate(8);
 
         return view('admin.disabilityManage', compact('disabilities'));
     }

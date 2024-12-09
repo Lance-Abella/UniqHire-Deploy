@@ -381,7 +381,7 @@ class AuthController extends Controller
             'age' => $request->age ?? 0,
             'founder' => $request->founder ?? '',
             'year_established' => $request->year_established ?? 0,
-            'registration_status' => $validatedData['registration_status']
+            'registration_status' => $validatedData['registration_status'] ?? 'Activated'
         ]);
 
         return redirect()->route('login-page')->with('success', 'Your account has been successfully registered! Please allow up to 1 hour for the verification process. Thank you for your patience.');

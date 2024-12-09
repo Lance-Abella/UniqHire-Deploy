@@ -128,7 +128,7 @@
                                     </a></li>
                                 <li class="side-item"><a href="{{route('trainer-list')}}" class="side-item-link {{ request()->routeIs('trainer-list') ? 'active' : '' }}">
                                         <i class='bx bxs-school side-icon'></i>
-                                        <span class="side-title">Training Agencies</span>
+                                        <span class="side-title">Agencies</span>
                                     </a></li>
                                 <li class="side-item"><a href="{{route('employee-list')}}" class="side-item-link {{ request()->routeIs('employee-list') ? 'active' : '' }}">
                                         <i class='bx bx-briefcase-alt-2 side-icon'></i>
