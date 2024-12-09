@@ -278,7 +278,7 @@ class AuthController extends Controller
                 return redirect()->route('login-page')->withInput()->with('info', 'Your account is still being verified. Thank you for your patience!');
             } else {
                 Auth::logout();
-                return redirect()->route('login-page')->withInput()->with('info', 'Your account is currently deactivated. Please contact our support team. We are here to help!');
+                return redirect()->route('login-page')->withInput()->with('info', 'Your account is currently deactivated. Please contact our support team for assistance.');
             }
         } else {
             return back()->withInput()->with('error', 'The provided credentials do not match our records');
@@ -358,6 +358,8 @@ class AuthController extends Controller
             }
 
             $validatedData['registration_status'] = 'Pending';
+        } elseif ($request->role == 5) { // Sponsor
+            $validatedData['registration_status'] = 'Activated';
         }
 
 
@@ -381,10 +383,16 @@ class AuthController extends Controller
             'age' => $request->age ?? 0,
             'founder' => $request->founder ?? '',
             'year_established' => $request->year_established ?? 0,
-            'registration_status' => $validatedData['registration_status'] ?? 'Pending'
+            'registration_status' => $validatedData['registration_status'] ?? 'Activated',
         ]);
 
-        return redirect()->route('login-page')->with('success', 'Your account has been successfully registered! Please allow up to 1 hour for the verification process. Thank you for your patience.');
+        if (in_array($request->role, [2, 5])) {
+            $message = 'Account registered successfully!';
+        } else {
+            $message = 'Account registered! Please wait for verification.';
+        }
+
+        return redirect()->route('login-page')->with('success', $message);
     }
 
     public function logout(Request $request)
