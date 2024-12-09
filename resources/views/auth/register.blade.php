@@ -27,7 +27,7 @@
                         <select class="form-select" name="role" id="role" aria-label="Small select example" onchange="togglePWDSection()">
                             @foreach ($roles as $role)
                             @if ($role->role_name !== 'Admin')
-                            <option value="{{ $role->id }}">{{ $role->role_name }}</option>
+                            <option value="{{ $role->id }}" {{ old('role', 2) == $role->id ? 'selected' : '' }}>{{ $role->role_name }}</option>
                             
                             @endif
                             
@@ -147,7 +147,7 @@
                             </div>
                         </div>
                     </div> -->
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
@@ -157,7 +157,7 @@
                                 @enderror
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div id="agency-section" style="display:none;">
                     <div class="row">
@@ -179,16 +179,16 @@
                                 @enderror
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
-                                <label for="name" id="id_label"></label>
-                                @error('pwd_id')
-                                <span class="error-msg">{{ $message }}</span>
-                                @enderror
-                            </div>
+                    </div>                    
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
+                            <label for="name" id="id_label">PWD ID Number</label>
+                            @error('pwd_id')
+                            <span class="error-msg">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -224,7 +224,7 @@
         var input = document.getElementById(id);
         input.value = '';
     }
-
+    
     function togglePWDSection() {
         var roleSelect = document.getElementById('role');
         var pwdSection = document.getElementById('pwd-section');
@@ -255,11 +255,21 @@
             agencySection.style.display = 'none';
         }
 
-        if (roleSelect.value === '3') {
-            idLabel.textContent = 'Training Provider Accreditation Number';
+        if (roleSelect.value === '2'){
+             idLabel.textContent = 'PWD ID Number';
+             pwdIdInput.style.display = 'block';
         }
-        if (roleSelect.value === '4') {
+        else if (roleSelect.value === '3') {
+            idLabel.textContent = 'Training Provider Accreditation Number';
+            pwdIdInput.style.display = 'block';
+        }
+        else if (roleSelect.value === '4') {
             idLabel.textContent = 'DTI Business Registration Number';
+            pwdIdInput.style.display = 'block';
+        }
+        else if (roleSelect.value === '5') {
+            pwdIdInput.style.display = 'none';
+            idLabel.textContent = '';
         }
     }
 

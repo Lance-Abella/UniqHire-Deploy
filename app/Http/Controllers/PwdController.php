@@ -149,7 +149,7 @@ class PwdController extends Controller
                 ->get(['id', 'job_id', 'schedule', 'start_time', 'end_time']);
 
             $eventIds = Participants::where('user_id', $userId)->pluck('event_id');
-            $pwdEvents = Events::whereIn('id', $eventIds)->get(['id', 'title', 'schedule', 'start_time', 'end_time']);
+            $pwdEvents = Events::whereIn('id', $eventIds)->where('schedule', '>=', now()->format('Y-m-d'))->get(['id', 'title', 'schedule', 'start_time', 'end_time']);
             $events = [];
 
             foreach ($pwdEvents as $event) {
