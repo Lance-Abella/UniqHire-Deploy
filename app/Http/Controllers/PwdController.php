@@ -66,7 +66,7 @@ class PwdController extends Controller
                     'end_time' => $app->program->end_time,
                 ];
             }
-            return null; 
+            return null;
         })->filter()->toArray();
 
         $allPrograms = TrainingProgram::whereHas('disability', function ($query) use ($disabilityId) {
@@ -89,7 +89,7 @@ class PwdController extends Controller
                     }
                 }
             }
-            return true; 
+            return true;
         })->pluck('id')->toArray();
         $enrolleeCount = Enrollee::where('program_id', $program->id)
             ->where('completion_status', 'Ongoing')
@@ -106,8 +106,8 @@ class PwdController extends Controller
                     ->get(['name', 'amount']);
             }
             $raisedAmount = $program->crowdfund->raised_amount ?? 0;
-            $goal = $program->crowdfund->goal ?? 1; 
-            $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0; 
+            $goal = $program->crowdfund->goal ?? 1;
+            $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
             $program->crowdfund->progress = $progress;
         }
 
@@ -124,7 +124,7 @@ class PwdController extends Controller
         $hiredPWDs = Employee::where('job_id', $listing->id)->where('hiring_status', 'Accepted')->get();
 
         if ($listing->crowdfund) {
-            $raisedAmount = $program->crowdfund->raised_amount ?? 0; 
+            $raisedAmount = $program->crowdfund->raised_amount ?? 0;
             $goal = $program->crowdfund->goal ?? 1;
             $progress = ($goal > 0) ? round(($raisedAmount / $goal) * 100, 2) : 0;
             $listing->crowdfund->progress = $progress;
@@ -142,7 +142,7 @@ class PwdController extends Controller
                     ->from('enrollees')
                     ->where('pwd_id', $userId)
                     ->where('completion_status', 'Ongoing');
-                })->get(['id', 'title', 'schedule', 'start_time', 'end_time']);
+            })->get(['id', 'title', 'schedule', 'start_time', 'end_time']);
 
             $interviews = Employee::where('pwd_id', $userId)
                 ->where('hiring_status', '!=', 'Accepted')
@@ -154,12 +154,12 @@ class PwdController extends Controller
 
             foreach ($pwdEvents as $event) {
                 $dateParts = explode('-', $event->schedule);
-                $startParts = explode(':', $event->start_time); 
+                $startParts = explode(':', $event->start_time);
                 $endParts = explode(':', $event->end_time);
 
                 if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
 
-                    try{
+                    try {
                         $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
 
                         $startFormatted = sprintf(
@@ -177,29 +177,29 @@ class PwdController extends Controller
                             $endParts[1],
                             $endParts[2]
                         );
-                        
+
                         $events[] = [
                             'id' => $event->id,
                             'title' => '[Event] ' . $event->title,
                             'start' => $startFormatted,
                             'end' => $endFormatted,
-                            'color' => '#FB773C', 
+                            'color' => '#FB773C',
                             'allDay' => false
                         ];
-                    }catch (\Exception $e) {
+                    } catch (\Exception $e) {
                         Log::error("Error formatting date and time: " . $e->getMessage());
-                    }                    
-                }                   
+                    }
+                }
             }
 
             foreach ($interviews as $interview) {
                 $dateParts = explode('-', $interview->schedule);
-                $startParts = explode(':', $interview->start_time); 
+                $startParts = explode(':', $interview->start_time);
                 $endParts = explode(':', $interview->end_time);
 
                 if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
 
-                    try{
+                    try {
                         $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
 
                         $startFormatted = sprintf(
@@ -217,34 +217,34 @@ class PwdController extends Controller
                             $endParts[1],
                             $endParts[2]
                         );
-                        
+
                         $events[] = [
                             'id' => $interview->id,
                             'title' => '[Interview] ' . $interview->job->employer->userInfo->name,
                             'start' => $startFormatted,
                             'end' => $endFormatted,
-                            'color' => '#9B3922', 
+                            'color' => '#9B3922',
                             'allDay' => false
                         ];
-                    }catch (\Exception $e) {
+                    } catch (\Exception $e) {
                         Log::error("Error formatting date and time: " . $e->getMessage());
-                    }                    
-                }                   
+                    }
+                }
             }
 
             foreach ($trainingPrograms as $program) {
                 $scheduleDates = explode(',', $program->schedule);
-                $startTime = $program->start_time; 
+                $startTime = $program->start_time;
                 $endTime = $program->end_time;
 
                 foreach ($scheduleDates as $date) {
                     $dateParts = explode('/', $date);
-                    $startParts = explode(':', $startTime); 
+                    $startParts = explode(':', $startTime);
                     $endParts = explode(':', $endTime);
 
                     if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
 
-                        try{
+                        try {
                             $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
 
                             $startFormatted = sprintf(
@@ -262,23 +262,23 @@ class PwdController extends Controller
                                 $endParts[1],
                                 $endParts[2]
                             );
-                            
+
                             $events[] = [
                                 'id' => $program->id,
                                 'title' => '[Training] ' . $program->title,
                                 'start' => $startFormatted,
                                 'end' => $endFormatted,
-                                'color' => '#347928', 
+                                'color' => '#347928',
                                 'allDay' => false
                             ];
-                        }catch (\Exception $e) {
+                        } catch (\Exception $e) {
                             Log::error("Error formatting date and time: " . $e->getMessage());
-                        }                        
+                        }
                     }
-                }                  
+                }
             }
 
-            return response()->json($events); 
+            return response()->json($events);
         }
 
         return view('pwd.calendar');
@@ -425,7 +425,7 @@ class PwdController extends Controller
         })->latest()->paginate(10);
 
         $participantCounts = [];
-        
+
         foreach ($events as $event) {
             $participantCounts[$event->id] = $event->users()->count();
         }

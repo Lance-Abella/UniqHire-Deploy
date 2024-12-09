@@ -16,6 +16,7 @@
                 <td class="table-head">Email</td>
                 <td class="table-head">Contact Number</td>
                 <td class="table-head">Location</td>
+                <td class="table-head">Account Status</td>
                 <td class="table-head" colspan="2">--</td>
                 <td class="table-head" colspan="2">--</td>
             </tr>
@@ -28,31 +29,36 @@
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->userInfo->contactnumber }}</td>
                 <td>{{ $user->userInfo->location}}</td>
+                <td>
+                    <p class="match-info">
+                        {{ $user->userInfo->registration_status}}
+                    </p>
+                </td>
                 <td colspan="2">
-                     @if ($user->userInfo->registration_status == 'Pending')                        
-                        <form id="set-user-status-activated-{{ $user->id }}" action="{{ route('user-set-status', ['id' => $user->id, 'status' => 'Activated']) }}" method="POST" style="display:inline;" onclick="confirmStatus(event, 'set-user-status-activated-{{ $user->id }}')">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit" class="set-btn border-0">
-                                Set to Activate
-                            </button>
-                        </form>
+                    @if ($user->userInfo->registration_status == 'Pending')
+                    <form id="set-user-status-activated-{{ $user->id }}" action="{{ route('user-set-status', ['id' => $user->id, 'status' => 'Activated']) }}" method="POST" style="display:inline;" onclick="confirmStatus(event, 'set-user-status-activated-{{ $user->id }}')">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="set-btn border-0">
+                            Set to Activate
+                        </button>
+                    </form>
 
-                        <form id="set-user-status-deactivated-{{ $user->id }}" action="{{ route('user-set-status', ['id' => $user->id, 'status' => 'Deactivated']) }}" method="POST" style="display:inline;" onclick="confirmStatus(event, 'set-user-status-deactivated-{{ $user->id }}')">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit" class="set-btn border-0">
-                                Set to Deactivate
-                            </button>
-                        </form>
-                    @else                        
-                        <form id="toggle-user-status-{{ $user->id }}" action="{{ route('user-toggle-status', $user->id) }}" method="POST" style="display:inline;" onclick="confirmToggle(event, 'toggle-user-status-{{ $user->id }}')">
-                            @csrf
-                            @method('PATCH') 
-                            <button type="submit" class="{{ $user->userInfo->registration_status == 'Activated' ? 'deny-btn' : 'activate-btn' }} border-0">
-                                {{ $user->userInfo->registration_status == 'Activated' ? 'Deactivate' : 'Activate' }}
-                            </button>
-                        </form>
+                    <form id="set-user-status-deactivated-{{ $user->id }}" action="{{ route('user-set-status', ['id' => $user->id, 'status' => 'Deactivated']) }}" method="POST" style="display:inline;" onclick="confirmStatus(event, 'set-user-status-deactivated-{{ $user->id }}')">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="set-btn border-0">
+                            Set to Deactivate
+                        </button>
+                    </form>
+                    @else
+                    <form id="toggle-user-status-{{ $user->id }}" action="{{ route('user-toggle-status', $user->id) }}" method="POST" style="display:inline;" onclick="confirmToggle(event, 'toggle-user-status-{{ $user->id }}')">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="{{ $user->userInfo->registration_status == 'Activated' ? 'deny-btn' : 'activate-btn' }} border-0">
+                            {{ $user->userInfo->registration_status == 'Activated' ? 'Deactivate' : 'Activate' }}
+                        </button>
+                    </form>
                     @endif
                 </td>
                 <td colspan="2">

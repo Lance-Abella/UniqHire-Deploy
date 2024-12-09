@@ -236,20 +236,20 @@ class EmployerController extends Controller
                 $query->select('id')
                     ->from('job_listings')
                     ->where('employer_id', $user);
-                })->where('hiring_status', '!=', 'Accepted')
+            })->where('hiring_status', '!=', 'Accepted')
                 ->get(['id', 'job_id', 'schedule', 'pwd_id', 'start_time', 'end_time']);
 
             $events = [];
 
-            foreach ($employerEvents as $event) {                   
+            foreach ($employerEvents as $event) {
 
                 $dateParts = explode('-', $event->schedule);
-                $startParts = explode(':', $event->start_time); 
+                $startParts = explode(':', $event->start_time);
                 $endParts = explode(':', $event->end_time);
 
                 if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
 
-                    try{
+                    try {
                         $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
 
                         $startFormatted = sprintf(
@@ -267,29 +267,29 @@ class EmployerController extends Controller
                             $endParts[1],
                             $endParts[2]
                         );
-                        
+
                         $events[] = [
                             'id' => $event->id,
                             'title' => '[Event] ' . $event->title,
                             'start' => $startFormatted,
                             'end' => $endFormatted,
-                            'color' => '#FB773C', 
+                            'color' => '#FB773C',
                             'allDay' => false
                         ];
-                    }catch (\Exception $e) {
+                    } catch (\Exception $e) {
                         Log::error("Error formatting date and time: " . $e->getMessage());
-                    }                    
-                }                                
+                    }
+                }
             }
 
-            foreach ($interviews as $interview) {                
+            foreach ($interviews as $interview) {
                 $dateParts = explode('-', $interview->schedule);
-                $startParts = explode(':', $interview->start_time); 
+                $startParts = explode(':', $interview->start_time);
                 $endParts = explode(':', $interview->end_time);
-                
+
                 if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
 
-                    try{
+                    try {
                         $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
 
                         $startFormatted = sprintf(
@@ -307,31 +307,31 @@ class EmployerController extends Controller
                             $endParts[1],
                             $endParts[2]
                         );
-                        
+
                         $events[] = [
                             'id' => $interview->id,
                             'title' => '[Interview] ' . $interview->pwd->userInfo->name,
                             'start' => $startFormatted,
                             'end' => $endFormatted,
-                            'color' => '#9B3922', 
+                            'color' => '#9B3922',
                             'allDay' => false
                         ];
-                    }catch (\Exception $e) {
+                    } catch (\Exception $e) {
                         Log::error("Error formatting date and time: " . $e->getMessage());
-                    }                    
-                }                                          
+                    }
+                }
             }
 
             foreach ($jobListings as $job) {
                 $dateParts = explode('-', $job->end_date);
-                
+
                 if (count($dateParts) == 3) {
                     $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[0], $dateParts[1], $dateParts[2]);
                     $events[] = [
                         'id' => $job->employer_id,
-                        'title' => '[Job Listing]: ' . $job->position,
+                        'title' => '[Job Listing] ' . $job->position,
                         'start' => $formattedDate,
-                        'color' => '#03346E', 
+                        'color' => '#03346E',
                         'allDay' => true
                     ];
                 }
@@ -339,17 +339,17 @@ class EmployerController extends Controller
 
             foreach ($trainingPrograms as $program) {
                 $scheduleDates = explode(',', $program->schedule);
-                $startTime = $program->start_time; 
+                $startTime = $program->start_time;
                 $endTime = $program->end_time;
 
                 foreach ($scheduleDates as $date) {
                     $dateParts = explode('/', $date);
-                    $startParts = explode(':', $startTime); 
+                    $startParts = explode(':', $startTime);
                     $endParts = explode(':', $endTime);
 
                     if (count($dateParts) == 3 && count($startParts) == 3 && count($endParts) == 3) {
 
-                        try{
+                        try {
                             $formattedDate = sprintf('%04d-%02d-%02d', $dateParts[2], $dateParts[0], $dateParts[1]);
 
                             $startFormatted = sprintf(
@@ -367,21 +367,20 @@ class EmployerController extends Controller
                                 $endParts[1],
                                 $endParts[2]
                             );
-                            
+
                             $events[] = [
                                 'id' => $program->id,
                                 'title' => '[Training] ' . $program->title,
                                 'start' => $startFormatted,
                                 'end' => $endFormatted,
-                                'color' => '#347928', 
+                                'color' => '#347928',
                                 'allDay' => false
                             ];
-                        }catch (\Exception $e) {
+                        } catch (\Exception $e) {
                             Log::error("Error formatting date and time: " . $e->getMessage());
                         }
-                        
                     }
-                }                
+                }
             }
 
             return response()->json($events);
@@ -437,7 +436,7 @@ class EmployerController extends Controller
 
         $conflictingSchedule = Employee::whereHas('job', function ($query) use ($employerId) {
             $query->where('employer_id', $employerId);
-            })->where('schedule', $schedule)
+        })->where('schedule', $schedule)
             ->where(function ($query) use ($start_time, $end_time) {
                 $query->whereBetween('start_time', [$start_time, $end_time])
                     ->orWhereBetween('end_time', [$start_time, $end_time])
@@ -506,10 +505,10 @@ class EmployerController extends Controller
 
     public function deleteEvent($id)
     {
-        $event = Events::findOrFail($id); 
+        $event = Events::findOrFail($id);
 
         if ($event->employer_id == Auth::id()) {
-            $event->delete(); 
+            $event->delete();
             return redirect()->back()->with('success', 'Event deleted successfully.');
         }
 
