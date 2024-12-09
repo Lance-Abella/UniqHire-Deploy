@@ -230,8 +230,7 @@ class EmployerController extends Controller
                 ->get(['id', 'employer_id', 'position', 'end_date']);
             $trainingPrograms = TrainingProgram::where('agency_id', $user)
                 ->get(['agency_id', 'title', 'schedule', 'start_time', 'end_time']);
-            $employerEvents = Events::where('employer_id', $user)
-                ->get(['id', 'title', 'schedule', 'start_time', 'end_time']);
+            $employerEvents = Events::where('employer_id', $user)->where('schedule', '>=', now()->format('Y-m-d'))->get(['id', 'title', 'schedule', 'start_time', 'end_time']);
             $job_id = JobListing::where('employer_id', $user)->get();
             $interviews = Employee::whereIn('job_id', function ($query) use ($user) {
                 $query->select('id')
@@ -514,5 +513,12 @@ class EmployerController extends Controller
         }
 
         return redirect()->back()->with('error', 'You are not authorized to delete this event.');
+    }
+
+    public function deny(JobApplication $jobid)
+    {
+        $jobid->delete();
+
+        return back()->with('success', 'Application denied');
     }
 }

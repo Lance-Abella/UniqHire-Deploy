@@ -30,7 +30,10 @@
                 <td>{{ $user->userInfo->contactnumber }}</td>
                 <td>{{ $user->userInfo->location}}</td>
                 <td>
-                    <p class="match-info">
+                    <p class="match-info @if ($user->userInfo->registration_status == 'Pending')
+                                pending @elseif ($user->userInfo->registration_status == 'Deactivated')
+                                denied
+                                @endif">
                         {{ $user->userInfo->registration_status}}
                     </p>
                 </td>

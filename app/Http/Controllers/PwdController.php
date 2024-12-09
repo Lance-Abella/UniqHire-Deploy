@@ -149,7 +149,7 @@ class PwdController extends Controller
                 ->get(['id', 'job_id', 'schedule', 'start_time', 'end_time']);
 
             $eventIds = Participants::where('user_id', $userId)->pluck('event_id');
-            $pwdEvents = Events::whereIn('id', $eventIds)->get(['id', 'title', 'schedule', 'start_time', 'end_time']);
+            $pwdEvents = Events::whereIn('id', $eventIds)->where('schedule', '>=', now()->format('Y-m-d'))->get(['id', 'title', 'schedule', 'start_time', 'end_time']);
             $events = [];
 
             foreach ($pwdEvents as $event) {
@@ -360,17 +360,19 @@ class PwdController extends Controller
         $trainingApplication = TrainingApplication::create($validatedData);
 
         $trainingProgram = TrainingProgram::findOrFail($validatedData['training_program_id']);
+        $applicant = User::findOrFail($validatedData['user_id']);
 
+        // Get the owner (agency/employer) of the training program
         $trainerUser = User::whereHas('userInfo', function ($query) use ($trainingProgram) {
             $query->where('user_id', $trainingProgram->agency_id);
         })->whereHas('role', function ($query) {
-            $query->where('role_name', 'Training Agency');
+            $query->whereIn('role_name', ['Training Agency', 'Employer']); // Check for both roles
         })->first();
 
         if ($trainerUser) {
-            $trainerUser->notify(new PwdApplicationNotification($trainingProgram));
+            $trainerUser->notify(new PwdApplicationNotification($trainingProgram, $applicant));
         } else {
-            Log::error('No agency user found for training program', ['trainingProgram' => $trainingProgram->id]);
+            Log::error('No agency/employer user found for training program', ['trainingProgram' => $trainingProgram->id]);
         }
 
         return back()->with('success', 'Application sent successfully!');

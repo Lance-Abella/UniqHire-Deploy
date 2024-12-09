@@ -38,6 +38,7 @@ class NotificationController extends Controller
         } else if ($user->hasRole('Employer')) {
             $notifications = $notificationsQuery->filter(function ($notification) {
                 return in_array($notification->type, [
+                    'App\\Notifications\\PwdApplicationNotification',
                     'App\\Notifications\\PwdJobApplicationNotification',
                 ]);
             });
