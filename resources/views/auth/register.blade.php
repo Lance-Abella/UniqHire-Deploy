@@ -168,16 +168,16 @@
                                 @enderror
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
-                                <label for="name" id="id_label"></label>
-                                @error('pwd_id')
-                                <span class="error-msg">{{ $message }}</span>
-                                @enderror
-                            </div>
+                    </div>                    
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pwd_id" name="pwd_id" value="{{ old('pwd_id') }}" placeholder="PWD ID Number">
+                            <label for="name" id="id_label">PWD ID Number</label>
+                            @error('pwd_id')
+                            <span class="error-msg">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                 </div>
