@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->foreignId('worktype_id')->constrained('work_types')->onDelete('cascade');
             $table->foreignId('worksetup_id')->constrained('work_setups')->onDelete('cascade');
+            $table->enum('status', ['Ongoing', 'Ended', 'Cancelled'])->default('Ongoing');
             $table->timestamps();
         });
     }

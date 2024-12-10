@@ -88,6 +88,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/agency/accept', [AgencyController::class, 'accept'])->middleware('role:Training Agency,Employer')->name('agency-accept');
     Route::delete('/agency/deny/{trainid}', [AgencyController::class, 'deny'])->middleware('role:Training Agency,Employer')->name('agency-deny');
     Route::post('/agency/mark-complete', [AgencyController::class, 'markComplete'])->middleware('role:Training Agency,Employer')->name('mark-complete');
+    Route::put('/programs/{id}/status/{status}', [AgencyController::class, 'updateProgramStatus'])->middleware('role:Training Agency,Employer')->name('programs.update-status');
+    Route::post('/programs/{id}/cancel', [AgencyController::class, 'cancelProgram'])->middleware('role:Training Agency,Employer')->name('programs.cancel');
 
 
     // PWD Middleware
@@ -140,4 +142,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-event/{id}', [EmployerController::class, 'deleteEvent'])->middleware('role:Employer')->name('delete-event');
     Route::get('/employer/set-schedule/{id}', [EmployerController::class, 'setScheduleForm'])->middleware('role:Employer')->name('set-schedule');
     Route::post('/employer/set-schedule/{id}', [EmployerController::class, 'setSchedule'])->middleware('role:Employer')->name('set-schedule');
+    Route::put('/jobs/{id}/status/{status}', [EmployerController::class, 'updateJobStatus'])->middleware('role:Employer')->name('jobs.update-status');
+    Route::post('/jobs/{id}/cancel', [EmployerController::class, 'cancelJob'])->middleware('role:Employer')->name('jobs.cancel');
 });

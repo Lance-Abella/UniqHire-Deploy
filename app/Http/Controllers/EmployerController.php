@@ -32,7 +32,14 @@ class EmployerController extends Controller
         $userId = auth()->id();
         $jobs = JobListing::where('employer_id', $userId)
             ->latest()
-            ->paginate(15);;
+            ->paginate(15);
+
+        // Check and update status for jobs based on end_date
+        foreach ($jobs as $job) {
+            if ($job->status !== 'Cancelled' && $job->end_date < now()->startOfDay()) {
+                $job->update(['status' => 'Ended']);
+            }
+        }
 
         return view('employer.manageJob', compact('jobs'));
     }
@@ -81,7 +88,8 @@ class EmployerController extends Controller
             'location' => $request->loc,
             'end_date' => $request->end_date,
             'worksetup_id' => $request->setup,
-            'worktype_id' => $request->type
+            'worktype_id' => $request->type,
+            'status' => 'Ongoing'
         ]);
 
         $jobListing->skill()->attach($request->skills);
@@ -400,10 +408,12 @@ class EmployerController extends Controller
         $jobId = $validatedData['jobId'];
         $userId = $validatedData['userId'];
         $employeeId = $validatedData['employeeId'];
-        $hiringStatus = 'Accepted';
-        $employee = Employee::findOrFail($employeeId);
-        $employee->update(['hiring_status' => $hiringStatus]);
 
+        // Update employee status
+        $employee = Employee::findOrFail($employeeId);
+        $employee->update(['hiring_status' => 'Accepted']);
+
+        // Send notification
         $pwdUser = $employee->pwd;
         $pwdUser->notify(new JobHiredNotification($employee));
 
@@ -520,5 +530,37 @@ class EmployerController extends Controller
         $jobid->delete();
 
         return back()->with('success', 'Application denied');
+    }
+
+    public function updateJobStatus($id, $status)
+    {
+        $listing = JobListing::findOrFail($id);
+
+        if ($listing && $listing->employer_id == auth()->id()) {
+            if (in_array($status, ['Ongoing', 'Ended', 'Cancelled'])) {
+                $listing->status = $status;
+                $listing->save();
+            }
+            return redirect()->route('manage-jobs')->with('success', 'Job status updated successfully.');
+        }
+
+        return redirect()->route('manage-jobs')->with('error', 'Failed to update job status.');
+    }
+
+    public function cancelJob($id)
+    {
+        $listing = JobListing::findOrFail($id);
+
+        if ($listing && $listing->employer_id == auth()->id()) {
+            $listing->status = 'Cancelled';
+            $listing->save();
+
+            // Optionally notify applicants about cancellation
+            // Add notification logic here if needed
+
+            return redirect()->route('manage-jobs')->with('success', 'Job listing cancelled successfully.');
+        }
+
+        return redirect()->route('manage-jobs')->with('error', 'Failed to cancel job listing.');
     }
 }

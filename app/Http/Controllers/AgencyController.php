@@ -49,11 +49,17 @@ class AgencyController extends Controller
             ->get();
 
         foreach ($programs as $program) {
-            $program->enrolleeCount = Enrollee::where('program_id', $program->id)
+            $enrolleeCount = Enrollee::where('program_id', $program->id)
                 ->where('completion_status', 'Ongoing')
                 ->count();
 
-            $program->slots = $program->participants - $program->enrolleeCount;
+            $totalEnrolleeCount = Enrollee::where('program_id', $program->id)->count();
+
+            // Set these as object properties without saving to database
+            $program->enrollee_count = $enrolleeCount;
+            $program->available_slots = $program->participants - $totalEnrolleeCount;
+
+            // Don't call update() on these properties since they're just for display
 
             if ($program->crowdfund) {
                 $raisedAmount = $program->crowdfund->raised_amount ?? 0;
@@ -69,6 +75,21 @@ class AgencyController extends Controller
     {
         $program = TrainingProgram::findOrFail($id);
         $userId = auth()->id();
+
+        // Only check for 'Ended' status if the program isn't already cancelled
+        if ($program->status !== 'Cancelled') {
+            // Check if all enrollees have completed the program
+            $totalEnrollees = Enrollee::where('program_id', $program->id)->count();
+            $completedEnrollees = Enrollee::where('program_id', $program->id)
+                ->where('completion_status', 'Completed')
+                ->count();
+
+            if ($totalEnrollees > 0 && $totalEnrollees === $completedEnrollees) {
+                $program->status = 'Ended';
+                $program->save();
+            }
+        }
+
         $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
         $applications = TrainingApplication::where('training_program_id', $program->id)->get();
         $requests = TrainingApplication::where('training_program_id', $program->id)->where('application_status', 'Pending')->get();
@@ -77,8 +98,7 @@ class AgencyController extends Controller
         $ongoingCount = $enrollees->where('completion_status', 'Ongoing')->count();
         $completedCount = $enrollees->where('completion_status', 'Completed')->count();
         $enrolleesCount = $enrollees->count();
-        $enrolleeCount = Enrollee::where('program_id', $program->id)
-            ->count();
+        $enrolleeCount = Enrollee::where('program_id', $program->id)->count();
         $slots = $program->participants - $enrolleeCount;
 
         $sponsors = [];
@@ -149,6 +169,7 @@ class AgencyController extends Controller
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'participants' => $participants,
+            'status' => 'Ongoing',
         ]);
 
         $trainingProgram->skill()->attach($request->skills);
@@ -190,17 +211,20 @@ class AgencyController extends Controller
         $program = TrainingProgram::find($id);
 
         if ($program && $program->agency_id == auth()->id()) {
+            // Delete related notifications
             DB::table('notifications')
                 ->where('data', 'like', '%"training_program_id":' . $id . '%')
                 ->delete();
 
+            // Delete the program
             $program->delete();
 
-            return redirect()->route('programs-manage')->with('success', 'Training program deleted successfully');
-        } else {
-
-            return redirect()->route('programs-manage')->with('error', 'Failed to delete training program');
+            return redirect()->route('programs-manage')
+                ->with('success', 'Training program deleted successfully');
         }
+
+        return redirect()->route('programs-manage')
+            ->with('error', 'Failed to delete training program');
     }
 
     public function editProgram($id)
@@ -421,6 +445,25 @@ class AgencyController extends Controller
         $programId = $validatedData['programId'];
         $userId = $validatedData['userId'];
 
+        // Update enrollee status
+        $enrolleeId = $validatedData['enrolleeId'];
+        $enrollee = Enrollee::findOrFail($enrolleeId);
+        $enrollee->update(['completion_status' => 'Completed']);
+
+        // Check if all enrollees have completed
+        $totalEnrollees = Enrollee::where('program_id', $programId)->count();
+        $completedEnrollees = Enrollee::where('program_id', $programId)
+            ->where('completion_status', 'Completed')
+            ->count();
+
+        // Update program status if all enrollees have completed
+        if ($totalEnrollees > 0 && $totalEnrollees === $completedEnrollees) {
+            $program = TrainingProgram::find($programId);
+            $program->status = 'Ended';
+            $program->save();
+        }
+
+        // Add skills to user
         $progSkills = DB::table('program_skill')
             ->where('training_program_id', $programId)
             ->pluck('skill_id')
@@ -438,12 +481,8 @@ class AgencyController extends Controller
                 ]);
             }
         }
-        $enrolleeId = $validatedData['enrolleeId'];
-        $completionStatus = 'Completed';
 
-        $enrollee = Enrollee::findOrFail($enrolleeId);
-        $enrollee->update(['completion_status' => $completionStatus]);
-
+        // Create certification record
         DB::table('certification_details')->insert([
             'program_id' => $enrollee->program_id,
             'user_id' => $enrollee->pwd_id,
@@ -451,6 +490,7 @@ class AgencyController extends Controller
             'updated_at' => now(),
         ]);
 
+        // Send notification
         $pwdUser = $enrollee->pwd;
         $pwdUser->notify(new TrainingCompletedNotification($enrollee));
 
@@ -477,5 +517,43 @@ class AgencyController extends Controller
         $trainid->delete();
 
         return back()->with('success', 'Application denied');
+    }
+
+    public function updateProgramStatus($id, $status)
+    {
+        $program = TrainingProgram::find($id);
+
+        if ($program && $program->agency_id == auth()->id()) {
+            if (in_array($status, ['Ongoing', 'Ended', 'Cancelled'])) {
+                $program->status = $status;
+                $program->save();
+                return redirect()->back()->with('success', 'Program status updated successfully');
+            }
+        }
+
+        return redirect()->back()->with('error', 'Failed to update program status');
+    }
+
+    public function cancelProgram($id)
+    {
+        $program = TrainingProgram::find($id);
+
+        if ($program && $program->agency_id == auth()->id()) {
+            $program->status = 'Cancelled';
+            $program->save();
+
+            // Optionally notify enrolled users about cancellation
+            $enrollees = Enrollee::where('program_id', $program->id)->get();
+            foreach ($enrollees as $enrollee) {
+                // You might want to create a new notification class for this
+                // $enrollee->pwd->notify(new ProgramCancelledNotification($program));
+            }
+
+            return redirect()->route('programs-manage')
+                ->with('success', 'Training program has been cancelled');
+        }
+
+        return redirect()->route('programs-manage')
+            ->with('error', 'Failed to cancel training program');
     }
 }
