@@ -55,7 +55,7 @@
                 <div class="prog-grid-list">
                     @forelse ($paginatedItems as $ranked)
                     <div class="row prog-card mb-2" data-program-id="{{ $ranked['program']->id }}" data-lat="{{ $ranked['program']->latitude }}" data-lng="{{ $ranked['program']->longitude }}">
-                        <input type="hidden" name="" value="{{$ranked['similarity']}}" id="">
+                        <input type="hidden" name="" value="{{$ranked['similarity']}}" id="" readonly>
                         <div class="col ">
                             <a href="{{ route('training-details', $ranked['program']->id ) }}" class="d-flex prog-texts">
                                 <div class="prog-texts-container">
@@ -105,7 +105,7 @@
                                         </div>
                                         @endforeach
 
-                                        <div class="match-info @if (Auth::user()->userInfo->education->id != $ranked['program']->education->id) notmatch-info @endif">
+                                        <div class="match-info @if (Auth::user()->userInfo->education->id == $ranked['program']->education->id || in_array($ranked['program']->education->education_name, request()->input('education', []))) match-info @else notmatch-info @endif">
                                             {{$ranked['program']->education->education_name}}
                                         </div>
                                         <div class="match-info @if (Auth::user()->userInfo->age < $ranked['program']->start_age || Auth::user()->userInfo->age > $ranked['program']->end_age) notmatch-info @endif">

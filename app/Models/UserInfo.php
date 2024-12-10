@@ -73,5 +73,4 @@ class UserInfo extends Model
     {
         return $this->hasMany(Events::class, 'employer_id');
     }
-
 }

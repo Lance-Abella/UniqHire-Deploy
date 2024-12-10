@@ -35,7 +35,11 @@
                                         <input type="hidden" name="training_application_id" value="{{ $request->id }}">
                                         <button type="submit" class="submit-btn border-0">Accept</button>
                                     </form>
-                                    <button type="button" class="deny-btn border-0">Deny</button>
+                                    <form action="{{ route('agency-deny', $request->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="deny-btn border-0">Deny</button>
+                                    </form>
                                 </div>
                                 >
                             </div>

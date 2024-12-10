@@ -51,12 +51,15 @@ class NewTrainingProgramNotification extends Notification
      */
     public function toArray($notifiable)
     {
+        $creator = $this->trainingProgram->agency->hasRole('Employer') ? 'Employer' : 'Training Agency';
+
         return [
             'title' => $this->trainingProgram->title,
             'description' => $this->trainingProgram->description,
             'start_date' => $this->trainingProgram->schedule,
             'training_program_id' => $this->trainingProgram->id,
             'agency_name' => $this->trainingProgram->agency->userInfo->name,
+            'creator_type' => $creator,
             'url' => url('training-details/' . $this->trainingProgram->id),
         ];
     }

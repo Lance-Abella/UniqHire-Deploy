@@ -126,6 +126,14 @@ class AuthController extends Controller
             UserSocials::insert($userSocials);
         }
 
+        // Handle removed socials
+        if ($request->filled('removed_socials')) {
+            $removedSocialIds = explode(',', $request->input('removed_socials'));
+            UserSocials::where('user_id', $user->id)
+                ->whereIn('social_id', $removedSocialIds)
+                ->delete();
+        }
+
         return back()->with('success', 'Your profile has been changed successfully!');
     }
 
@@ -258,27 +266,33 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|string|',
+            'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->has('remember'))) {
 
-            $user = auth()->user()->load('userInfo');
+            $user = User::with('userInfo')->find(auth()->id());
 
             if ($user->userInfo->registration_status == 'Activated') {
                 $request->session()->regenerate();
-                if (Auth::user()->hasRole('PWD')) {
+                if ($user->hasRole('PWD')) {
                     return redirect()->intended(route('pwd-list-program'))->with('logged-in', 'Logged in successfully');
-                } else {
-                    return redirect()->intended(route('home'))->with('logged-in', 'Logged in successfully');
+                } elseif ($user->hasRole('Training Agency')) {
+                    return redirect()->intended(route('programs-manage'))->with('logged-in', 'Logged in successfully');
+                } elseif ($user->hasRole('Employer')) {
+                    return redirect()->intended(route('manage-jobsS'))->with('logged-in', 'Logged in successfully');
+                } elseif ($user->hasRole('Sponsor')) {
+                    return redirect()->intended(route('list-of-tp'))->with('logged-in', 'Logged in successfully');
+                } elseif ($user->hasRole('Admin')) {
+                    return redirect()->intended(route('pwd-list'))->with('logged-in', 'Logged in successfully');
                 }
             } elseif ($user->userInfo->registration_status == 'Pending') {
                 Auth::logout();
                 return redirect()->route('login-page')->withInput()->with('info', 'Your account is still being verified. Thank you for your patience!');
             } else {
                 Auth::logout();
-                return redirect()->route('login-page')->withInput()->with('info', 'Your account is currently deactivated. If you believe this is a mistake or would like to reactivate your account, please contact our support team. We are here to help!');
+                return redirect()->route('login-page')->withInput()->with('info', 'Your account is currently deactivated. Please contact our support team for assistance.');
             }
         } else {
             return back()->withInput()->with('error', 'The provided credentials do not match our records');
@@ -358,6 +372,8 @@ class AuthController extends Controller
             }
 
             $validatedData['registration_status'] = 'Pending';
+        } elseif ($request->role == 5) { // Sponsor
+            $validatedData['registration_status'] = 'Activated';
         }
 
 
@@ -381,10 +397,16 @@ class AuthController extends Controller
             'age' => $request->age ?? 0,
             'founder' => $request->founder ?? '',
             'year_established' => $request->year_established ?? 0,
-            'registration_status' => $validatedData['registration_status'] ?? 'Activated'
+            'registration_status' => $validatedData['registration_status'] ?? 'Activated',
         ]);
 
-        return redirect()->route('login-page')->with('success', 'Your account has been successfully registered! Please allow up to 1 hour for the verification process. Thank you for your patience.');
+        if (in_array($request->role, [2, 5])) {
+            $message = 'Account registered successfully!';
+        } else {
+            $message = 'Account registered! Please wait for verification.';
+        }
+
+        return redirect()->route('login-page')->with('success', $message);
     }
 
     public function logout(Request $request)

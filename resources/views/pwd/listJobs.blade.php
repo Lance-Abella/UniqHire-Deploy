@@ -89,7 +89,7 @@
                 <div class="prog-grid-list">
                     @foreach ($paginatedItems as $ranked)
 
-                    <div class="job-card mb-2" data-program-id="{{ $ranked['job']->id }}" data-lat="{{ $ranked['job']->latitude }}" data-lng="{{ $ranked['job']->longitude }}">
+                    <div class="job-card prog-card mb-2" data-program-id="{{ $ranked['job']->id }}" data-lat="{{ $ranked['job']->latitude }}" data-lng="{{ $ranked['job']->longitude }}">
                         <input type="hidden" name="" value="{{$ranked['similarity']}}" id="">
 
                         <a href="{{ route('job-details', $ranked['job']->id) }}" class="d-flex prog-texts">
@@ -101,8 +101,8 @@
                                         @endif
                                     </div>
 
-                                    <div class="prog-head d-flex justify-content-between" style="width:20rem">
-                                        <div class=" header" style="width:12rem">
+                                    <div class="prog-head d-flex justify-content-between">
+                                        <div class=" header">
                                             <h4 class="text-cap">{{$ranked['job']->position}}</h4>
                                             <p class="sub-text text-cap">{{$ranked['job']->employer->userInfo->name}}</p>
                                             <p class="sub-text text-cap location">

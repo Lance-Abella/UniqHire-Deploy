@@ -514,4 +514,11 @@ class EmployerController extends Controller
 
         return redirect()->back()->with('error', 'You are not authorized to delete this event.');
     }
+
+    public function deny(JobApplication $jobid)
+    {
+        $jobid->delete();
+
+        return back()->with('success', 'Application denied');
+    }
 }

@@ -17,8 +17,8 @@
                 <td class="table-head">Contact Number</td>
                 <td class="table-head">Location</td>
                 <td class="table-head">Account Status</td>
-                <td class="table-head" colspan="2">--</td>
-                <td class="table-head" colspan="2">--</td>
+                <td class="table-head" colspan="2">Set Status</td>
+                <td class="table-head" colspan="2">Actions</td>
             </tr>
         </thead>
         <tbody class="table-group-divider text-center">
@@ -30,7 +30,10 @@
                 <td>{{ $user->userInfo->contactnumber }}</td>
                 <td>{{ $user->userInfo->location}}</td>
                 <td>
-                    <p class="match-info">
+                    <p class="match-info @if ($user->userInfo->registration_status == 'Pending')
+                                pending @elseif ($user->userInfo->registration_status == 'Deactivated')
+                                denied
+                                @endif">
                         {{ $user->userInfo->registration_status}}
                     </p>
                 </td>
@@ -84,7 +87,7 @@
         event.preventDefault();
         Swal.fire({
             title: "Confirmation",
-            text: "Do you really want to delete this?",
+            text: "Do you really want to delete this user?",
             icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -101,7 +104,7 @@
         event.preventDefault();
         Swal.fire({
             title: "Confirmation",
-            text: "Do you want to change the user's status?",
+            text: "Do you want to change the user's accountstatus?",
             icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",

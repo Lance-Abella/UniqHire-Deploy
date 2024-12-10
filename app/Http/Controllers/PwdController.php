@@ -360,17 +360,19 @@ class PwdController extends Controller
         $trainingApplication = TrainingApplication::create($validatedData);
 
         $trainingProgram = TrainingProgram::findOrFail($validatedData['training_program_id']);
+        $applicant = User::findOrFail($validatedData['user_id']);
 
+        // Get the owner (agency/employer) of the training program
         $trainerUser = User::whereHas('userInfo', function ($query) use ($trainingProgram) {
             $query->where('user_id', $trainingProgram->agency_id);
         })->whereHas('role', function ($query) {
-            $query->where('role_name', 'Training Agency');
+            $query->whereIn('role_name', ['Training Agency', 'Employer']); // Check for both roles
         })->first();
 
         if ($trainerUser) {
-            $trainerUser->notify(new PwdApplicationNotification($trainingProgram));
+            $trainerUser->notify(new PwdApplicationNotification($trainingProgram, $applicant));
         } else {
-            Log::error('No agency user found for training program', ['trainingProgram' => $trainingProgram->id]);
+            Log::error('No agency/employer user found for training program', ['trainingProgram' => $trainingProgram->id]);
         }
 
         return back()->with('success', 'Application sent successfully!');

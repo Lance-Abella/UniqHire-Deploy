@@ -239,10 +239,10 @@ footer .footer-container {
     bottom: 0;
     background-color: var(--text-color);
     padding: 2rem 5rem;
-    display: grid;
+    /* display: grid;
     grid-template-columns: 1fr 1.3fr;
     grid-template-areas: "socials contact";
-    grid-gap: 5rem;
+    grid-gap: 5rem; */
     box-shadow: var(--side-shadow-04);
 }
 
@@ -901,12 +901,12 @@ span.badge {
 
 .pwd-browse-prog .prog-grid-list {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
     gap: 1rem;
 }
 
 .pwd-browse-prog .prog-card {
-    width: 38rem;
+    width: 60%rem;
     height: 13rem;
     background-color: var(--bg-color-02);
     box-shadow: var(--side-shadow-03);
@@ -980,7 +980,7 @@ span.badge {
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container .header {
-    width: 20rem;
+    width: 55rem;
 }
 
 .pwd-browse-prog .prog-card .prog-texts-container .header p,
@@ -2329,13 +2329,13 @@ table tbody .bx {
 
 .pwd-browse-job .prog-grid-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(1, 1fr);
     gap: 1rem;
 }
 
 .pwd-browse-job .job-card {
     height: 14rem;
-    width: 29rem;
+    /* width: 55rem; */
     background-color: var(--bg-color-02);
     border-radius: var(--border-radius);
     box-shadow: var(--side-shadow-03);

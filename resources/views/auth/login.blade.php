@@ -44,9 +44,9 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col text-end forget-pass">
+                    <!-- <div class="col text-end forget-pass">
                         <a href="{{ route('forgot-password') }}" class="link-underline link-underline-opacity-0 accent-text">Forget Password?</a>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="">
                     <button type="submit" class="bg-text fs-5 border-0 bold-texts submit-btn">Sign In</button>

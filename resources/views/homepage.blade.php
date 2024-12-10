@@ -12,7 +12,15 @@
                 <p>Welcome to Uniqhire, where every ability finds opportunity! Creating bridges to people with disabilities, fostering inclusivity and celebrating diverse talents. Join us in building a world where everyone thrives!</p>
             </div>
             <div class="">
-                <button type="button" class="btn-outline">Explore</button>
+                @if (Auth::user()->hasRole('PWD'))
+                <a href="{{ route('pwd-list-program') }}" class="btn-outline">Explore</a>
+                @elseif (Auth::user()->hasRole('Training Agency'))
+                <a href="{{ route('programs-manage') }}" class="btn-outline">Explore</a>
+                @elseif (Auth::user()->hasRole('Employer'))
+                <a href="{{ route('manage-jobs') }}" class="btn-outline">Explore</a>
+                @else
+                <a href="{{ route('list-of-tp') }}" class="btn-outline">Explore</a>
+                @endif
             </div>
         </div>
         <div id="carouselExample" class="carousel slide carousel-container welcome-right">

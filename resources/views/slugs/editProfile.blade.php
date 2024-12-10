@@ -75,6 +75,15 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="paypal" name="paypal" value="{{ $user->userInfo->paypal_account }}">
+                                    <label for="paypal">PayPal Account</label>
+                                    @error('paypal')
+                                    <span class=" error-msg">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
                             @elseif ($user->hasRole('Training Agency') || $user->hasRole('Sponsor') || $user->hasRole('Employer'))
                             <div class="col">
                                 <div class="form-floating mb-3">
@@ -156,6 +165,7 @@
                         <div class="form-floating mb-3">
                             <div id="socialListContainer">
                                 <label for="socialList">Socials</label>
+                                <input type="hidden" name="removed_socials" id="removedSocials" value="">
                                 <div id="socialList">
                                     @foreach ($userSocials as $userSocial)
                                     <div class="input-group mb-3 social-item">
@@ -187,6 +197,7 @@
             </div>
         </div>
     </div>
+
 </form>
 
 @push('map-scripts')
@@ -205,6 +216,7 @@
 
     const socialList = document.getElementById('socialList');
     const addSocialBtn = document.getElementById('addSocialBtn');
+    const removedSocialsInput = document.getElementById('removedSocials');
 
     // Add social event listener
     addSocialBtn.addEventListener('click', function() {
@@ -232,6 +244,13 @@
         if (e.target.classList.contains('remove-social')) {
             const socialItem = e.target.closest('.social-item');
             if (socialItem) {
+                const socialId = socialItem.querySelector('select[name="socials[]"]').value;
+                if (socialId) {
+                    // Add the removed social ID to the hidden input
+                    const removedSocials = removedSocialsInput.value ? removedSocialsInput.value.split(',') : [];
+                    removedSocials.push(socialId);
+                    removedSocialsInput.value = removedSocials.join(',');
+                }
                 socialList.removeChild(socialItem);
                 socialCount--;
                 toggleAddButton();

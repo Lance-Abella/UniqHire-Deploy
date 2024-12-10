@@ -138,15 +138,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="row mb-4">
-                        <div class="col">
-                            PWD Card
-                            <div class="input-group mb-3">
-                                <input type="file" name="pwd_card" class="form-control" id="choose-file" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
-                                <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04" onclick="clearFileInput('choose-file')">Remove</button>
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
                 <div id="agency-section" style="display:none;">
                     <div class="row">
@@ -181,6 +172,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="d-flex justify-content-center align-items-center mb-3">
                     <button type="reset" class="m-2 border-0 bg-transparent deny-btn">
                         Clear
