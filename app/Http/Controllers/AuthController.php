@@ -126,6 +126,14 @@ class AuthController extends Controller
             UserSocials::insert($userSocials);
         }
 
+        // Handle removed socials
+        if ($request->filled('removed_socials')) {
+            $removedSocialIds = explode(',', $request->input('removed_socials'));
+            UserSocials::where('user_id', $user->id)
+                ->whereIn('social_id', $removedSocialIds)
+                ->delete();
+        }
+
         return back()->with('success', 'Your profile has been changed successfully!');
     }
 
@@ -258,20 +266,26 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|string|',
+            'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->has('remember'))) {
 
-            $user = auth()->user()->load('userInfo');
+            $user = User::with('userInfo')->find(auth()->id());
 
             if ($user->userInfo->registration_status == 'Activated') {
                 $request->session()->regenerate();
-                if (Auth::user()->hasRole('PWD')) {
+                if ($user->hasRole('PWD')) {
                     return redirect()->intended(route('pwd-list-program'))->with('logged-in', 'Logged in successfully');
-                } else {
-                    return redirect()->intended(route('home'))->with('logged-in', 'Logged in successfully');
+                } elseif ($user->hasRole('Training Agency')) {
+                    return redirect()->intended(route('programs-manage'))->with('logged-in', 'Logged in successfully');
+                } elseif ($user->hasRole('Employer')) {
+                    return redirect()->intended(route('manage-jobsS'))->with('logged-in', 'Logged in successfully');
+                } elseif ($user->hasRole('Sponsor')) {
+                    return redirect()->intended(route('list-of-tp'))->with('logged-in', 'Logged in successfully');
+                } elseif ($user->hasRole('Admin')) {
+                    return redirect()->intended(route('pwd-list'))->with('logged-in', 'Logged in successfully');
                 }
             } elseif ($user->userInfo->registration_status == 'Pending') {
                 Auth::logout();

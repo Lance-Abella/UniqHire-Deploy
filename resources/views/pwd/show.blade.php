@@ -69,7 +69,7 @@
         </div>
         <div class="mb-5">
             <div class="col">
-                {{ $program->description }}
+                {!! nl2br(e($program->description)) !!}
             </div>
         </div>
         <ul class="nav nav-underline" role="tablist">

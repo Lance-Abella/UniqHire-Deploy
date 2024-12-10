@@ -8,15 +8,16 @@ use App\Models\User;
 use App\Models\UserInfo;
 use App\Models\Role;
 use App\Models\Skill;
+use App\Models\Socials;
 use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
-    public function showDashboard()
-    {
-        $users = User::all();
-        return view('admin.dashboard')->with('users');
-    }
+    // public function showDashboard()
+    // {
+    //     $users = User::all();
+    //     return view('admin.dashboard')->with('users');
+    // }
 
     public function showPwds()
     {
@@ -95,7 +96,7 @@ class AdminController extends Controller
 
         $skill->update($request->all());
 
-        return redirect()->route('skill-list')->withInput()->with('success', 'Skill updated successfully!');
+        return redirect()->route('skill-list')->with('success', 'Skill updated successfully!');
     }
 
     public function deleteSkill(Skill $skill)
@@ -122,7 +123,7 @@ class AdminController extends Controller
             'disability_name' => $request->name,
         ]);
 
-        return redirect()->route('disability-list')->withInput()->with('success', 'Disability added successfully.');
+        return redirect()->route('disability-list')->with('success', 'Disability added successfully.');
     }
 
     public function editDisability(Disability $disability)
@@ -140,7 +141,7 @@ class AdminController extends Controller
             'disability_name' => $request->name,
         ]);
 
-        return redirect()->route('disability-list')->withInput()->with('success', 'Disability updated successfully!');
+        return redirect()->route('disability-list')->with('success', 'Disability updated successfully!');
     }
 
     public function deleteDisability(Disability $disability)
@@ -148,6 +149,51 @@ class AdminController extends Controller
         $disability->delete();
 
         return back()->with('success', 'Disability deleted successfully!');
+    }
+
+    public function showSocials()
+    {
+        $socials = Socials::paginate(18);
+
+        return view('admin.socialManage', compact('socials'));
+    }
+
+    public function addSocial(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        Socials::create([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('social-list')->with('success', 'Social media platform added successfully.');
+    }
+
+    public function editSocial(Socials $social)
+    {
+        return view('admin.editSocial', compact('social'));
+    }
+
+    public function updateSocial(Request $request, Socials $social)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $social->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('social-list')->withInput()->with('success', 'Social media platform updated successfully!');
+    }
+
+    public function deleteSocial(Socials $social)
+    {
+        $social->delete();
+
+        return back()->with('success', 'Social media platform deleted successfully!');
     }
 
     public function deleteUser(User $id)

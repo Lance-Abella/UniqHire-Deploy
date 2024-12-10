@@ -101,8 +101,8 @@
                                         @endif
                                     </div>
 
-                                    <div class="prog-head d-flex justify-content-between" style="">
-                                        <div class=" header" style="">
+                                    <div class="prog-head d-flex justify-content-between">
+                                        <div class=" header">
                                             <h4 class="text-cap">{{$ranked['job']->position}}</h4>
                                             <p class="sub-text text-cap">{{$ranked['job']->employer->userInfo->name}}</p>
                                             <p class="sub-text text-cap location">

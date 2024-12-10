@@ -20,7 +20,7 @@
             </div>
 
         </div>
-        <div class="contact">
+        <!-- <div class="contact">
             <h5 class="mb-4">Send us a message</h5>
             <div>
                 <div class="form-floating mb-3">
@@ -38,7 +38,7 @@
                     <button type="submit" class="border-0 submit-btn">Send</button>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
 </footer>

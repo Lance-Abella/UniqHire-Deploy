@@ -15,15 +15,16 @@
     <table class="table table-striped table-hover">
         <thead>
             <tr>
-                <td class="table-head">Disability ID</td>
+                <!-- <td class="table-head">Disability ID</td> -->
                 <td class="table-head">Name</td>
-                <td class="table-head" colspan="2">--</td>
+                <td class="table-head" colspan="2">Actions</td>
             </tr>
         </thead>
         <tbody class="table-group-divider text-center">
             @forelse ($disabilities as $disability)
+            @if ($disability->id != 1)
             <tr>
-                <td>{{ $disability->id }}</td>
+                <!-- <td>{{ $disability->id }}</td> -->
                 <td>{{ $disability->disability_name }}</td>
                 <td colspan="2">
                     <a href="{{ route('disability-edit', $disability->id) }}" class="submit-btn border-0">Edit</a>
@@ -36,6 +37,7 @@
                     </form>
                 </td>
             </tr>
+            @endif
             @empty
             <tr>
                 <td colspan="7">No disabilities found.</td>
