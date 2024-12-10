@@ -55,6 +55,7 @@ class SponsorDonationNotification extends Notification
             'amount' => $this->Transaction->amount,
             'donor' => $this->Transaction->sponsor->name,
             'donate_date' => now(),
+            'url' => url("/show-program/" . $this->Transaction->crowdfundEvent->program->id)
         ];
     }
 }

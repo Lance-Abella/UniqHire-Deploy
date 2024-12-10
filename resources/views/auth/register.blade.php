@@ -159,7 +159,7 @@
                                 @enderror
                             </div>
                         </div>
-                    </div>
+                    </div>                    
                 </div>
                 <div class="row">
                     <div class="col">
@@ -205,7 +205,7 @@
         var input = document.getElementById(id);
         input.value = '';
     }
-
+    
     function togglePWDSection() {
         var roleSelect = document.getElementById('role');
         var pwdSection = document.getElementById('pwd-section');
@@ -236,16 +236,19 @@
             agencySection.style.display = 'none';
         }
 
-        if (roleSelect.value === '2') {
-            idLabel.textContent = 'PWD ID Number';
-            pwdIdInput.style.display = 'block';
-        } else if (roleSelect.value === '3') {
+        if (roleSelect.value === '2'){
+             idLabel.textContent = 'PWD ID Number';
+             pwdIdInput.style.display = 'block';
+        }
+        else if (roleSelect.value === '3') {
             idLabel.textContent = 'Training Provider Accreditation Number';
             pwdIdInput.style.display = 'block';
-        } else if (roleSelect.value === '4') {
+        }
+        else if (roleSelect.value === '4') {
             idLabel.textContent = 'DTI Business Registration Number';
             pwdIdInput.style.display = 'block';
-        } else if (roleSelect.value === '5') {
+        }
+        else if (roleSelect.value === '5') {
             pwdIdInput.style.display = 'none';
             idLabel.textContent = '';
         }
