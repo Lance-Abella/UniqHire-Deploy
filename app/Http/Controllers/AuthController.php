@@ -281,7 +281,7 @@ class AuthController extends Controller
                 } elseif ($user->hasRole('Training Agency')) {
                     return redirect()->intended(route('programs-manage'))->with('logged-in', 'Logged in successfully');
                 } elseif ($user->hasRole('Employer')) {
-                    return redirect()->intended(route('manage-jobsS'))->with('logged-in', 'Logged in successfully');
+                    return redirect()->intended(route('manage-jobs'))->with('logged-in', 'Logged in successfully');
                 } elseif ($user->hasRole('Sponsor')) {
                     return redirect()->intended(route('list-of-tp'))->with('logged-in', 'Logged in successfully');
                 } elseif ($user->hasRole('Admin')) {

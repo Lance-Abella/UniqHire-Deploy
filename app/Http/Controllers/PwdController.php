@@ -36,7 +36,9 @@ class PwdController extends Controller
 {
     public function showDetails($id)
     {
-        $program = TrainingProgram::with('agency.userInfo', 'disability', 'education', 'crowdfund')->findOrFail($id);
+        $program = TrainingProgram::with('agency.userInfo', 'disability', 'education', 'crowdfund')
+            ->where('status', 'Ongoing')
+            ->findOrFail($id);
         $userId = auth()->user()->id;
         $application = TrainingApplication::where('user_id', $userId)->get();
         $reviews = PwdFeedback::where('program_id', $id)->with('pwd')->latest()->get();
@@ -71,7 +73,9 @@ class PwdController extends Controller
 
         $allPrograms = TrainingProgram::whereHas('disability', function ($query) use ($disabilityId) {
             $query->where('disability_id', $disabilityId);
-        })->get();
+        })
+            ->where('status', 'Ongoing')
+            ->get();
 
         $nonConflictingPrograms = $allPrograms->filter(function ($program) use ($appliedSchedules) {
             $programDate = $program->schedule;
