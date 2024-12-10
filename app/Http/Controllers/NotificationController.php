@@ -7,12 +7,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notifiable;
 use App\Models\TrainingProgram;
+use App\Models\User;
 
 class NotificationController extends Controller
 {
     public function getNotifications()
     {
-        $user = auth()->user();
+        $user = User::with('userInfo')->find(auth()->id());
         $notificationsQuery = $user->notifications;
 
         if ($user->hasRole('PWD')) {
@@ -61,7 +62,9 @@ class NotificationController extends Controller
             'id' => 'required|exists:notifications,id',
         ]);
 
-        $notification = auth()->user()->notifications()
+        $user = User::with('userInfo')->find(auth()->id());
+
+        $notification = $user->notifications()
             ->where('id', $validated['id'])
             ->first();
 
