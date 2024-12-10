@@ -34,7 +34,7 @@ class RecommenderController extends Controller
 {
     private function calculateDistance($lat1, $lng1, $lat2, $lng2)
     {
-        $earthRadius = 6371; 
+        $earthRadius = 6371;
 
         $latDifference = deg2rad($lat2 - $lat1);
         $lngDifference = deg2rad($lng2 - $lng1);
@@ -45,7 +45,7 @@ class RecommenderController extends Controller
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
-        $distance = $earthRadius * $c; 
+        $distance = $earthRadius * $c;
 
         return round($distance, 2);
     }
@@ -103,8 +103,8 @@ class RecommenderController extends Controller
             })->exists();
 
             if ($matchingProgram) {
-                 $matchedSkillsCount++;
-            } 
+                $matchedSkillsCount++;
+            }
         }
 
         if ($matchedSkillsCount === 1) {
@@ -146,6 +146,7 @@ class RecommenderController extends Controller
         }
 
         $query->whereNotIn('id', $approvedProgramIds);
+        $query->where('status', 'Ongoing');
 
         $query->whereHas('disability', function ($q) use ($user) {
             $q->where('disability_id', $user->disability_id);
