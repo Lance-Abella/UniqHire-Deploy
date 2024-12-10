@@ -1652,6 +1652,30 @@ input[type="range"]::-webkit-slider-thumb {
     overflow-y: scroll;
 }
 
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.status-ongoing {
+    background-color: #22c55e;
+    color: white;
+}
+
+.status-ended {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.status-cancelled {
+    background-color: #ef4444;
+    color: white;
+}
+
 /* CROWDFUND */
 
 .progress-bar,
@@ -1899,6 +1923,30 @@ input[type="range"]::-webkit-slider-thumb {
 
 .agency-prog-container .prog-card .prog-btn {
     height: 3rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.status-ongoing {
+    background-color: #22c55e;
+    color: white;
+}
+
+.status-ended {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.status-cancelled {
+    background-color: #ef4444;
+    color: white;
 }
 
 /* TABLES */

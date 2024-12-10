@@ -16,7 +16,12 @@
             @foreach ($jobs as $job)
             <div class="prog-card" data-job-id="{{ $job->id }}" data-lat="{{ $job->latitude }}" data-lng="{{ $job->longitude }}">
                 <a href="{{route('jobs-show', $job->id) }}" class="prog-texts">
-                    <h3 class="text-cap">{{$job->position}}</h3>
+                    <h3 class="text-cap">
+                        {{$job->position}}
+                        <span class="status-badge status-{{ strtolower($job->status) }}">
+                            {{ $job->status }}
+                        </span>
+                    </h3>
                     <p class="sub-text prog-loc text-cap" id="location-{{ $job->id }}">
                         <i class='bx bx-map sub-text prog-loc'></i>{{$job->location}}
                     </p>

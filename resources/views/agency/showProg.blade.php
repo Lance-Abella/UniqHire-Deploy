@@ -13,7 +13,14 @@
         <div class="prog-details">
             <div class="d-flex header">
                 <div class="mb-3 titles">
-                    <h3 class="text-cap">{{ $program->title }}</h3>
+                    <div class="program-header">
+                        <h2>
+                            {{ $program->title }}
+                            <span class="status-badge status-{{ strtolower($program->status) }}">
+                                {{ $program->status }}
+                            </span>
+                        </h2>
+                    </div>
                     <p class="sub-text text-cap">{{ $program->agency->userInfo->name }}</p>
                     <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $program->location }}</p>
                     <input type="hidden" id="lat" value="{{ $program->latitude }}">
@@ -35,6 +42,14 @@
                             </form>
                         </div>
                     </div>
+                    @if($program->status !== 'Cancelled')
+                    <div class="mt-2">
+                        <form id="cancel-form-{{ $program->id }}" action="{{ route('programs.cancel', $program->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="deny-btn border-0" onclick="confirmCancel(event, 'cancel-form-{{ $program->id }}')">Cancel Program</button>
+                        </form>
+                    </div>
+                    @endif
                 </div>
             </div>
             <div class="mb-5">
@@ -293,6 +308,23 @@
             title: "Confirmation",
             text: "Do you really want to delete this training program?",
             icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirm"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
+    }
+
+    function confirmCancel(event, formId) {
+        event.preventDefault();
+        Swal.fire({
+            title: "Confirmation",
+            text: "Do you really want to cancel this training program?",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->integer('end_age')->default(0);
             $table->time('start_time')->default('00:00:00');
             $table->time('end_time')->default('00:00:00');
+            $table->enum('status', ['Ongoing', 'Ended', 'Cancelled'])->default('Ongoing');
             $table->timestamps();
         });
     }

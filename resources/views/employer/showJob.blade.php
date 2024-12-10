@@ -13,7 +13,14 @@
         <div class="prog-details">
             <div class="d-flex header">
                 <div class="mb-3 titles">
-                    <h3 class="text-cap">{{ $listing->position }}</h3>
+                    <div class="program-header">
+                        <h3 class="text-cap">
+                            {{ $listing->position }}
+                            <span class="status-badge status-{{ strtolower($listing->status) }}">
+                                {{ $listing->status }}
+                            </span>
+                        </h3>
+                    </div>
                     <p class="sub-text text-cap">{{ $listing->employer->userInfo->name }}</p>
                     <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $listing->location }}</p>
                     <input type="hidden" id="lat" value="{{ $listing->latitude }}">
@@ -34,8 +41,15 @@
                                 <button type="submit" class="deny-btn border-0" onclick="confirmDeleteJob(event, 'delete-form-{{ $listing->id }}')">Delete</button>
                             </form>
                         </div>
-
                     </div>
+                    @if($listing->status !== 'Cancelled')
+                    <div class="mt-2">
+                        <form id="cancel-form-{{ $listing->id }}" action="{{ route('jobs.cancel', $listing->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="deny-btn border-0" onclick="confirmCancel(event, 'cancel-form-{{ $listing->id }}')">Cancel Listing</button>
+                        </form>
+                    </div>
+                    @endif
                 </div>
             </div>
             <div class="mb-5">
@@ -197,6 +211,23 @@
             title: "Confirmation",
             text: "Do you really want to delete this job listing?",
             icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirm"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
+    }
+
+    function confirmCancel(event, formId) {
+        event.preventDefault();
+        Swal.fire({
+            title: "Confirmation",
+            text: "Do you really want to cancel this job listing?",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",

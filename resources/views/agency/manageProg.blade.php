@@ -16,7 +16,12 @@
             @foreach ($programs as $program)
             <div class="prog-card" data-program-id="{{ $program->id }}" data-lat="{{ $program->latitude }}" data-lng="{{ $program->longitude }}">
                 <a href="{{ route('programs-show', $program->id) }}" class="prog-texts">
-                    <h3 class="text-cap">{{ $program->title }}</h3>
+                    <h3 class="text-cap">
+                        {{ $program->title }}
+                        <span class="status-badge status-{{ strtolower($program->status) }}">
+                            {{ $program->status }}
+                        </span>
+                    </h3>
                     <p class="sub-text prog-loc text-cap" id="location-{{ $program->id }}">
                         <i class='bx bx-map sub-text prog-loc'></i>{{ $program->location }}
                     </p>
@@ -90,5 +95,4 @@
     //     });
     // });
 </script>
-
 @endsection
