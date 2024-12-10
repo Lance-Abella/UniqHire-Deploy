@@ -399,7 +399,7 @@
                                     notification.data.program_title +
                                     '</span>' +
                                     '<div class="notif-content sub-text">' + '<span class="sub-text text-cap">' + notification.data.donor + '</span>' +
-                                    +' has donated ' + '<span class="sub-text text-cap">' + notification.data.amount + '</span>' +
+                                    ' has donated ' + '<span class="sub-text text-cap">' + notification.data.amount + '</span>' +
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\JobHiredNotification') {
