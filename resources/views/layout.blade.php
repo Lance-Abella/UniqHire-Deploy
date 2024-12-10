@@ -187,6 +187,12 @@
                                         <span class="side-title">Calendar</span>
                                     </a>
                                 </li>
+                                <li class="side-item">
+                                    <a href="{{route('payment-history')}}" class="side-item-link {{ request()->routeIs('payment-history') ? 'active' : '' }}">
+                                        <i class='bx bx-history side-icon'></i>
+                                        <span class="side-title">Transactions</span>
+                                    </a>
+                                </li>
                                 @endif
 
                                 @if (Auth::user()->hasRole('Sponsor'))
@@ -221,15 +227,12 @@
                                     <li class="nav-item "><a href="{{route('events')}}" class="{{ request()->routeIs('events') ? 'active' : '' }}">Events</a></li>
                                     @endif
                                     @if (Auth::user()->hasRole('Employer'))
+                                    <li class="nav-item "><a href="{{route('list-of-tp')}}" class="{{ request()->routeIs('list-of-tp', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
                                     <li class="nav-item "><a href="{{route('post-events')}}" class="{{ request()->routeIs('show-post-events') ? 'active' : '' }}">Events</a></li>
                                     @endif
                                     @if (Auth::user()->hasRole('Sponsor'))
-                                    <li class="nav-item "><a href="{{route('list-of-tp')}}" class="{{ request()->routeIs('list-of-tp', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
-                                    <li class="nav-item "><a href="">Find Work</a></li>
-                                    @endif
-
-                                    <!-- <li class="nav-item"><a href="{{ route('home') }}/#about" class="">About</a></li> -->
-
+                                    <li class="nav-item "><a href="{{route('list-of-tp')}}" class="{{ request()->routeIs('list-of-tp', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>                                    
+                                    @endif                                    
                                 </ul>
                             </div>
                             <div>

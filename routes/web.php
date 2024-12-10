@@ -105,15 +105,15 @@ Route::middleware('auth')->group(function () {
 
 
     //SPONSOR Middleware
-    Route::get('/browse/list-of-programs', [SponsorController::class, 'showTrainingLists'])->middleware('role:Sponsor')->name('list-of-tp');
-    Route::get('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('trainingprog-details');
-    Route::post('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('trainingprog-details');
-    Route::get('/training-program/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor')->name('show-progdetails');
-    Route::post('/training-program/payment', [SponsorController::class, 'payment'])->middleware('role:Sponsor')->name('payment');
-    Route::post('/payment', [PaymentController::class, 'payment'])->middleware('role:Sponsor')->name('payment');
-    Route::get('/payment/success', [PaymentController::class, 'success'])->middleware('role:Sponsor')->name('payment-success');
-    Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->middleware('role:Sponsor')->name('payment-cancel');
-    Route::get('/payment-history', [SponsorController::class, 'showTransactions'])->middleware('role:Sponsor')->name('payment-history');
+    Route::get('/browse/list-of-programs', [SponsorController::class, 'showTrainingLists'])->middleware('role:Sponsor,Employer')->name('list-of-tp');
+    Route::get('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor,Employer')->name('trainingprog-details');
+    Route::post('/trainingprogram-details/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor,Employer')->name('trainingprog-details');
+    Route::get('/training-program/{id}', [SponsorController::class, 'showProgDetails'])->middleware('role:Sponsor,Employer')->name('show-progdetails');
+    Route::post('/training-program/payment', [SponsorController::class, 'payment'])->middleware('role:Sponsor,Employer')->name('payment');
+    Route::post('/payment', [PaymentController::class, 'payment'])->middleware('role:Sponsor,Employer')->name('payment');
+    Route::get('/payment/success', [PaymentController::class, 'success'])->middleware('role:Sponsor,Employer')->name('payment-success');
+    Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->middleware('role:Sponsor,Employer')->name('payment-cancel');
+    Route::get('/payment-history', [SponsorController::class, 'showTransactions'])->middleware('role:Sponsor,Employer')->name('payment-history');
 
 
 
