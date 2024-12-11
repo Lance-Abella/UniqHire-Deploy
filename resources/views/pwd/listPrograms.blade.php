@@ -55,7 +55,7 @@
                 <div class="prog-grid-list">
                     @forelse ($paginatedItems as $ranked)
                     <div class="row prog-card mb-2" data-program-id="{{ $ranked['program']->id }}" data-lat="{{ $ranked['program']->latitude }}" data-lng="{{ $ranked['program']->longitude }}">
-                        <input type="hidden" name="" value="{{$ranked['similarity']}}" id="" readonly>
+                        <input type="text" name="" value="{{$ranked['similarity']}}" id="" readonly>
                         <div class="col ">
                             <a href="{{ route('training-details', $ranked['program']->id ) }}" class="d-flex prog-texts">
                                 <div class="prog-texts-container">

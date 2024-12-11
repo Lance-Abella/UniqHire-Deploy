@@ -19,6 +19,7 @@ use App\Http\Requests\UpdateUserInfoRequest;
 use App\Models\Enrollee;
 use App\Models\Employee;
 use App\Models\Events;
+use App\Models\Criteria;
 use App\Models\PwdFeedback;
 use App\Models\WorkSetup;
 use App\Models\WorkType;
@@ -57,12 +58,18 @@ class RecommenderController extends Controller
         $userSkills = SkillUser::where('user_id', $user->id)->get();
         $totalRating = PwdFeedback::where('program_id', $program->id)->sum('rating');
         $ratingCount = PwdFeedback::where('program_id', $program->id)->count();
+        $locationWeight = Criteria::where('name', 'Location')->value('weight');
+        $ageWeight = Criteria::where('name', 'Age')->value('weight');
+        $educWeight = Criteria::where('name', 'Educational Background')->value('weight');
+        $skillsWeight = Criteria::where('name', 'Skills')->value('weight');
+        $programSkillsCount = $program->skill->count();
         $filteredPrograms = TrainingProgram::whereHas('disability', function ($q) use ($user) {
             $q->where('disability_id', $user->disability_id);
         })->get();
         $averageRating = $ratingCount > 0 ? $totalRating / $ratingCount : 0;
         $distances = [];
 
+        Log::info("Ihap sa program skills" . $programSkillsCount);
         foreach ($filteredPrograms as $prog) {
             $distanceValue = $this->calculateDistance($user->latitude, $user->longitude, $prog->latitude, $prog->longitude);
             $distances[] = [
@@ -75,47 +82,65 @@ class RecommenderController extends Controller
             return $a['distance'] <=> $b['distance'];
         });
 
-        $numberOfDistances = count($distances);
-        $difference = $numberOfDistances > 1 ? 30 / ($numberOfDistances) : 0;
+        $highest = end($distances)['distance'];
+
+        foreach ($distances as $key => $distance) {
+            $currentDistance = $distance['distance'];
+            $result = (1 - ($currentDistance / $highest)) * ($locationWeight/100);
+            $distances[$key]['calculated_result'] = $result; 
+        }
+
+        Log::info($distances);
+
+        // $numberOfDistances = count($distances);
+        // $difference = $numberOfDistances > 1 ? 30 / ($numberOfDistances) : 0;
 
         foreach ($distances as $index => $distanceItem) {
             if ($distanceItem['program_id'] == $program->id) {
-                $similarityScore += max(0, 30 - ($difference * $index));
+                $similarityScore += $distanceItem['calculated_result'];
                 break;
             }
         }
 
+        Log::info("Mao ni ang sa current formula if nakuha ba gyud:" . $similarityScore);
+
         if ($user->age >= $program->start_age && $user->age <= $program->end_age) {
-            $similarityScore += 20;
+            $similarityScore += $ageWeight;
         } else {
             $similarityScore += 10;
         }
 
-        if ($user->educational_id >= $program->education_id) {
-            $similarityScore += 25;
-        } else {
-            $similarityScore += 10;
-        }
+        // if ($user->educational_id >= $program->education_id) {
+        //     $similarityScore += $educWeight;
+        // } else {
+        //     $similarityScore += 10;
+        // }
 
         foreach ($userSkills as $userSkill) {
-            $matchingProgram = $program->whereHas('skill', function ($q) use ($userSkill) {
-                $q->where('program_skill.id', $userSkill->skill_id);
-            })->exists();
+            $matchingProgram = $program->skill->contains(function ($skill) use ($userSkill) {
+                return $skill->id == $userSkill->skill_id;
+            });
 
             if ($matchingProgram) {
                 $matchedSkillsCount++;
             }
         }
 
-        if ($matchedSkillsCount === 1) {
-            $similarityScore += 5;
-        } elseif ($matchedSkillsCount === 2) {
-            $similarityScore += 10;
-        } elseif ($matchedSkillsCount === 3) {
-            $similarityScore += 15;
-        } elseif ($matchedSkillsCount >= 4) {
-            $similarityScore += 20;
-        }
+        $similarityScore += ($matchedSkillsCount/$programSkillsCount) * $skillsWeight;
+
+
+
+        Log::info("Pila kabuok ni match nga skills" . $matchedSkillsCount);
+
+        // if ($matchedSkillsCount === 1) {
+        //     $similarityScore += 5;
+        // } elseif ($matchedSkillsCount === 2) {
+        //     $similarityScore += 10;
+        // } elseif ($matchedSkillsCount === 3) {
+        //     $similarityScore += 15;
+        // } elseif ($matchedSkillsCount >= 4) {
+        //     $similarityScore += 20;
+        // }
 
         if ($averageRating) {
             $similarityScore += $averageRating;
@@ -203,12 +228,27 @@ class RecommenderController extends Controller
             return $a['distance'] <=> $b['distance'];
         });
 
-        $numberOfDistances = count($distances);
-        $difference = $numberOfDistances > 1 ? 30 / ($numberOfDistances) : 0;
+        $highest = end($distances)['distance'];
 
-        foreach ($distances as $index => $distanceItem) {
+        // $numberOfDistances = count($distances);
+        // $difference = $numberOfDistances > 1 ? 30 / ($numberOfDistances) : 0;
+
+        // foreach ($distances as $index => $distanceItem) {
+        //     if ($distanceItem['job_id'] == $currentJob->id) {
+        //         $similarityScore += max(0, 30 - ($difference * $index));
+        //         break;
+        //     }
+        // }
+
+        foreach ($distances as $key => $distance) {
+            $currentDistance = $distance['distance'];
+            $result = (1 - ($currentDistance / $highest)) * ($locationWeight/100);
+            $distances[$key]['calculated_result'] = $result; 
+        }
+
+         foreach ($distances as $index => $distanceItem) {
             if ($distanceItem['job_id'] == $currentJob->id) {
-                $similarityScore += max(0, 30 - ($difference * $index));
+                $similarityScore += $distanceItem['calculated_result'];
                 break;
             }
         }

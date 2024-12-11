@@ -150,6 +150,10 @@
                                         <i class='bx bx-globe side-icon'></i>
                                         <span class="side-title">Socials</span>
                                     </a></li>
+                                <li class="side-item"><a href="{{route('criteria-list')}}" class="side-item-link {{ request()->routeIs('criteria-list', 'criteria-edit') ? 'active' : '' }}">
+                                        <i class='bx bx-notepad side-icon'></i>
+                                        <span class="side-title">Criteria</span>
+                                    </a></li>
                                 <!-- <li class="side-item"><a href="" class="side-item-link">
                                         <i class='bx bx-cog side-icon'></i>
                                         <span class="side-title">Settings</span>

@@ -9,6 +9,7 @@ use App\Models\UserInfo;
 use App\Models\Role;
 use App\Models\Skill;
 use App\Models\Socials;
+use App\Models\Criteria;
 use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
@@ -234,4 +235,37 @@ class AdminController extends Controller
 
         return redirect()->back()->with('error', 'Status cannot be changed.');
     }
+
+    public function showCriteria()
+    {
+        $criteria = Criteria::paginate(18);
+
+        return view('admin.criteriaManage', compact('criteria'));
+    }
+
+    public function updateCriteria(Request $request)
+    {
+
+        $request->validate([
+            'weight' => ['required', 'array'], 
+            'weight.*' => ['required', 'numeric', 'min:0', 'max:100'],
+        ]);
+
+        if (array_sum($request->weight) !== 100) {
+            return back()->withInput()->with(['weight' => 'The total weight must equal 100.']);
+        }
+
+        foreach ($request->weight as $index => $weight) {
+            $criterion = Criterion::findOrFail($index);
+            $criterion->update(['weight' => $weight]);
+        }
+
+        return redirect()->back()->with('success', 'Criteria updated successfully!');
+    }
+
+    public function editCriteria(Criteria $criterion)
+    {
+        return view('admin.editCriteria', compact('criterion'));
+    }
+
 }
