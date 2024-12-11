@@ -71,6 +71,30 @@
     </div>
     <div class="row mb-3">
         <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="time" class="form-control" id="startTime" name="start_time" value="{{$program->start_time}}" required placeholder="Input Start Time">
+                        <label for="floatingInput">Time Start</label>
+                        @error('start_time')
+                        <span class="error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="time" class="form-control" id="endTime" name="end_time" value="{{$program->end_time}}" required placeholder="Input Start Time">
+                        <label for="floatingInput">Time End</label>
+                        @error('end_time')
+                        <span class="error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
             <h5>Select Disabilities</h5>
             <div class="req-container">
                 @foreach ($disabilities as $disability)
@@ -129,9 +153,14 @@
         </div>
     </div>
     <hr>
+    @if (Auth::user()->userInfo->paypal_account == '' || Auth::user()->userInfo->paypal_account == null)
+    <div class="mb-2"><span class="error-msg">** Need to have paypal email in profile</span></div>
+    @endif
     <div>
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="host-crowdfund" onchange="toggleCrowdfund()" {{ $program->crowdfund ? 'checked' : '' }}>
+            <input class="form-check-input" type="checkbox" value="" id="host-crowdfund" onchange="toggleCrowdfund()" {{ $program->crowdfund ? 'checked' : '' }} @if (Auth::user()->userInfo->paypal_account == '' || Auth::user()->userInfo->paypal_account == null)
+            disabled
+            @endif>
             <label class="form-check-label" for="flexCheckDefault">
                 Host a crowdfunding for this?
             </label>

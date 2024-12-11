@@ -68,7 +68,7 @@
         </div>
         <div class="col">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control date" name="schedule" required placeholder="Choose Date">
+                <input type="text" class="form-control date" name="schedule" required placeholder="Choose Date" value="{{old('schedule')}}">
                 <label for="floatingInput">Choose Date</label>
                 @error('schedule')
                 <span class="error-msg">{{ $message }}</span>

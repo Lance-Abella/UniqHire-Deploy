@@ -14,12 +14,12 @@
             <div class="d-flex header">
                 <div class="mb-3 titles">
                     <div class="program-header">
-                        <h2>
+                        <h3 class="text-cap">
                             {{ $program->title }}&nbsp;
                             <span class="status-badge status-{{ strtolower($program->status) }}">
                                 {{ $program->status }}
                             </span>
-                            </h3>
+                        </h3>
                     </div>
                     <p class="sub-text text-cap">{{ $program->agency->userInfo->name }}</p>
                     <p class="sub-text prog-loc text-cap mb-3" id="location"><i class='bx bx-map sub-text'></i>{{ $program->location }}</p>
@@ -185,37 +185,6 @@
                         No enrollees yet.
                     </div>
                     @endforelse
-                    <!-- <table class="table table-striped table-hover">                
-                        <tbody>
-                            @forelse ($enrollees as $enrollee)
-                            <tr>
-                                <td class="name">
-                                    <a href="{{ route('show-profile', $enrollee->application->user->id) }}">
-                                        {{ $enrollee->application->user->userInfo->name }}
-                                    </a>
-                                </td>
-
-                                <td class="d-flex justify-content-end btn-container">
-                                    <form action="{{ route('mark-complete') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" value="{{$enrollee->id}}" name="enrolleeId">
-                                        <input type="hidden" value="{{$enrollee->pwd_id}}" name="userId">
-                                        <input type="hidden" value="{{$program->id}}" name="programId">
-                                        @if ($enrollee->completion_status == 'Ongoing')
-                                        <button class="submit-btn border-0">Completed?</button>
-                                        @else
-                                        <button class="submit-btn completed border-0" disabled><i class='bx bx-check'></i></button>
-                                        @endif
-                                    </form>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="3" class="text-center">No enrollees yet.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table> -->
                 </div>
                 @if ($program->crowdfund)
                 <div class="tab-pane" id="sponsors" role="tabpanel">

@@ -100,8 +100,9 @@
                         <div id="map" class="map"></div>
                     </div>
                 </div>
-                <hr>
+
                 <div id="pwd-section">
+                    <hr>
                     <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
@@ -140,6 +141,7 @@
                     </div>
                 </div>
                 <div id="agency-section" style="display:none;">
+                    <hr>
                     <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
@@ -159,7 +161,7 @@
                                 @enderror
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col">
@@ -205,7 +207,7 @@
         var input = document.getElementById(id);
         input.value = '';
     }
-    
+
     function togglePWDSection() {
         var roleSelect = document.getElementById('role');
         var pwdSection = document.getElementById('pwd-section');
@@ -236,19 +238,16 @@
             agencySection.style.display = 'none';
         }
 
-        if (roleSelect.value === '2'){
-             idLabel.textContent = 'PWD ID Number';
-             pwdIdInput.style.display = 'block';
-        }
-        else if (roleSelect.value === '3') {
+        if (roleSelect.value === '2') {
+            idLabel.textContent = 'PWD ID Number';
+            pwdIdInput.style.display = 'block';
+        } else if (roleSelect.value === '3') {
             idLabel.textContent = 'Training Provider Accreditation Number';
             pwdIdInput.style.display = 'block';
-        }
-        else if (roleSelect.value === '4') {
+        } else if (roleSelect.value === '4') {
             idLabel.textContent = 'DTI Business Registration Number';
             pwdIdInput.style.display = 'block';
-        }
-        else if (roleSelect.value === '5') {
+        } else if (roleSelect.value === '5') {
             pwdIdInput.style.display = 'none';
             idLabel.textContent = '';
         }

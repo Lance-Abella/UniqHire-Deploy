@@ -1676,26 +1676,24 @@ input[type="range"]::-webkit-slider-thumb {
 .status-badge,
 .agency-prog-container .status-badge {
     display: inline-block;
-    padding: 0.2rem;
-    border-radius: 4px;
+    padding: 0.3rem;
+    border-radius: var(--border-radius);
     font-size: 0.875rem;
     font-weight: 500;
     /* margin-left: 8px; */
+    color: var(--bg-color-02);
 }
 
 .status-ongoing {
     background-color: var(--primary-color);
-    color: white;
 }
 
 .status-ended {
     background-color: var(--color-01);
-    color: white;
 }
 
 .status-cancelled {
-    background-color: #ef4444;
-    color: white;
+    background-color: var(--color-02);
 }
 
 /* CROWDFUND */
