@@ -78,6 +78,7 @@ class RecommenderController extends Controller
             ];
         }
 
+
         usort($distances, function ($a, $b) {
             return $a['distance'] <=> $b['distance'];
         });
@@ -100,6 +101,7 @@ class RecommenderController extends Controller
                 $similarityScore += $distanceItem['calculated_result'];
                 break;
             }
+            
         }
 
         Log::info("Mao ni ang sa current formula if nakuha ba gyud:" . $similarityScore);
@@ -154,6 +156,7 @@ class RecommenderController extends Controller
         $user = auth()->user()->userInfo;
         $educations = EducationLevel::all();
         $query = TrainingProgram::query();
+        $userDisabilityId = $user->disability_id;
 
         $approvedProgramIds = TrainingApplication::where('user_id', auth()->id())
             ->where('application_status', 'Approved')
@@ -200,9 +203,11 @@ class RecommenderController extends Controller
         $paginatedItems = new LengthAwarePaginator($currentItems, count($rankedPrograms), $perPage);
         $paginatedItems->setPath($request->url());
 
-        $educationCounts = EducationLevel::withCount('program')->get()->keyBy('id');
-        Log::info('Paginated Items:', $paginatedItems->toArray());
-        log::info("nakaabot ari gyuddd");
+        $educationCounts = EducationLevel::withCount(['program' => function ($query) use ($userDisabilityId) {
+            $query->whereHas('disability', function ($q) use ($userDisabilityId) {
+                $q->where('disabilities.id', $userDisabilityId);
+            });
+        }])->get()->keyBy('id');
         return view('pwd.listPrograms', compact('paginatedItems', 'educations', 'educationCounts'));
     }
 
@@ -350,6 +355,7 @@ class RecommenderController extends Controller
         $maxSalary = $request->maxSalary;
         $query->whereDate('end_date', '>=', $currentDate);
         $query->whereNotIn('id', $approvedJobIds);
+        $query->where('status', 'Ongoing');
         $query->whereHas('disability', function ($q) use ($user) {
             $q->where('disability_id', $user->disability_id);
         });
