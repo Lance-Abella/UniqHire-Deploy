@@ -187,9 +187,15 @@ class AgencyController extends Controller
             $trainingProgram->competencies()->sync($competencyIds);
         }
 
+        $programDisabilityIds = $trainingProgram->disability->pluck('id')->toArray();
+
         $pwdUsers = User::whereHas('role', function ($query) {
             $query->where('role_name', 'PWD');
-        })->get();
+        })
+            ->whereHas('userInfo', function ($query) use ($programDisabilityIds) {
+                $query->whereIn('disability_id', $programDisabilityIds);
+            })
+            ->get();
 
         foreach ($pwdUsers as $user) {
             $user->notify(new NewTrainingProgramNotification($trainingProgram));
