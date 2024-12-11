@@ -24,22 +24,42 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class EmployerController extends Controller
 {
+    // public function manageJobs()
+    // {
+    //     $userId = auth()->id();
+    //     $jobs = JobListing::where('employer_id', $userId)
+    //         ->latest()
+    //         ->paginate(15);
+
+    //     // Check and update status for jobs based on end_date
+    //     foreach ($jobs as $job) {
+    //         if ($job->status !== 'Cancelled' && $job->end_date < now()->startOfDay()) {
+    //             Log::info('naay sulod');
+    //             $job->update(['status' => 'Ended']);
+    //         }
+    //     }
+
+    //     return view('employer.manageJob', compact('jobs'));
+    // }
+
     public function manageJobs()
     {
         $userId = auth()->id();
+
+        // Update job statuses in bulk
+        JobListing::where('employer_id', $userId)
+            ->where('status', '!=', 'Cancelled')
+            ->where('end_date', '<', Carbon::now()->startOfDay())
+            ->update(['status' => 'Ended']);
+
+        // Fetch updated jobs for display
         $jobs = JobListing::where('employer_id', $userId)
             ->latest()
             ->paginate(15);
-
-        // Check and update status for jobs based on end_date
-        foreach ($jobs as $job) {
-            if ($job->status !== 'Cancelled' && $job->end_date < now()->startOfDay()) {
-                $job->update(['status' => 'Ended']);
-            }
-        }
 
         return view('employer.manageJob', compact('jobs'));
     }
@@ -502,15 +522,15 @@ class EmployerController extends Controller
 
         $employees = Employee::all();
 
-        if ($employees->isEmpty()) {
-            return redirect()->route('show-post-events')->with('error', 'No users found to notify.');
-        }
+        // if ($employees->isEmpty()) {
+        //     return redirect()->route('show-post-events')->with('error', 'No users found to notify.');
+        // }
 
         foreach ($employees as $employee) {
             $employee->pwd->notify(new SetEventsNotification($event));
         }
 
-        return redirect()->route('show-post-events');
+        return redirect()->route('show-post-events')->with('success', 'Event posted successfully!');
     }
 
     public function deleteEvent($id)

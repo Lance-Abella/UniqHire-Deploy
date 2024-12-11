@@ -19,7 +19,7 @@
                             <span class="status-badge status-{{ strtolower($program->status) }}">
                                 {{ $program->status }}
                             </span>
-                        </h2>
+                            </h3>
                     </div>
                     <p class="sub-text text-cap">{{ $program->agency->userInfo->name }}</p>
                     <p class="sub-text prog-loc text-cap mb-3" id="location"><i class='bx bx-map sub-text'></i>{{ $program->location }}</p>

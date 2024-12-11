@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notifiable;
-use App\Models\TrainingProgram;
 use App\Models\User;
 
 class NotificationController extends Controller
@@ -61,9 +60,7 @@ class NotificationController extends Controller
         $validated = $request->validate([
             'id' => 'required|exists:notifications,id',
         ]);
-
         $user = User::with('userInfo')->find(auth()->id());
-
         $notification = $user->notifications()
             ->where('id', $validated['id'])
             ->first();
