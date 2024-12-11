@@ -16,7 +16,8 @@ use App\Models\UserInfo;
 use App\Models\TrainingProgram;
 use App\Models\WorkSetup;
 use App\Models\WorkType;
-use App\Models\Criteria;
+use App\Models\ProgramCriteria;
+use App\Models\JobCriteria;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -95,11 +96,15 @@ class DatabaseSeeder extends Seeder
         $id_nineteen = Valid::create(['valid_id_number' => '13-5416-000-0000019']);
         $id_twenty = Valid::create(['valid_id_number' => '13-5416-000-0000020']);
 
-        $location = Criteria::create(['name' => 'Location', 'weight' => '30']);
-        $age = Criteria::create(['name' => 'Age', 'weight' => '20']);
-        $educ = Criteria::create(['name' => 'Educational Background', 'weight' => '25']);
-        $skills = Criteria::create(['name' => 'Skills', 'weight' => '20']);
-        $rating = Criteria::create(['name' => 'Rating', 'weight' => '5']);
+        $location = ProgramCriteria::create(['name' => 'Location', 'weight' => '30']);
+        $age = ProgramCriteria::create(['name' => 'Age', 'weight' => '20']);
+        $educ = ProgramCriteria::create(['name' => 'Educational Background', 'weight' => '25']);
+        $skills = ProgramCriteria::create(['name' => 'Skills', 'weight' => '20']);
+        $rating = ProgramCriteria::create(['name' => 'Rating', 'weight' => '5']);
+
+        $location = JobCriteria::create(['name' => 'Location', 'weight' => '30']);
+        $skills = JobCriteria::create(['name' => 'Skills', 'weight' => '10']);
+        $certifiedSkills = JobCriteria::create(['name' => 'Certified Skills', 'weight' => '60']);
 
         $adminuser = User::create([
             'email' => 'kler@example.com',

@@ -90,7 +90,7 @@
                     @foreach ($paginatedItems as $ranked)
 
                     <div class="job-card prog-card mb-2" data-program-id="{{ $ranked['job']->id }}" data-lat="{{ $ranked['job']->latitude }}" data-lng="{{ $ranked['job']->longitude }}">
-                        <input type="hidden" name="" value="{{$ranked['similarity']}}" id="">
+                        <input type="text" name="" value="{{$ranked['similarity']}}" id="">
 
                         <a href="{{ route('job-details', $ranked['job']->id) }}" class="d-flex prog-texts">
                             <div class="prog-texts-container">

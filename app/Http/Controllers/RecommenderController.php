@@ -19,7 +19,8 @@ use App\Http\Requests\UpdateUserInfoRequest;
 use App\Models\Enrollee;
 use App\Models\Employee;
 use App\Models\Events;
-use App\Models\Criteria;
+use App\Models\ProgramCriteria;
+use App\Models\JobCriteria;
 use App\Models\PwdFeedback;
 use App\Models\WorkSetup;
 use App\Models\WorkType;
@@ -58,10 +59,10 @@ class RecommenderController extends Controller
         $userSkills = SkillUser::where('user_id', $user->id)->get();
         $totalRating = PwdFeedback::where('program_id', $program->id)->sum('rating');
         $ratingCount = PwdFeedback::where('program_id', $program->id)->count();
-        $locationWeight = Criteria::where('name', 'Location')->value('weight');
-        $ageWeight = Criteria::where('name', 'Age')->value('weight');
-        $educWeight = Criteria::where('name', 'Educational Background')->value('weight');
-        $skillsWeight = Criteria::where('name', 'Skills')->value('weight');
+        $locationWeight = ProgramCriteria::where('name', 'Location')->value('weight');
+        $ageWeight = ProgramCriteria::where('name', 'Age')->value('weight');
+        $educWeight = ProgramCriteria::where('name', 'Educational Background')->value('weight');
+        $skillsWeight = ProgramCriteria::where('name', 'Skills')->value('weight');
         $programSkillsCount = $program->skill->count();
         $filteredPrograms = TrainingProgram::whereHas('disability', function ($q) use ($user) {
             $q->where('disability_id', $user->disability_id);
@@ -112,11 +113,11 @@ class RecommenderController extends Controller
             $similarityScore += 10;
         }
 
-        // if ($user->educational_id >= $program->education_id) {
-        //     $similarityScore += $educWeight;
-        // } else {
-        //     $similarityScore += 10;
-        // }
+        if ($user->educational_id >= $program->education_id) {
+            $similarityScore += $educWeight;
+        } else {
+            $similarityScore += 10;
+        }
 
         foreach ($userSkills as $userSkill) {
             $matchingProgram = $program->skill->contains(function ($skill) use ($userSkill) {
@@ -216,11 +217,16 @@ class RecommenderController extends Controller
         $similarityScore = 0;
         $matchedExistingSkillsCount = 0;
         $matchedCertifiedSkillsCount = 0;
+        $locationWeight = JobCriteria::where('name', 'Location')->value('weight');
+        $certifiedWeight = JobCriteria::where('name', 'Certified Skills')->value('weight');
+        $skillsWeight = JobCriteria::where('name', 'Skills')->value('weight');
+        $jobSkillsCount = $currentJob->skill->count();
         $filteredJobs = JobListing::whereHas('disability', function ($q) use ($user) {
             $q->where('disability_id', $user->disability_id);
         })->get();
 
         $distances = [];
+        Log::info("Ihap sa job skills" . $jobSkillsCount);
         foreach ($filteredJobs as $job) {
             $distanceValue = $this->calculateDistance($user->latitude, $user->longitude, $job->latitude, $job->longitude);
             $distances[] = [
@@ -280,17 +286,21 @@ class RecommenderController extends Controller
             }
         }
 
-        if ($matchedExistingSkillsCount == 1) {
-            $similarityScore += 2;
-        } else if ($matchedExistingSkillsCount == 2) {
-            $similarityScore += 4;
-        } else if ($matchedExistingSkillsCount == 3) {
-            $similarityScore += 6;
-        } else if ($matchedExistingSkillsCount == 4) {
-            $similarityScore += 8;
-        } else if ($matchedExistingSkillsCount >= 5) {
-            $similarityScore += 10;
-        }
+        $similarityScore += ($matchedExistingSkillsCount/$jobSkillsCount) * $skillsWeight;
+
+        Log::info("matched job id skills ni:" . $matchedExistingSkillsCount);
+
+        // if ($matchedExistingSkillsCount == 1) {
+        //     $similarityScore += 2;
+        // } else if ($matchedExistingSkillsCount == 2) {
+        //     $similarityScore += 4;
+        // } else if ($matchedExistingSkillsCount == 3) {
+        //     $similarityScore += 6;
+        // } else if ($matchedExistingSkillsCount == 4) {
+        //     $similarityScore += 8;
+        // } else if ($matchedExistingSkillsCount >= 5) {
+        //     $similarityScore += 10;
+        // }
 
         foreach ($certifiedSkills as $certifiedSkillId) {
             if (in_array($certifiedSkillId, $currentJobSkillIds)) {
@@ -298,19 +308,21 @@ class RecommenderController extends Controller
             }
         }
 
-        if ($matchedCertifiedSkillsCount == 1) {
-            $similarityScore += 10;
-        } elseif ($matchedCertifiedSkillsCount == 2) {
-            $similarityScore += 20;
-        } elseif ($matchedCertifiedSkillsCount == 3) {
-            $similarityScore += 30;
-        } elseif ($matchedCertifiedSkillsCount == 4) {
-            $similarityScore += 40;
-        } elseif ($matchedCertifiedSkillsCount == 5) {
-            $similarityScore += 50;
-        } elseif ($matchedCertifiedSkillsCount >= 6) {
-            $similarityScore += 60;
-        }
+        $similarityScore += ($matchedCertifiedSkillsCount/$jobSkillsCount) * $certifiedWeight;
+
+        // if ($matchedCertifiedSkillsCount == 1) {
+        //     $similarityScore += 10;
+        // } elseif ($matchedCertifiedSkillsCount == 2) {
+        //     $similarityScore += 20;
+        // } elseif ($matchedCertifiedSkillsCount == 3) {
+        //     $similarityScore += 30;
+        // } elseif ($matchedCertifiedSkillsCount == 4) {
+        //     $similarityScore += 40;
+        // } elseif ($matchedCertifiedSkillsCount == 5) {
+        //     $similarityScore += 50;
+        // } elseif ($matchedCertifiedSkillsCount >= 6) {
+        //     $similarityScore += 60;
+        // }
 
         return $similarityScore;
     }

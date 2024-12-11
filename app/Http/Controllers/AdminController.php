@@ -9,7 +9,8 @@ use App\Models\UserInfo;
 use App\Models\Role;
 use App\Models\Skill;
 use App\Models\Socials;
-use App\Models\Criteria;
+use App\Models\ProgramCriteria;
+use App\Models\JobCriteria;
 use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
@@ -236,14 +237,14 @@ class AdminController extends Controller
         return redirect()->back()->with('error', 'Status cannot be changed.');
     }
 
-    public function showCriteria()
+    public function showProgramCriteria()
     {
-        $criteria = Criteria::paginate(18);
+        $criteria = ProgramCriteria::paginate(18);
 
         return view('admin.criteriaManage', compact('criteria'));
     }
 
-    public function updateCriteria(Request $request)
+    public function updateProgramCriteria(Request $request)
     {
 
         $request->validate([
@@ -256,14 +257,14 @@ class AdminController extends Controller
         }
 
         foreach ($request->weight as $index => $weight) {
-            $criterion = Criterion::findOrFail($index);
+            $criterion = ProgramCriteria::findOrFail($index);
             $criterion->update(['weight' => $weight]);
         }
 
         return redirect()->back()->with('success', 'Criteria updated successfully!');
     }
 
-    public function editCriteria(Criteria $criterion)
+    public function editProgramCriteria(ProgramCriteria $criterion)
     {
         return view('admin.editCriteria', compact('criterion'));
     }

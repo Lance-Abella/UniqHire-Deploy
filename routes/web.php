@@ -74,9 +74,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/social-media/edit/{social}', [AdminController::class, 'editSocial'])->middleware('role:Admin')->name('social-edit');
     Route::put('/social-media/edit/{social}', [AdminController::class, 'updateSocial'])->middleware('role:Admin')->name('social-update');
     Route::delete('/social-media/{social}', [AdminController::class, 'deleteSocial'])->middleware('role:Admin')->name('social-delete');
-    Route::get('/criteria/all', [AdminController::class, 'showCriteria'])->middleware('role:Admin')->name('criteria-list');
-    Route::get('/criteria/edit/{id}', [AdminController::class, 'editCriteria'])->middleware('role:Admin')->name('criteria-edit');
-    Route::put('/criteria/update', [AdminController::class, 'updateCriteria'])->middleware('role:Admin')->name('criteria-update');
+    Route::get('/criteria/all', [AdminController::class, 'showProgramCriteria'])->middleware('role:Admin')->name('criteria-list');
+    Route::get('/criteria/edit/{id}', [AdminController::class, 'editProgramCriteria'])->middleware('role:Admin')->name('criteria-edit');
+    Route::put('/criteria/update', [AdminController::class, 'updateProgramCriteria'])->middleware('role:Admin')->name('criteria-update');
 
     //Trainer Middleware
     Route::get('/manage-program', [AgencyController::class, 'showPrograms'])->middleware('role:Training Agency,Employer')->name('programs-manage');
