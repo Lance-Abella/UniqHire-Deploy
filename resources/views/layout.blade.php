@@ -191,6 +191,12 @@
                                         <span class="side-title">Calendar</span>
                                     </a>
                                 </li>
+                                <li class="side-item">
+                                    <a href="{{route('payment-history')}}" class="side-item-link {{ request()->routeIs('payment-history') ? 'active' : '' }}">
+                                        <i class='bx bx-history side-icon'></i>
+                                        <span class="side-title">Transactions</span>
+                                    </a>
+                                </li>
                                 @endif
 
                                 @if (Auth::user()->hasRole('Sponsor'))
@@ -225,6 +231,7 @@
                                     <li class="nav-item "><a href="{{route('events')}}" class="{{ request()->routeIs('events') ? 'active' : '' }}">Events</a></li>
                                     @endif
                                     @if (Auth::user()->hasRole('Employer'))
+                                    <li class="nav-item "><a href="{{route('list-of-tp')}}" class="{{ request()->routeIs('list-of-tp', 'programs-show', 'training-details') ? 'active' : '' }}">Browse Training Programs</a></li>
                                     <li class="nav-item "><a href="{{route('post-events')}}" class="{{ request()->routeIs('show-post-events') ? 'active' : '' }}">Events</a></li>
                                     @endif
                                     @if (Auth::user()->hasRole('Sponsor'))
@@ -392,7 +399,7 @@
                                     notification.data.program_title +
                                     '</span>' +
                                     '<div class="notif-content sub-text">' + '<span class="sub-text text-cap">' + notification.data.donor + '</span>' +
-                                    +' has donated ' + '<span class="sub-text text-cap">' + notification.data.amount + '</span>' +
+                                    ' has donated ' + '<span class="sub-text text-cap">' + notification.data.amount + '</span>' +
                                     '</div>' +
                                     '</a></li>';
                             } else if (notification.type === 'App\\Notifications\\JobHiredNotification') {
