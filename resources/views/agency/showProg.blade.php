@@ -14,12 +14,12 @@
             <div class="d-flex header">
                 <div class="mb-3 titles">
                     <div class="program-header">
-                        <h2>
+                        <h3 class="text-cap">
                             {{ $program->title }}
                             <span class="status-badge status-{{ strtolower($program->status) }}">
                                 {{ $program->status }}
                             </span>
-                        </h2>
+                        </h3>
                     </div>
                     <p class="sub-text text-cap">{{ $program->agency->userInfo->name }}</p>
                     <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $program->location }}</p>
