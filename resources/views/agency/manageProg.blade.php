@@ -18,9 +18,6 @@
                 <a href="{{ route('programs-show', $program->id) }}" class="prog-texts">
                     <h3 class="text-cap">
                         {{ $program->title }}
-                        <span class="status-badge status-{{ strtolower($program->status) }}">
-                            {{ $program->status }}
-                        </span>
                     </h3>
                     <p class="sub-text prog-loc text-cap" id="location-{{ $program->id }}">
                         <i class='bx bx-map sub-text prog-loc'></i>{{ $program->location }}
@@ -51,11 +48,15 @@
                         </div>
                     </div>
                     @endif
-                    <div class="d-flex prog-details">
+                    <div class="d-flex prog-details align-items-center">
                         <p class="sub-text">
-                            <i class='bx bx-group sub-text'></i> {{ number_format($program->slots) . '/' . number_format($program->participants) }} Remaining
+                            <i class='bx bx-group'></i> {{ number_format($program->slots) . '/' . number_format($program->participants) }} Enrollees
                         </p>
-                        <!-- <span class="sub-text period">•</span>  -->
+                        <span class="sub-text period">•</span>
+                        <span class="status-badge status-{{ strtolower($program->status) }}">
+                            {{ $program->status }}
+                        </span>
+
 
                     </div>
                 </a>

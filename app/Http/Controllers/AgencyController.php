@@ -547,7 +547,12 @@ class AgencyController extends Controller
             foreach ($enrollees as $enrollee) {
                 // You might want to create a new notification class for this
                 // $enrollee->pwd->notify(new ProgramCancelledNotification($program));
+                $enrollee->update([
+                    'completion_status' => 'Not completed'
+                ]);
+                // $enrollee->completion_status = 'Not completed';
             }
+
 
             return redirect()->route('programs-manage')
                 ->with('success', 'Training program has been cancelled');

@@ -15,16 +15,23 @@
                 <div class="mb-3 titles">
                     <div class="program-header">
                         <h3 class="text-cap">
-                            {{ $listing->position }}
+                            {{ $listing->position }}&nbsp;
                             <span class="status-badge status-{{ strtolower($listing->status) }}">
                                 {{ $listing->status }}
                             </span>
                         </h3>
                     </div>
                     <p class="sub-text text-cap">{{ $listing->employer->userInfo->name }}</p>
-                    <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $listing->location }}</p>
+                    <p class="sub-text prog-loc text-cap mb-3" id="location"><i class='bx bx-map sub-text'></i>{{ $listing->location }}</p>
                     <input type="hidden" id="lat" value="{{ $listing->latitude }}">
                     <input type="hidden" id="lng" value="{{ $listing->longitude }}">
+                    <div>
+                        <div class="mb-4">
+                            <div class="desc">
+                                {!! nl2br(e($listing->description)) !!}
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="prog-btn">
                     @include('slugs.applicantRequests')
@@ -43,18 +50,13 @@
                         </div>
                     </div>
                     @if($listing->status !== 'Cancelled')
-                    <div class="mt-2">
+                    <div>
                         <form id="cancel-form-{{ $listing->id }}" action="{{ route('jobs.cancel', $listing->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="deny-btn border-0" onclick="confirmCancel(event, 'cancel-form-{{ $listing->id }}')">Cancel Listing</button>
+                            <button type="submit" class="submit-btn border-0 cancel" onclick="confirmCancel(event, 'cancel-form-{{ $listing->id }}')">Cancel Listing</button>
                         </form>
                     </div>
                     @endif
-                </div>
-            </div>
-            <div class="mb-5">
-                <div class="col">
-                    {!! nl2br(e($listing->description)) !!}
                 </div>
             </div>
             <ul class="nav nav-underline" role="tablist">
@@ -67,8 +69,6 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="tab" href="#hired" role="tab">Employees</a>
                 </li>
-
-
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="requirements" role="tabpanel">

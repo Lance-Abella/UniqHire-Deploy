@@ -15,16 +15,23 @@
                 <div class="mb-3 titles">
                     <div class="program-header">
                         <h2>
-                            {{ $program->title }}
+                            {{ $program->title }}&nbsp;
                             <span class="status-badge status-{{ strtolower($program->status) }}">
                                 {{ $program->status }}
                             </span>
                         </h2>
                     </div>
                     <p class="sub-text text-cap">{{ $program->agency->userInfo->name }}</p>
-                    <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $program->location }}</p>
+                    <p class="sub-text prog-loc text-cap mb-3" id="location"><i class='bx bx-map sub-text'></i>{{ $program->location }}</p>
                     <input type="hidden" id="lat" value="{{ $program->latitude }}">
                     <input type="hidden" id="lng" value="{{ $program->longitude }}">
+                    <div>
+                        <div class="mb-4">
+                            <div class="desc">
+                                {!! nl2br(e($program->description)) !!}
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="prog-btn">
                     @include('slugs.enrolleeRequests')
@@ -42,21 +49,17 @@
                             </form>
                         </div>
                     </div>
-                    @if($program->status !== 'Cancelled')
-                    <div class="mt-2">
+                    <div class="">
+                        @if ($program->status != 'Cancelled')
                         <form id="cancel-form-{{ $program->id }}" action="{{ route('programs.cancel', $program->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="deny-btn border-0" onclick="confirmCancel(event, 'cancel-form-{{ $program->id }}')">Cancel Program</button>
+                            <button type="submit" class="submit-btn border-0 cancel" onclick="confirmCancel(event, 'cancel-form-{{ $program->id }}')">Cancel Program</button>
                         </form>
+                        @endif
                     </div>
-                    @endif
                 </div>
             </div>
-            <div class="mb-5">
-                <div class="col">
-                    {!! nl2br(e($program->description)) !!}
-                </div>
-            </div>
+
             <ul class="nav nav-underline" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" data-bs-toggle="tab" href="#requirements" role="tab">Requirements</a>
