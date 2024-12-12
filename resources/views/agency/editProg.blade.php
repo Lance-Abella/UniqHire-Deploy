@@ -238,6 +238,11 @@
         dates = dates.map(date => new Date(date.trim()));
         dates.sort((a, b) => a - b);
 
+        if (dates.length > 16) {
+            dates = dates.slice(0, 16);
+        }
+
+
         // Format the dates back to the desired format (mm/dd/yyyy)
         const sortedDates = dates.map(date =>
             ('0' + (date.getMonth() + 1)).slice(-2) + '/' +
@@ -245,14 +250,14 @@
             date.getFullYear()
         );
 
-        // Update the input field with the sorted dates
         dateInput.val(sortedDates.join(','));
     }
 
     document.addEventListener('DOMContentLoaded', function() {
         $('.date').datepicker({
-            multidate: true,
+            multidate: 16,
             todayHighlight: true,
+            format: 'mm/dd/yyyy'
         }).on('changeDate', function(e) {
             sortAndFormatDates($(this));
         });
