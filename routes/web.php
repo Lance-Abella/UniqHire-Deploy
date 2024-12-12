@@ -77,6 +77,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/social-media/edit/{social}', [AdminController::class, 'editSocial'])->middleware('role:Admin')->name('social-edit');
     Route::put('/social-media/edit/{social}', [AdminController::class, 'updateSocial'])->middleware('role:Admin')->name('social-update');
     Route::delete('/social-media/{social}', [AdminController::class, 'deleteSocial'])->middleware('role:Admin')->name('social-delete');
+    Route::get('/prog-criteria/all', [AdminController::class, 'showProgramCriteria'])->middleware('role:Admin')->name('prog-criteria-list');
+    Route::get('/prog-criteria/edit/{id}', [AdminController::class, 'editProgramCriteria'])->middleware('role:Admin')->name('prog-criteria-edit');
+    Route::put('/prog-criteria/edit/{id}', [AdminController::class, 'updateProgramCriteria'])->middleware('role:Admin')->name('prog-criteria-update');
+    Route::get('/job-criteria/all', [AdminController::class, 'showJobCriteria'])->middleware('role:Admin')->name('job-criteria-list');
+    Route::get('/job-criteria/edit/{id}', [AdminController::class, 'editJobCriteria'])->middleware('role:Admin')->name('job-criteria-edit');
+    Route::put('/job-criteria/edit/{id}', [AdminController::class, 'updateJobCriteria'])->middleware('role:Admin')->name('job-criteria-update');
+    Route::post('/prog-criteria/reset', [AdminController::class, 'resetProgCriteria'])->middleware('role:Admin')->name('prog-criteria-reset');
 
     //Trainer Middleware
     Route::get('/manage-program', [AgencyController::class, 'showPrograms'])->middleware('role:Training Agency,Employer')->name('programs-manage');

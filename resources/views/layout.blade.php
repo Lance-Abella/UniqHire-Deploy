@@ -150,6 +150,14 @@
                                         <i class='bx bx-globe side-icon'></i>
                                         <span class="side-title">Socials</span>
                                     </a></li>
+                                <li class="side-item"><a href="{{route('prog-criteria-list')}}" class="side-item-link {{ request()->routeIs('prog-criteria-list', 'prog-criteria-edit') ? 'active' : '' }}">
+                                        <i class='bx bx-notepad side-icon'></i>
+                                        <span class="side-title">Program Criteria</span>
+                                    </a></li>
+                                    <li class="side-item"><a href="{{route('job-criteria-list')}}" class="side-item-link {{ request()->routeIs('job-criteria-list', 'job-criteria-edit') ? 'active' : '' }}">
+                                        <i class='bx bx-notepad side-icon'></i>
+                                        <span class="side-title">Job Criteria</span>
+                                    </a></li>
                                 <!-- <li class="side-item"><a href="" class="side-item-link">
                                         <i class='bx bx-cog side-icon'></i>
                                         <span class="side-title">Settings</span>
