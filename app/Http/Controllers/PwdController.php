@@ -37,7 +37,7 @@ class PwdController extends Controller
     public function showDetails($id)
     {
         $program = TrainingProgram::with('agency.userInfo', 'disability', 'education', 'crowdfund')
-            ->where('status', 'Ongoing')
+            // ->where('status', 'Ongoing')
             ->findOrFail($id);
         $userId = auth()->user()->id;
         $application = TrainingApplication::where('user_id', $userId)->get();
@@ -74,7 +74,7 @@ class PwdController extends Controller
         $allPrograms = TrainingProgram::whereHas('disability', function ($query) use ($disabilityId) {
             $query->where('disability_id', $disabilityId);
         })
-            ->where('status', 'Ongoing')
+            // ->where('status', 'Ongoing')
             ->get();
 
         $nonConflictingPrograms = $allPrograms->filter(function ($program) use ($appliedSchedules) {

@@ -122,7 +122,7 @@ class EmployerController extends Controller
             $user->notify(new NewJobListingNotification($jobListing));
         }
 
-        return redirect()->route('manage-jobs')->with('success', 'Job listing created successfully!');
+        return redirect()->route('manage-jobs')->withInput()->with('success', 'Job listing created successfully!');
     }
 
     public function showJobDetails($id)

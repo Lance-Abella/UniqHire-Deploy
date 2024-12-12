@@ -14,7 +14,9 @@
     <div class="prog-details">
         <div class="header d-flex">
             <div class="mb-3 titles">
-                <h3 class="text-cap">{{ $program->title }}</h3>
+                <h3 class="text-cap">{{ $program->title }}&nbsp; <span class="status-badge status-{{ strtolower($program->status) }}">
+                        {{ $program->status }}
+                    </span></h3>
                 <p class="sub-text text-cap">{{ $program->agency->userInfo->name }}</p>
                 <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $program->location }}</p>
                 <input type="hidden" id="lat" value="{{ $program->latitude }}">

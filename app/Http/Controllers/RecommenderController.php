@@ -84,7 +84,6 @@ class RecommenderController extends Controller
                 $similarityScore += max(0, 30 - ($difference * $index));
                 break;
             }
-            
         }
         Log::info($similarityScore);
         if ($user->age >= $program->start_age && $user->age <= $program->end_age) {
@@ -101,7 +100,7 @@ class RecommenderController extends Controller
 
         foreach ($userSkills as $userSkill) {
             $matchingProgram = $program->whereHas('skill', function ($q) use ($userSkill) {
-                $q->where('program_skill.id', $userSkill->skill_id);
+                $q->where('program_skill.skill_id', $userSkill->skill_id);
             })->exists();
 
             if ($matchingProgram) {

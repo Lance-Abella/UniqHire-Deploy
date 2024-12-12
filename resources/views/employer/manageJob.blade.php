@@ -18,9 +18,7 @@
                 <a href="{{route('jobs-show', $job->id) }}" class="prog-texts">
                     <h3 class="text-cap">
                         {{$job->position}}
-                        <span class="status-badge status-{{ strtolower($job->status) }}">
-                            {{ $job->status }}
-                        </span>
+
                     </h3>
                     <p class="sub-text prog-loc text-cap" id="location-{{ $job->id }}">
                         <i class='bx bx-map sub-text prog-loc'></i>{{$job->location}}
@@ -36,8 +34,10 @@
                         <p class="sub-text">
                             <i class='bx bx-calendar sub-text'></i> {{ \Carbon\Carbon::parse($job->end_date)->format('F d, Y') }}
                         </p>
-                        <!-- <span class="sub-text period">•</span>  -->
-
+                        <span class="sub-text period">•</span>
+                        <span class="status-badge status-{{ strtolower($job->status) }}">
+                            {{ $job->status }}
+                        </span>
                     </div>
                 </a>
             </div>

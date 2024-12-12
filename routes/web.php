@@ -10,6 +10,7 @@ use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserInfoController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ContactController;
 use App\Models\UserInfo;
 use App\Models\TrainingProgram;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,8 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::post('/contact', [ContactController::class, 'send'])->name('contact-send');
 
 Route::get('/', [AuthController::class, 'showLanding'])->name('landing');
 

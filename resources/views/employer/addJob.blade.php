@@ -50,7 +50,7 @@
         </div>
         <div class="col">
             <div class="form-floating mb-3">
-                <input type="date" class="form-control date" name="end_date" required placeholder="Choose Date">
+                <input type="date" class="form-control date" name="end_date" required placeholder="Choose Date" value="{{old('end_date')}}">
                 <label for="floatingInput">End Date (Hiring until)</label>
                 @error('end_date')
                 <span class="error-msg">{{ $message }}</span>

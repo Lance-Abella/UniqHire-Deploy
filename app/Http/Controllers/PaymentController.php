@@ -25,13 +25,13 @@ class PaymentController extends Controller
         $response = $provider->getAccessToken();
 
         if (isset($response['access_token'])) {
-            $token = $response['access_token']; 
+            $token = $response['access_token'];
         } else {
             Log::error('PayPal access token request failed', ['response' => $response]);
             return back()->with('error', 'Unable to retrieve PayPal access token.');
         }
 
-        $provider->setAccessToken($response); 
+        $provider->setAccessToken($response);
         $crowdfundEvent = CrowdfundEvent::findOrFail($request->crowdfund_id);
         $payeeEmail = $crowdfundEvent->program->agency->userInfo->paypal_account;
 
@@ -40,7 +40,7 @@ class PaymentController extends Controller
             "purchase_units" => [
                 [
                     "amount" => [
-                        "currency_code" => "USD",
+                        "currency_code" => "PHP",
                         "value" => $this->convertToNumber($request->amount),
                     ],
                     "payee" => [
