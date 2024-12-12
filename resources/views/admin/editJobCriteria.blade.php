@@ -4,10 +4,10 @@
 @section('page-content')
 <div class="users-container container">
     <div class="text-start header-texts back-link-container border-bottom mb-3">
-        <a href="{{ route('criteria-list') }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
+        <a href="{{ route('job-criteria-list') }}" class="m-1 back-link"><i class='bx bx-left-arrow-alt'></i></a>
         Edit Disability.
     </div>
-    <form action="{{ route('criteria-update', $criterion->id) }}" method="POST">
+    <form action="{{ route('job-criteria-update', $criterion->id) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="form-floating mb-3">
@@ -17,7 +17,7 @@
             <span class="error-msg">{{ $message }}</span>
             @enderror
         </div>
-        <button type="submit" class="submit-btn border-0">Update Disability</button>
+        <button type="submit" class="submit-btn border-0">Update Weight</button>
     </form>
 </div>
 @endsection

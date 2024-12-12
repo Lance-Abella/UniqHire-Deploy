@@ -239,12 +239,62 @@ class AdminController extends Controller
 
     public function showProgramCriteria()
     {
-        $criteria = ProgramCriteria::paginate(18);
+        $criteria = ProgramCriteria::all();
+        $total = ProgramCriteria::sum('weight');
 
-        return view('admin.criteriaManage', compact('criteria'));
+        return view('admin.progCriteriaManage', compact('criteria', 'total'));
     }
 
-    public function updateProgramCriteria(Request $request)
+    public function updateProgramCriteria(Request $request, ProgramCriteria $id)
+    {
+        $request->validate([
+            'weight' => 'required|integer|min:0|max:100',
+        ]);
+
+        $total = ProgramCriteria::sum('weight');
+        $addedWeight = $request->weight + $total;
+        if($total <= 100 && $addedWeight <= 100){
+                $id->update([
+                'weight' => $request->weight,
+            ]);
+        }else{
+            return redirect()->back()->withInput()->with('error', 'Total weight reach the maximum!');
+        }
+        
+
+        
+        Log::info("total ni sa weight" . $total);
+
+        return redirect()->route('prog-criteria-list')->with('success', 'Criteria updated successfully!');
+    }
+
+    public function resetProgCriteria () {
+        $progCriteria = ProgramCriteria::all();
+        
+        foreach ($progCriteria as $criteria) {
+            $criteria->update([
+                'weight' => 0
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'All weights have been set to 0.');
+    }
+
+    public function editProgramCriteria(ProgramCriteria $id)
+    {
+         $total = ProgramCriteria::sum('weight');
+        return view('admin.editProgCriteria', compact('id', 'total'));
+    }
+
+    public function showJobCriteria()
+    {
+        $criteria = JobCriteria::all();
+        $total = JobCriteria::sum('weight');
+
+        return view('admin.jobCriteriaManage', compact('criteria', 'total'));
+    }
+
+    public function updateJobCriteria(Request $request)
     {
 
         $request->validate([
@@ -257,16 +307,16 @@ class AdminController extends Controller
         }
 
         foreach ($request->weight as $index => $weight) {
-            $criterion = ProgramCriteria::findOrFail($index);
+            $criterion = JobCriteria::findOrFail($index);
             $criterion->update(['weight' => $weight]);
         }
 
         return redirect()->back()->with('success', 'Criteria updated successfully!');
     }
 
-    public function editProgramCriteria(ProgramCriteria $criterion)
+    public function editJobCriteria(JobCriteria $criterion)
     {
-        return view('admin.editCriteria', compact('criterion'));
+        return view('admin.editJobCriteria', compact('criterion'));
     }
 
 }
