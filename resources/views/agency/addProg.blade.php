@@ -68,8 +68,8 @@
         </div>
         <div class="col">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control date" name="schedule" required placeholder="Choose Date">
-                <label for="floatingInput">Choose Date</label>
+                <input type="text" class="form-control date" name="schedule" required placeholder="Choose Date" value="{{old('schedule')}}">
+                <label for="floatingInput">Choose Date (Max. of 16 days only)</label>
                 @error('schedule')
                 <span class="error-msg">{{ $message }}</span>
                 @enderror
@@ -107,7 +107,8 @@
                 @foreach ($disabilities as $disability)
                 @if ($disability->disability_name != 'Not Applicable')
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{$disability->id}}" id="disability{{$loop->index}}" name="disabilities[]">
+                    <input class="form-check-input" type="checkbox" value="{{$disability->id}}" id="disability{{$loop->index}}" name="disabilities[]" @if (old('disabilities') && in_array($disability->id, old('disabilities')))
+                    checked @endif>
                     <label class="form-check-label" for="disability{{$loop->index}}">
                         {{$disability->disability_name}}
                     </label>
@@ -121,7 +122,8 @@
             <div class="req-container">
                 @foreach ($skills as $skill)
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{$skill->id}}" id="skill{{$loop->index}}" name="skills[]">
+                    <input class="form-check-input" type="checkbox" value="{{$skill->id}}" id="skill{{$loop->index}}" name="skills[]" @if (old('skills') && in_array($skill->id, old('skills')))
+                    checked @endif>
                     <label class="form-check-label" for="skill{{$loop->index}}">
                         {{$skill->title}}
                     </label>
@@ -236,6 +238,11 @@
         dates = dates.map(date => new Date(date.trim()));
         dates.sort((a, b) => a - b);
 
+        // Limit to 16 dates
+        if (dates.length > 16) {
+            dates = dates.slice(0, 16);
+        }
+
         // Format the dates back to the desired format (mm/dd/yyyy)
         const sortedDates = dates.map(date =>
             ('0' + (date.getMonth() + 1)).slice(-2) + '/' +
@@ -243,17 +250,28 @@
             date.getFullYear()
         );
 
-        // Update the input field with the sorted dates
         dateInput.val(sortedDates.join(','));
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Get the old input value if it exists
+        const oldSchedule = '{{old("schedule")}}';
+
+        // Initialize the datepicker
         $('.date').datepicker({
-            multidate: true,
+            multidate: 16,
+            multidateSeparator: ',',
             todayHighlight: true,
+            format: 'mm/dd/yyyy'
         }).on('changeDate', function(e) {
             sortAndFormatDates($(this));
         });
+
+        if (oldSchedule) {
+            // Split the old dates string and set them in the datepicker
+            const dates = oldSchedule.split(',').map(date => date.trim());
+            $('.date').datepicker('setDates', dates);
+        }
 
         // Trigger sorting when the input field loses focus
         $('.date').on('blur', function() {

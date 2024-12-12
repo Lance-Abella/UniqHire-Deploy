@@ -46,6 +46,7 @@ class DatabaseSeeder extends Seeder
 
         // EDUCATION LEVELS
         $not_applicable = EducationLevel::create(['education_name' => 'Not Applicable']);
+        $noedu = EducationLevel::create(['education_name' => 'No Education Attainment']);
         $hsgrad = EducationLevel::create(['education_name' => 'High School Graduate']);
         $somecoll = EducationLevel::create(['education_name' => 'Some College']);
         $vocational = EducationLevel::create(['education_name' => 'Vocational']);

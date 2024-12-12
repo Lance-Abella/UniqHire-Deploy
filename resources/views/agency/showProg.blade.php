@@ -15,16 +15,23 @@
                 <div class="mb-3 titles">
                     <div class="program-header">
                         <h3 class="text-cap">
-                            {{ $program->title }}
+                            {{ $program->title }}&nbsp;
                             <span class="status-badge status-{{ strtolower($program->status) }}">
                                 {{ $program->status }}
                             </span>
                         </h3>
                     </div>
                     <p class="sub-text text-cap">{{ $program->agency->userInfo->name }}</p>
-                    <p class="sub-text prog-loc text-cap" id="location"><i class='bx bx-map sub-text'></i>{{ $program->location }}</p>
+                    <p class="sub-text prog-loc text-cap mb-3" id="location"><i class='bx bx-map sub-text'></i>{{ $program->location }}</p>
                     <input type="hidden" id="lat" value="{{ $program->latitude }}">
                     <input type="hidden" id="lng" value="{{ $program->longitude }}">
+                    <div>
+                        <div class="mb-4">
+                            <div class="desc">
+                                {!! nl2br(e($program->description)) !!}
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="prog-btn">
                     @include('slugs.enrolleeRequests')
@@ -42,21 +49,17 @@
                             </form>
                         </div>
                     </div>
-                    @if($program->status !== 'Cancelled')
-                    <div class="mt-2">
+                    <div class="">
+                        @if ($program->status != 'Cancelled')
                         <form id="cancel-form-{{ $program->id }}" action="{{ route('programs.cancel', $program->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="deny-btn border-0" onclick="confirmCancel(event, 'cancel-form-{{ $program->id }}')">Cancel Program</button>
+                            <button type="submit" class="submit-btn border-0 cancel" onclick="confirmCancel(event, 'cancel-form-{{ $program->id }}')">Cancel Program</button>
                         </form>
+                        @endif
                     </div>
-                    @endif
                 </div>
             </div>
-            <div class="mb-5">
-                <div class="col">
-                    {!! nl2br(e($program->description)) !!}
-                </div>
-            </div>
+
             <ul class="nav nav-underline" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" data-bs-toggle="tab" href="#requirements" role="tab">Requirements</a>
@@ -182,37 +185,6 @@
                         No enrollees yet.
                     </div>
                     @endforelse
-                    <!-- <table class="table table-striped table-hover">                
-                        <tbody>
-                            @forelse ($enrollees as $enrollee)
-                            <tr>
-                                <td class="name">
-                                    <a href="{{ route('show-profile', $enrollee->application->user->id) }}">
-                                        {{ $enrollee->application->user->userInfo->name }}
-                                    </a>
-                                </td>
-
-                                <td class="d-flex justify-content-end btn-container">
-                                    <form action="{{ route('mark-complete') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" value="{{$enrollee->id}}" name="enrolleeId">
-                                        <input type="hidden" value="{{$enrollee->pwd_id}}" name="userId">
-                                        <input type="hidden" value="{{$program->id}}" name="programId">
-                                        @if ($enrollee->completion_status == 'Ongoing')
-                                        <button class="submit-btn border-0">Completed?</button>
-                                        @else
-                                        <button class="submit-btn completed border-0" disabled><i class='bx bx-check'></i></button>
-                                        @endif
-                                    </form>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="3" class="text-center">No enrollees yet.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table> -->
                 </div>
                 @if ($program->crowdfund)
                 <div class="tab-pane" id="sponsors" role="tabpanel">

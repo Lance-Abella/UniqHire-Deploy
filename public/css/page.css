@@ -239,10 +239,10 @@ footer .footer-container {
     bottom: 0;
     background-color: var(--text-color);
     padding: 2rem 5rem;
-    /* display: grid;
+    display: grid;
     grid-template-columns: 1fr 1.3fr;
     grid-template-areas: "socials contact";
-    grid-gap: 5rem; */
+    grid-gap: 5rem;
     box-shadow: var(--side-shadow-04);
 }
 
@@ -1172,6 +1172,10 @@ input[type="range"]::-webkit-slider-thumb {
     text-overflow: ellipsis;
 }
 
+.agency-show-prog .prog-details .header .desc {
+    text-wrap: wrap;
+}
+
 .agency-show-prog .prog-details .prog-btn {
     width: 30%;
     text-align: end;
@@ -1198,6 +1202,15 @@ input[type="range"]::-webkit-slider-thumb {
 
 .agency-show-prog .prog-details .prog-btn .submit-btn.edit-btn:hover {
     background-color: var(--primary-color-light);
+}
+
+.agency-show-prog .prog-details .prog-btn .submit-btn.cancel {
+    background-color: transparent;
+    color: var(--color-01);
+}
+
+.agency-show-prog .prog-details .prog-btn .submit-btn.cancel:hover {
+    background-color: var(--hover-color);
 }
 
 .agency-show-prog .prog-details h3 {
@@ -1472,6 +1485,10 @@ input[type="range"]::-webkit-slider-thumb {
     border-radius: var(--border-radius);
 }
 
+.agency-show-prog .enrollees .user-card .name {
+    width: 15rem;
+}
+
 .agency-show-prog .enrollees .user-card:hover,
 .events-container .user-card:hover {
     background-color: var(--hover-color);
@@ -1652,28 +1669,31 @@ input[type="range"]::-webkit-slider-thumb {
     overflow-y: scroll;
 }
 
-.status-badge {
+.agency-prog-container p.sub-text {
+    margin: 0;
+}
+
+.status-badge,
+.agency-prog-container .status-badge {
     display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 0.3rem;
+    border-radius: var(--border-radius);
     font-size: 0.875rem;
     font-weight: 500;
-    margin-left: 8px;
+    /* margin-left: 8px; */
+    color: var(--bg-color-02);
 }
 
 .status-ongoing {
-    background-color: #22c55e;
-    color: white;
+    background-color: var(--primary-color);
 }
 
 .status-ended {
-    background-color: #3b82f6;
-    color: white;
+    background-color: var(--color-01);
 }
 
 .status-cancelled {
-    background-color: #ef4444;
-    color: white;
+    background-color: var(--color-02);
 }
 
 /* CROWDFUND */
@@ -1923,30 +1943,6 @@ input[type="range"]::-webkit-slider-thumb {
 
 .agency-prog-container .prog-card .prog-btn {
     height: 3rem;
-}
-
-.status-badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-left: 8px;
-}
-
-.status-ongoing {
-    background-color: #22c55e;
-    color: white;
-}
-
-.status-ended {
-    background-color: #3b82f6;
-    color: white;
-}
-
-.status-cancelled {
-    background-color: #ef4444;
-    color: white;
 }
 
 /* TABLES */

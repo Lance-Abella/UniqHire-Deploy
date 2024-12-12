@@ -138,8 +138,8 @@ class AgencyController extends Controller
             'loc' => 'nullable|string|max:255',
             'description' => 'required|string',
             'schedule' => 'required|string',
-            'start_age' => 'integer|min:1|max:99',
-            'end_age' => 'integer|min:1|max:99',
+            'start_age' => 'integer|min:1|max:99|lt:end_age',
+            'end_age' => 'integer|min:1|max:99|gt:start_age',
             'start_time' => 'required|date_format:H:i|before:end_time',
             'end_time' => 'required|date_format:H:i|after:start_time',
             'participants' => 'required|max:255',
@@ -209,7 +209,7 @@ class AgencyController extends Controller
             ]);
         }
 
-        return redirect()->route('programs-manage')->with('success', 'Training program created successfully!');
+        return redirect()->route('programs-manage')->withInput()->with('success', 'Training program created successfully!');
     }
 
     public function deleteProgram($id)
@@ -269,9 +269,11 @@ class AgencyController extends Controller
                 'disabilities.*' => 'exists:disabilities,id',
                 'competencies' => 'array|max:4',
                 'competencies.*' => 'string|distinct',
-                'start_age' => 'integer|min:1|max:99',
-                'end_age' => 'integer|min:1|max:99',
+                'start_age' => 'integer|min:1|max:99|lt:end_age',
+                'end_age' => 'integer|min:1|max:99|gt:start_age',
                 'participants' => 'required|max:255',
+                'start_time' => 'required|date_format:H:i|before:end_time',
+                'end_time' => 'required|date_format:H:i|after:start_time',
             ]);
 
             $participants = $this->convertToNumber($request->participants);
@@ -287,6 +289,8 @@ class AgencyController extends Controller
                 'start_age' => $request->start_age,
                 'end_age' => $request->end_age,
                 'participants' => $participants,
+                'start_time' => $request->start_time,
+                'end_time' => $request->end_time,
             ]);
 
             $program->skill()->sync($request->skills);
@@ -325,9 +329,9 @@ class AgencyController extends Controller
                 }
             }
 
-            return redirect()->route('programs-show', $id)->with('success', 'Training program has been updated successfully!');
+            return redirect()->route('programs-show', $id)->withInput()->with('success', 'Training program has been updated successfully!');
         } else {
-            return back()->with('error', 'Failed to update training program. Review form.');
+            return back()->withInput()->with('error', 'Failed to update training program. Review form.');
         }
     }
 
@@ -553,7 +557,12 @@ class AgencyController extends Controller
             foreach ($enrollees as $enrollee) {
                 // You might want to create a new notification class for this
                 // $enrollee->pwd->notify(new ProgramCancelledNotification($program));
+                $enrollee->update([
+                    'completion_status' => 'Not completed'
+                ]);
+                // $enrollee->completion_status = 'Not completed';
             }
+
 
             return redirect()->route('programs-manage')
                 ->with('success', 'Training program has been cancelled');

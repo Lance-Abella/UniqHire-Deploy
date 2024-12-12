@@ -20,25 +20,31 @@
             </div>
 
         </div>
-        <!-- <div class="contact">
+        <div class="contact">
             <h5 class="mb-4">Send us a message</h5>
-            <div>
-                <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="floatingInput" name="email" required placeholder="Email">
-                    <label for="floatingInput">Email</label>
+            <form action="{{ route('contact-send') }}" method="POST">
+                @csrf
+                <div>
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="floatingInput" name="email" required placeholder="Email">
+                        <label for="floatingInput">Email</label>
+                        @error('email')
+                        <span class="error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" placeholder="Description" id="floatingTextarea2" name="description" style="height: 150px"></textarea>
+                        <label for="floatingTextarea2">Description</label>
+                        @error('description')
+                        <span class="error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="btn d-flex justify-content-center">
+                        <button type="submit" class="border-0 submit-btn">Send</button>
+                    </div>
                 </div>
-                <div class="form-floating mb-3">
-                    <textarea class="form-control" placeholder="Description" id="floatingTextarea2" name="description" style="height: 150px"></textarea>
-                    <label for="floatingTextarea2">Description</label>
-                    @error('description')
-                    <span class="error-msg">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="btn d-flex justify-content-center">
-                    <button type="submit" class="border-0 submit-btn">Send</button>
-                </div>
-            </div>
-        </div> -->
+            </form>
+        </div>
     </div>
 
 </footer>

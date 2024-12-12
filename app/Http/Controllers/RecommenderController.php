@@ -102,7 +102,6 @@ class RecommenderController extends Controller
                 $similarityScore += $distanceItem['calculated_result'];
                 break;
             }
-            
         }
 
         Log::info("Mao ni ang sa current formula if nakuha ba gyud:" . $similarityScore);
