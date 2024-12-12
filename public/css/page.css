@@ -239,10 +239,10 @@ footer .footer-container {
     bottom: 0;
     background-color: var(--text-color);
     padding: 2rem 5rem;
-    /* display: grid;
+    display: grid;
     grid-template-columns: 1fr 1.3fr;
     grid-template-areas: "socials contact";
-    grid-gap: 5rem; */
+    grid-gap: 5rem;
     box-shadow: var(--side-shadow-04);
 }
 
