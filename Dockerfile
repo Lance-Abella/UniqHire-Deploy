@@ -16,17 +16,26 @@ RUN a2enmod rewrite
 # Change Apache DocumentRoot to /public
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf
 
-# Copy all Laravel files into the container
+# Copy all Laravel files into the container (ensure this is after dependencies are installed)
 COPY . /var/www/html
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install PHP dependencies
+# Install PHP dependencies (with --no-dev to avoid installing dev dependencies)
 RUN composer install --no-dev --optimize-autoloader
 
 # Set correct permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Ensure that Laravel's key is generated (can be run as part of a setup step)
+RUN php artisan key:generate
+
+# Clear the application cache and optimize (optional but recommended)
+RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
+
 # Expose port 80
 EXPOSE 80
+
+# Start Apache
+CMD ["apache2-foreground"]
