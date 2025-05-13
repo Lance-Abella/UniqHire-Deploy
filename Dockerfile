@@ -1,23 +1,30 @@
-# Use an official PHP runtime as a parent image
-FROM php:8.1-fpm
+# Use PHP with Apache
+FROM php:8.2-apache
+
+# Set working directory
+WORKDIR /var/www/html
 
 # Install system dependencies and PHP extensions
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install gd pdo pdo_mysql
+RUN apt-get update && apt-get install -y \
+    libpng-dev libjpeg-dev libfreetype6-dev \
+    zip unzip git curl libonig-dev libxml2-dev libzip-dev libpq-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql gd zip
 
-# Set the working directory in the container
-WORKDIR /var/www
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
 
-# Copy the current directory contents into the container at /var/www
-COPY . /var/www
+# Copy project files
+COPY . /var/www/html
 
 # Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install PHP dependencies
-RUN composer install --no-interaction --prefer-dist
+RUN composer install --no-dev --optimize-autoloader
 
-# Expose port 9000 and start the PHP-FPM server
-EXPOSE 9000
-CMD ["php-fpm"]
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Expose port 80 for Apache
+EXPOSE 80
