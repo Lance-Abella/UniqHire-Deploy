@@ -41,10 +41,7 @@ RUN cp .env.example .env
 RUN php artisan key:generate
 
 # Clear any previously cached files
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear && \
-    php artisan cache:clear
+RUN php artisan config:clear && php artisan route:clear && php artisan view:clear
 
 # Optimize Laravel
 RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
