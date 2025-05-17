@@ -34,6 +34,9 @@ RUN composer install --no-dev --optimize-autoloader
 # Set permissions for Laravel folders
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Copy default environment file
+RUN cp .env.example .env
+
 # Generate application key
 RUN php artisan key:generate
 
