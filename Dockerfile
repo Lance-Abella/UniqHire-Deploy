@@ -8,7 +8,7 @@ WORKDIR /var/www/html
 RUN apt-get update && apt-get install -y \
     git curl zip unzip libonig-dev libxml2-dev libzip-dev libpng-dev libjpeg-dev libfreetype6-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql gd zip
+    && docker-php-ext-install pdo pdo_pgsql gd zip
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
