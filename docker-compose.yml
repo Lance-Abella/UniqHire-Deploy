@@ -12,17 +12,18 @@ services:
         depends_on:
             - db
         environment:
+            DB_CONNECTION: pgsql # IMPORTANT: tell Laravel to use pgsql
             DB_HOST: db
-            DB_PORT: 3306
+            DB_PORT: 5432 # PostgreSQL default port
             DB_DATABASE: uniqhire
-            DB_USERNAME: root
+            DB_USERNAME: postgres # default PostgreSQL user
             DB_PASSWORD: lance123
         command: >
             sh -c "
               apt-get update &&
-              apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip unzip git curl &&
+              apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip unzip git curl libpq-dev &&
               docker-php-ext-configure gd --with-freetype --with-jpeg &&
-              docker-php-ext-install pdo pdo_mysql gd &&
+              docker-php-ext-install pdo pdo_pgsql gd zip &&
               curl -sS https://getcomposer.org/installer | php &&
               mv composer.phar /usr/local/bin/composer &&
               composer install &&
@@ -31,17 +32,16 @@ services:
             "
 
     db:
-        image: mysql:5.7
+        image: postgres:15
         container_name: laravel-db
         ports:
-            - 3306:3306
+            - 5432:5432
         environment:
-            MYSQL_ROOT_PASSWORD: lance123
-            MYSQL_DATABASE: uniqhire
-            MYSQL_USER: root
-            MYSQL_PASSWORD: lance123
+            POSTGRES_DB: uniqhire
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: lance123
         volumes:
-            - dbdata:/var/lib/mysql
+            - pgdata:/var/lib/postgresql/data
 
 volumes:
-    dbdata:
+    pgdata:
