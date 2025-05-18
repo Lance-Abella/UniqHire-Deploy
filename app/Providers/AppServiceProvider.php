@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        if (config('app.env') === 'production') {
+        if (config('APP_ENV') === 'production') {
             URL::forceScheme('https');
         }
 
