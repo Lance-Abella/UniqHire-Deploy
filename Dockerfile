@@ -25,12 +25,7 @@ RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/c\<Directory /var/www/html
 # Copy Laravel project files into container
 COPY . /var/www/html
 
-# Install Node.js and npm (Node 18)
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs
 
-# Install npm dependencies and build frontend assets
-RUN npm install && npm run build
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
