@@ -30,7 +30,8 @@ COPY . /var/www/html
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-
+# Install PHP dependencies for production
+RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions for Laravel folders
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
@@ -46,8 +47,7 @@ RUN php artisan config:clear && php artisan route:clear && php artisan view:clea
 
 # Optimize Laravel
 RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
-# Install PHP dependencies for production
-RUN composer install --no-dev --optimize-autoloader
+
 # Expose Apache port
 EXPOSE 80
 
